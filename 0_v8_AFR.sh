@@ -1,4 +1,4 @@
-#Create multipop weight files for GTEx v8 
+#Create gene expression weight files for GTEx v8 
 #Begin an interactive session before running the script
 
 #Set up r environment 
@@ -6,8 +6,7 @@ source ~/.bashrc
 conda activate r_env
 
 #Identify downsampled individuals and cis window 
-
-Rscript 1_v8.NoDownsample.R #done (finds individuals with both genotype and gene expression data in GTEx)
+Rscript 1_v8.NoDownsample.R #(finds individuals with both genotype and gene expression data in GTEx)
 
 #Only run once or everytime scratch directory deletes itself
 run=2 #run: 1, don't run: 2 
@@ -15,7 +14,7 @@ if [ $run -eq 1 ];
 then
  Rscript 2_v8.GetMeasuredGenes.R 
  #SNP extraction (tissue independent)
- ref_dir=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/GTEx_plink
+ ref_dir=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO/data/GTEx_plink
  beddir=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/gene_beds/
  plinkdir=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/plink_cissnps_AFR
  mkdir $plinkdir
@@ -32,10 +31,10 @@ then
  done
 fi
 
-Rscript 3_v8.covar.AFR.R #done
-Rscript assignBatch.R #done
+Rscript 3_v8.covar.AFR.R 
+Rscript assignBatch.R 
 
 multipopweights.sh
 
 #after jobs run 
-#Rscript processFlexPop.R 
+#Rscript processWeights.R
