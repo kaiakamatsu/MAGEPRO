@@ -97,7 +97,7 @@ h[["eqtlgen"]] <- 31684
 h[["peruvian"]] <- 259 
 
 # all available external datasets to a list
-datasets <- list(file.test, file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_CD4, file.ota.Mem_CD8, file.ota.NK, file.ota.Naive_B, file.ota.Naive_CD4, file.ota.Naive_CD8, file.ota.Neu, file.ota.Plasmablast, file.ota.mDC, file.ota.pDC, file.mesahis, file.genoa, file.mesa, file.jung, file.ishi.B, file.ishi.CD4, file.ishi.CD8, file.ishi.Mono, file.ishi.NK, file.ishi.PB, file.peruvian)
+datasets <- list(file.test, file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_CD4, file.ota.Mem_CD8, file.ota.NK, file.ota.Naive_B, file.ota.Naive_CD4, file.ota.Naive_CD8, file.ota.Neu, file.ota.Plasmablast, file.ota.mDC, file.ota.pDC, file.mesahis, file.genoa, file.mesa, file.jung, file.ishi.B, file.ishi.CD4, file.ishi.CD8, file.ishi.Mono, file.ishi.NK, file.ishi.PB, file.peruvian, file.eqtlgen)
 # remove datasets that are not available for that gene
 for (d in datasets) {
 	if (!file.exists(d)){
@@ -376,7 +376,7 @@ cv.calls = matrix(NA,nrow=n,ncol=3)
 wgts <- list()
 
 
-#process EUR gene model here: 
+#process EUR gene model here--------------------------------------------- 
 if (file.test %in% datasets){
 load(file.test) 
 #wgt.RDat includes the following: 
@@ -427,46 +427,60 @@ if(sum(which(pred.wgt.eur != 0)) > 0){
 	hsq_eur <- NA
 	hsq_eur.pv <- NA
 }
-
+#-------------------------------------------------------------------
 
 #IMPORTANT: for the eQTL stats, use only snps present in both populations above 
 #Note: SNPs in the eQTL stats that are not in AFR data are removed, SNPs in the AFR but not in the eQTL stats will have a weight 0 in the eQTL weights 
-#To simplify, if the SNP in AFR is in neither EUR or other populations, only the AFR weight is used. 
+#If the SNP in AFR is in neither EUR or other populations, only the AFR weight is used. 
 
-#function to process ota data for different cell types 
-ota_process <- function(file, cell, wgts){
-	table.ota <- fread(file, select = c(6, 14, 15, 16))
-	for (k in 1:nrow(table.ota)){
-		match=which(genos$bim$V2 == table.ota$Variant_ID[k])
+#process function to handle ref/alt flips for external datasets---------------------------------
+
+datasets_process <- function(dataset, file, cell, wgts, snp, A1, A0, B){
+	#dataset = name of dataset
+	#file = file path to data
+	#cell = cell type if it exists (NA if data is not split by cell type)
+	#wgts = current list of wgts 
+	#snp = column number of rsid 
+	#A1 = column number of relevant (alt) allele 
+	#A0 = column number of ref allele
+	#B = column number of effect size Beta
+	if (is.na(cell)){
+		cell <- ""
+	}
+	table <- fread(file, select = c(snp, A1, A0, B)) 
+	for (k in 1:nrow(table)){
+		match=which(genos$bim$V2 == table[k, 1])
 		if (identical(match, integer(0))){
-			print(paste0("ota,", cell, ":", "no snp in common, skipping ref/alt check iteration"))
+			print(paste0(dataset, " ", cell, ":", "this snp not in GTEx, skipping ref/alt check iteration"))
 		}else{
-		if (!is.na(table.ota$A1[k]) && !is.na(table.ota$A0[k])){
-		if (genos$bim$V5[match] != table.ota$A1[k] || genos$bim$V6[match] != table.ota$A0[k]) {
-			if (genos$bim$V5[match] == table.ota$A0[k] && genos$bim$V6[match] == table.ota$A1[k]){
-				table.ota$Backward_slope[k] <- table.ota$Backward_slope[k] * -1
-			}else{
-				table.ota$Backward_slope[k] <- 0
+		if (!is.na(table[k, 2]) && !is.na(table[k, 3])){
+			if (genos$bim$V5[match] != table[k, 2] || genos$bim$V6[match] != table[k, 3]) {
+				if (genos$bim$V5[match] == table[k, 3] && genos$bim$V6[match] == table[k, 2]){
+					table[k, 4] <- table[k, 4] * -1
+				}else{
+					table[k, 4] <- 0
+				}
 			}
-		}
-		}else {
-			table.ota$Backward_slope[k] <- 0
+		} else {
+			table[k, 4] <- 0
 		}
 		}
 	}
-	mOTA <- match(genos$bim[,2], table.ota$Variant_ID)
-	table.ota <- table.ota[mOTA,]
-	wOTA <- which(is.na(table.ota[,1]))
-	if(length(wOTA) > 0){table.ota[wOTA,2] <- 0} 
-	assign(paste0("pred.wgt.ota.", cell ), table.ota$Backward_slope, envir = parent.frame())
-	if(sum(which(eval(parse(text = paste0("pred.wgt.ota.", cell))) != 0)) > 0){
-		wgts <- append(wgts, paste0("pred.wgt.ota.", cell))
+	m <- match(genos$bim[,2], table[[1]])
+	table <- table[m,]
+	w <- which(is.na(table[[1]]))
+	if(length(w) > 0){table[w,4] <- 0}
+	assign(paste0("pred.wgt.", dataset ,cell ), table[[4]], envir = parent.frame())
+	if(sum(which(eval(parse(text = paste0("pred.wgt.", dataset,cell))) != 0)) > 0){
+		wgts <- append(wgts, paste0("pred.wgt.", dataset,cell))
 		return (wgts)
 	}else {
 		return (wgts)
 	}
 }
 
+
+#-------------------------------------------------------------------
 
 #OTA
 all_ota <- c(file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_CD4, file.ota.Mem_CD8, file.ota.NK, file.ota.Naive_B, file.ota.Naive_CD4, file.ota.Naive_CD8, file.ota.Neu, file.ota.Plasmablast, file.ota.mDC, file.ota.pDC)
@@ -474,239 +488,54 @@ all_ota <- c(file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_C
 print("processing ota files")
 for (o in all_ota){
 	if(o %in% datasets){
-		splits <- strsplit(o, split = "/")[[1]][10]
-		print(splits)
-		wgts <- ota_process(o, splits, wgts)
+		cell <- strsplit(o, split = "/")[[1]][10]
+		print(cell)
+		wgts <- datasets_process("ota", o, cell, wgts, 6, 15, 16, 14)
 	}
 }
 
-
 #JUNG 
 if (file.jung %in% datasets){
-table.jung <- fread(file.jung, select = c(3, 13, 14, 15)) 
-for (k in 1:nrow(table.jung)){
-		match=which(genos$bim$V2 == table.jung$SNP[k])
-		if (identical(match, integer(0))){
-			print(paste0("JUNG:", "no snp in common, skipping ref/alt check iteration"))
-		}else{
-		if (!is.na(table.jung$A1[k]) && !is.na(table.jung$A0[k])){
-		if (genos$bim$V5[match] != table.jung$A1[k] || genos$bim$V6[match] != table.jung$A0[k]) {
-			if (genos$bim$V5[match] == table.jung$A0[k] && genos$bim$V6[match] == table.jung$A1[k]){
-				table.jung$SLOPE[k] <- table.jung$SLOPE[k] * -1
-			}else{
-				table.jung$SLOPE[k] <- 0
-			}
-		}
-		}else {
-			table.jung$SLOPE[k] <- 0
-		}
-		}
-}
-mJUNG <- match(genos$bim[,2], table.jung$SNP)
-table.jung <- table.jung[mJUNG,]
-wJUNG <- which(is.na(table.jung[,1]))
-if(length(wJUNG) > 0){table.jung[wJUNG,2] <- 0} 
-pred.wgt.jung <- table.jung$SLOPE
-if (sum(which(pred.wgt.jung != 0 )) > 0){
-	wgts <- append(wgts, "pred.wgt.jung")
-}
+	wgts <- datasets_process("jung", file.jung, NA, wgts, 3, 14, 15, 13)
 }
 
 
 #GENOA
 if (file.genoa %in% datasets){
-table.genoa <- fread(file.genoa, select = c(3, 13, 15, 16)) 
-for (k in 1:nrow(table.genoa)){
-		match=which(genos$bim$V2 == table.genoa$SNP[k])
-		if (identical(match, integer(0))){
-			print(paste0("GENOA:", "no snp in common, skipping ref/alt check iteration"))
-		}else{
-		if (!is.na(table.genoa$A1[k]) && !is.na(table.genoa$A0[k])){
-		if (genos$bim$V5[match] != table.genoa$A1[k] || genos$bim$V6[match] != table.genoa$A0[k]) {
-			if (genos$bim$V5[match] == table.genoa$A0[k] && genos$bim$V6[match] == table.genoa$A1[k]){
-				table.genoa$SLOPE[k] <- table.genoa$SLOPE[k] * -1
-			}else{
-				table.genoa$SLOPE[k] <- 0
-			}
-		}
-		}else {
-			table.genoa$SLOPE[k] <- 0
-		}
-		}
-}
-mGENOA <- match(genos$bim[,2], table.genoa$SNP)
-table.genoa <- table.genoa[mGENOA,]
-wGENOA <- which(is.na(table.genoa[,1]))
-if(length(wGENOA) > 0){table.genoa[wGENOA,2] <- 0} 
-pred.wgt.genoa <- table.genoa$SLOPE
-if (sum(which(pred.wgt.genoa != 0)) > 0){
-	wgts <- append(wgts, "pred.wgt.genoa")
-}
-}
-
-#function to process ishigaki data for different cell types
-ishigaki_process <- function(file, cell, wgts){
-	table.ishi <- fread(file, select = c(3, 13, 14, 15)) 
-	for (k in 1:nrow(table.ishi)){
-		match=which(genos$bim$V2 == table.ishi$SNP[k])
-		if (identical(match, integer(0))){
-			print(paste0("ishi,", cell, ":", "no snp in common, skipping ref/alt check iteration"))
-		}else{
-		if (!is.na(table.ishi$A1[k]) && !is.na(table.ishi$A0[k])){
-			if (genos$bim$V5[match] != table.ishi$A1[k] || genos$bim$V6[match] != table.ishi$A0[k]) {
-				if (genos$bim$V5[match] == table.ishi$A0[k] && genos$bim$V6[match] == table.ishi$A1[k]){
-					table.ishi$SLOPE[k] <- table.ishi$SLOPE[k] * -1
-				}else{
-					table.ishi$SLOPE[k] <- 0
-				}
-			}
-		} else {
-			table.ishi$SLOPE[k] <- 0
-		}
-		}
-	}
-	mIshi <- match(genos$bim[,2], table.ishi$SNP)
-	table.ishi <- table.ishi[mIshi,]
-	wIshi <- which(is.na(table.ishi[,1]))
-	if(length(wIshi) > 0){table.ishi[wIshi,2] <- 0} 
-	assign(paste0("pred.wgt.ishi.", cell ), table.ishi$SLOPE, envir = parent.frame())
-	if(sum(which(eval(parse(text = paste0("pred.wgt.ishi.", cell))) != 0)) > 0){
-		wgts <- append(wgts, paste0("pred.wgt.ishi.", cell))
-		return (wgts)
-	}else {
-		return (wgts)
-	}
+	wgts <- datasets_process("genoa", file.genoa, NA, wgts, 3, 15, 16, 13)
 }
 
 
 #ISHIGAKI
+all_ishi <- c(file.ishi.B, file.ishi.CD4, file.ishi.CD8, file.ishi.Mono, file.ishi.NK, file.ishi.PB)
 
-
-if(file.ishi.B %in% datasets){
-	wgts <- ishigaki_process(file.ishi.B, "B", wgts)
-}
-
-
-if(file.ishi.CD4 %in% datasets){
-	wgts <- ishigaki_process(file.ishi.CD4, "CD4", wgts)
-}
-
-
-if(file.ishi.CD8 %in% datasets){
-	wgts <- ishigaki_process(file.ishi.CD8, "CD8", wgts)
-}
-
-
-if(file.ishi.Mono %in% datasets){
-	wgts <- ishigaki_process(file.ishi.Mono, "Mono", wgts)
-}
-
-
-if(file.ishi.NK %in% datasets){
-	wgts <- ishigaki_process(file.ishi.NK, "NK", wgts)
-}
-
-
-if(file.ishi.PB %in% datasets){
-	wgts <- ishigaki_process(file.ishi.PB, "PB", wgts)
+print("processing ishi files")
+for (i in all_ishi){
+	if(i %in% datasets){
+		cell_p <- strsplit(i, split = "/")[[1]][10]
+		cell <- strsplit(cell_p, split = "_")[[1]][1]
+		wgts <- datasets_process("ishi", i, cell, wgts, 3, 14, 15, 13)
+	}
 }
 
 
 #MESA
 if (file.mesa %in% datasets){
-table.mesa <- fread(file.mesa, select = c(3, 13, 14, 15)) 
-for (k in 1:nrow(table.mesa)){
-		match=which(genos$bim$V2 == table.mesa$SNP[k])
-		if (identical(match, integer(0))){
-			print(paste0("MESA:", "no snp in common, skipping ref/alt check iteration"))
-		}else{
-		if (!is.na(table.mesa$A1[k]) && !is.na(table.mesa$A0[k]) ){
-		if (genos$bim$V5[match] != table.mesa$A1[k] || genos$bim$V6[match] != table.mesa$A0[k]) {
-			if (genos$bim$V5[match] == table.mesa$A0[k] && genos$bim$V6[match] == table.mesa$A1[k]){
-				table.mesa$SLOPE[k] <- table.mesa$SLOPE[k] * -1
-			}else{
-				table.mesa$SLOPE[k] <- 0
-			}
-		}
-		} else {
-			table.mesa$SLOPE[k] <- 0
-		}
-		}
-}
-mMESA <- match(genos$bim[,2], table.mesa$SNP)
-table.mesa <- table.mesa[mMESA,]
-wMESA <- which(is.na(table.mesa[,1]))
-if(length(wMESA) > 0){table.mesa[wMESA,2] <- 0} 
-pred.wgt.mesa <- table.mesa$SLOPE
-if (sum(which(pred.wgt.mesa != 0)) > 0){
-	wgts <- append(wgts, "pred.wgt.mesa")
-}
+	wgts <- datasets_process("mesa", file.mesa, NA, wgts, 3, 14, 15, 13)
 }
 
 #MESA_HIS
 if (file.mesahis %in% datasets){
-table.mesahis <- fread(file.mesahis, select = c(3, 13, 14, 15)) 
-for (k in 1:nrow(table.mesahis)){
-		match=which(genos$bim$V2 == table.mesahis$SNP[k])
-		if (identical(match, integer(0))){
-			print(paste0("MESAHIS:", "no snp in common, skipping ref/alt check iteration"))
-		}else{
-		if(!is.na(table.mesahis$A1[k]) && !is.na(table.mesahis$A0[k])){
-		if (genos$bim$V5[match] != table.mesahis$A1[k] || genos$bim$V6[match] != table.mesahis$A0[k]) {
-			if (genos$bim$V5[match] == table.mesahis$A0[k] && genos$bim$V6[match] == table.mesahis$A1[k]){
-				table.mesahis$SLOPE[k] <- table.mesahis$SLOPE[k] * -1
-			}else{
-				table.mesahis$SLOPE[k] <- 0
-			}
-		}
-		}else {
-			table.mesahis$SLOPE[k] <- 0
-		}
-		}
-}
-mMESAhis <- match(genos$bim[,2], table.mesahis$SNP)
-table.mesahis <- table.mesahis[mMESAhis,]
-wMESAhis <- which(is.na(table.mesahis[,1]))
-if(length(wMESAhis) > 0){table.mesahis[wMESAhis,2] <- 0} 
-pred.wgt.mesahis <- table.mesahis$SLOPE
-if (sum(which(pred.wgt.mesahis != 0)) > 0) {
-	wgts <- append(wgts, "pred.wgt.mesahis")
-}
+	wgts <- datasets_process("mesahis", file.mesahis, NA, wgts, 3, 14, 15, 13)
 }
 
 #eqtlgen
 if (file.eqtlgen %in% datasets){
-table.eqtlgen <- fread(file.eqtlgen, select = c(3, 13, 14, 15)) 
-for (k in 1:nrow(table.eqtlgen)){
-		match=which(genos$bim$V2 == table.eqtlgen$SNP[k])
-		if (identical(match, integer(0))){
-			print(paste0("eqtlgen:", "no snp in common, skipping ref/alt check iteration"))
-		}else{
-		if (!is.na(table.eqtlgen$A1[k]) && !is.na(table.eqtlgen$A0[k]) ){
-		if (genos$bim$V5[match] != table.eqtlgen$A1[k] || genos$bim$V6[match] != table.eqtlgen$A0[k]) {
-			if (genos$bim$V5[match] == table.eqtlgen$A0[k] && genos$bim$V6[match] == table.eqtlgen$A1[k]){
-				table.eqtlgen$SLOPE[k] <- table.eqtlgen$SLOPE[k] * -1
-			}else{
-				table.eqtlgen$SLOPE[k] <- 0
-			}
-		}
-		} else {
-			table.eqtlgen$SLOPE[k] <- 0
-		}
-		}
-}
-meqtlgen <- match(genos$bim[,2], table.eqtlgen$SNP)
-table.eqtlgen <- table.eqtlgen[meqtlgen,]
-weqtlgen <- which(is.na(table.eqtlgen[,1]))
-if(length(weqtlgen) > 0){table.eqtlgen[weqtlgen,2] <- 0} 
-pred.wgt.eqtlgen <- table.eqtlgen$SLOPE
-if (sum(which(pred.wgt.eqtlgen != 0)) > 0){
-	wgts <- append(wgts, "pred.wgt.eqtlgen")
-}
+	wgts <- datasets_process("eqtlgen", file.eqtlgen, NA, wgts, 3, 14, 15, 13)
 }
 
 
-#peruvian - flipped signs of beta already 
+#peruvian - flipped signs of beta during processing
 if (file.peruvian %in% datasets){
 table.peruvian <- fread(file.peruvian, select = c(3, 7)) 
 mperuvian <- match(genos$bim[,2], table.peruvian$rsid)
@@ -719,9 +548,10 @@ if (sum(which(pred.wgt.peruvian != 0)) > 0){
 }
 }
 
-print("edited to only use snps common across all populations")
 
-#metanalyze (by sample size) cell types from same dataset 
+#---------------------------------------------------------eQTL sum stats extracted 
+
+#metanalyze (by sample size) cell types from same dataset -----------------------
 
 new_wgts <- c()
 index <- c()
@@ -756,6 +586,8 @@ if (length(index) > 0){
 	print(wgts)
 	print("cell types combined")
 }
+#------------------------------------------------------------
+
 
 ext <- length(wgts)
 
@@ -819,7 +651,7 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 		if (length(pred.wgt.meta) == 1){
 			pred.wgt.meta <- t(pred.wgt.meta)
 		}
-		
+	
 		cv.calls[ indx , mod*3-1 ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.meta 
 		#-----------------------------------------------------------------------------
 
@@ -884,7 +716,7 @@ for ( mod in 1:ncol(cv.calls) ) {
 }
 if ( opt$verbose >= 1 ) write.table(cv.performance,quote=F,sep='\t')
 
-# ---- Full Analysis 
+# ---- Full Analysis (all 80 individuals) ----------------------------------------------------------- 
 if (opt$verbose >= 1) cat("Computing full-sample weights \n")
 
 wgt.matrix = matrix(0, nrow=nrow(genos$bim), ncol=3) 
@@ -910,11 +742,19 @@ for (w in wgts){
 wgt.matrix[, 2] = pred.wgt.meta2
 
 #create matrix for glmnet input
+if(length(pred.wgt2) == 1){
+	pred.wgt2 <- t(pred.wgt2)
+}	
 w1 <- genos$bed %*% pred.wgt2
 eq2 <- matrix(0, nrow = length (w1), ncol = ext + 1)
 eq2[, 1] <- w1
 num = 2
 for (w in wgts){
+	
+	if(length(eval(parse(text = w))) == 1){
+		assign(w,t(eval(parse(text = w))))
+	}	
+	
 	eq2[,num] <- genos$bed %*% eval(parse(text = w))
 	num = num+1
 }	
