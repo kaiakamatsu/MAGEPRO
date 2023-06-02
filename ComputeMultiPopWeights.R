@@ -592,6 +592,8 @@ if (length(index) > 0){
 ext <- length(wgts)
 
 for ( i in 1:opt$crossval ) { #for every chunk in crossval
+	
+	
 	if ( opt$verbose >= 1 ) cat("- Crossval fold",i,"\n")
 	indx = which(folds==i,arr.ind=TRUE)
 	cv.train = cv.all[-indx,] #training set is the other 4 groups 
@@ -666,6 +668,19 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 			eq[,num] <- genos$bed[ cv.sample[ -indx ] , ] %*%  eval(parse(text = w))
 			num = num+1
 		}	
+	
+		#check if any columns are all 0	- situation when there is nonzero Beta but genotype at that snp has no variance 
+		remove <- c()
+		for (i in 1:ncol(eq)){
+			if (length(which(eq[,i] == 0)) == nrow(eq)){
+				remove <- append(remove, i)
+			}
+		}
+		if (length(remove) > 0){
+			eq <- eq[, -remove]
+			ext <- ext - length(remove)
+			wgts <- wgts[-(remove-1)]
+		}
 		
 		#cv.glmnet runs if there are two or more columns
 		if (ext > 0){
