@@ -11,7 +11,7 @@ r2_h2 <- matrix(0, length(genes), 17)
 
 for (j in 1:length(genes)){
 
-file <- paste0("/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_MAGEPRO_alpha_opt/",tissues[i],"/",tissues[i],".",genes[j],".wgt.RDat") 
+file <- paste0("/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_MAGEPRO/",tissues[i],"/",tissues[i],".",genes[j],".wgt.RDat") 
 
 print(genes[j])
 
@@ -66,6 +66,6 @@ h <- which(r2_h2[,2] == 0)
 if(length(h) > 0){r2_h2 <- r2_h2[-h,]}
 
 
-write.table(r2_h2, file = "/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO/process_results/MAGEPRO_alpha_opt_r2_h2.txt", row.names = F, col.names = T, sep = "\t", quote = F)
+write.table(r2_h2, file = "/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO/process_results/MAGEPRO_r2_h2.txt", row.names = F, col.names = T, sep = "\t", quote = F)
 }
 
