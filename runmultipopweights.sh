@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=2G
-#SBATCH -t 02:00:00
+#SBATCH -t 03:00:00
 #SBATCH -J MAGEPRO
 #SBATCH -A ddp412
 #SBATCH -o ../workingerr/MAGEPRO.%j.%N.out
@@ -25,7 +25,7 @@ batch=$2
 
 tmpdir=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/tmp_${tissue}
 mkdir $tmpdir
-weights=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_MAGEPRO/$tissue #change directory to store weights
+weights=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_MAGEPRO_alpha_opt/$tissue #change directory to store weights
 mkdir -p $weights
 wd=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_$tissue
 mkdir $wd
@@ -54,7 +54,7 @@ then
     mv $wd/$gene.mod.fam $wd/$gene.fam #confirm that gene expression matches correct individual. Confirmed. Even though list of individuals are out of order. Need to make sure covariates are properly handled below in fusion. 
     TMP=$tmpdir/${gene}_${tissue} 
     OUT=$weights/${tissue}.$gene #CHANGE OUT TO MY DIRECTORY AFTER TESTING
-    Rscript /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO/ComputeMultiPopWeights.R --gene $gene --tissue $tissue --bfile $wd/$gene --covar $home_dir/Covar_All_${tissue}.txt --hsq_p 1 --tmp $TMP --out $OUT --models lasso --PATH_gcta /expanse/lustre/projects/ddp412/kakamatsu/fusion_twas-master/gcta_nr_robust --gemmaout ${gene}_${tissue} --PATH_gemma /expanse/lustre/projects/ddp412/kakamatsu/gemma-0.98.5-linux-static-AMD64 --verbose 2 --PATH_plink /expanse/lustre/projects/ddp412/kakamatsu/plink
+    Rscript /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO/ComputeMultiPopWeights_Opt.R --gene $gene --tissue $tissue --bfile $wd/$gene --covar $home_dir/Covar_All_${tissue}.txt --hsq_p 1 --tmp $TMP --out $OUT --models lasso --PATH_gcta /expanse/lustre/projects/ddp412/kakamatsu/fusion_twas-master/gcta_nr_robust --gemmaout ${gene}_${tissue} --PATH_gemma /expanse/lustre/projects/ddp412/kakamatsu/gemma-0.98.5-linux-static-AMD64 --verbose 2 --PATH_plink /expanse/lustre/projects/ddp412/kakamatsu/plink
     rm $wd/$gene.* 
 
 fi

@@ -11,11 +11,12 @@ r2_h2 <- matrix(0, length(genes), 17)
 
 for (j in 1:length(genes)){
 
-file <- paste0("/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_MAGEPRO/",tissues[i],"/",tissues[i],".",genes[j],".wgt.RDat") 
+file <- paste0("/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_MAGEPRO_alpha_opt/",tissues[i],"/",tissues[i],".",genes[j],".wgt.RDat") 
 
 print(genes[j])
 
 if(file.exists(file)){
+if(file.info(file)$size > 0){
 load(file)
 r2_h2[j,1] <- genes[j]
 r2_h2[j,2:(ncol(cv.performance)+1)] <- cv.performance[1,]
@@ -26,8 +27,12 @@ r2_h2[j, 10] <- hsq_afr.pv
 r2_h2[j, 11] <- hsq_eur[1]
 r2_h2[j, 12] <- hsq_eur[2]
 r2_h2[j, 13] <- hsq_eur.pv
-print(paste(wgts, collapse = ","))
-r2_h2[j, 14] <- paste(wgts, collapse = ",")
+if (length(wgts) > 0){
+	print(paste(wgts, collapse = ","))
+	r2_h2[j, 14] <- paste(wgts, collapse = ",")
+}else{
+	r2_h2[j, 14] <- NA
+}
 
 nonzeroAFR <- length(which(wgt.matrix[, 1] != 0))
 nonzeroMAGEPRO <- length(which(wgt.matrix[, 3] != 0))
@@ -49,7 +54,7 @@ if (is.matrix(alpha_beta)){
 print(ab)
 
 r2_h2[j, 17] <- ab
-
+}
 }
 }
 
@@ -61,6 +66,6 @@ h <- which(r2_h2[,2] == 0)
 if(length(h) > 0){r2_h2 <- r2_h2[-h,]}
 
 
-write.table(r2_h2, file = "/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO/MAGEPRO_r2_h2.txt", row.names = F, col.names = T, sep = "\t", quote = F)
+write.table(r2_h2, file = "/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO/process_results/MAGEPRO_alpha_opt_r2_h2.txt", row.names = F, col.names = T, sep = "\t", quote = F)
 }
 
