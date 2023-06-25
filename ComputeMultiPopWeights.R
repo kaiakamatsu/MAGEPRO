@@ -82,7 +82,10 @@ file.ishi.NK <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Is
 file.ishi.PB <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/PB_permutation/clumped/",name,".txt")
 file.eqtlgen <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/clumped/", name, ".txt")
 file.peruvian <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/peruvian/genes/", name, ".txt")
-
+onekcells <- list("B_IN","B_Mem","CD4_ET","CD4_NC","CD4_SOX4","CD8_ET","CD8_NC","CD8_S100B","DC","Mono_C","Mono_NC","NK","NK_R","Plasma")
+for (k in onekcells){
+	assign(paste0("file.1k1k.", k), paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/1k1k/genes/", k, "/", name, ".txt"))
+}
 
 # create a hashmap to store sample size of each datset (used later for sample-size weighted meta-analysis)
 h <- hash()
@@ -95,9 +98,10 @@ h[["mesa"]] <- 233
 h[["mesahis"]] <- 352
 h[["eqtlgen"]] <- 31684 
 h[["peruvian"]] <- 259 
+h[["1k1k"]] <- 982
 
 # all available external datasets to a list
-datasets <- list(file.test, file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_CD4, file.ota.Mem_CD8, file.ota.NK, file.ota.Naive_B, file.ota.Naive_CD4, file.ota.Naive_CD8, file.ota.Neu, file.ota.Plasmablast, file.ota.mDC, file.ota.pDC, file.mesahis, file.genoa, file.mesa, file.jung, file.ishi.B, file.ishi.CD4, file.ishi.CD8, file.ishi.Mono, file.ishi.NK, file.ishi.PB, file.peruvian, file.eqtlgen)
+datasets <- list(file.test, file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_CD4, file.ota.Mem_CD8, file.ota.NK, file.ota.Naive_B, file.ota.Naive_CD4, file.ota.Naive_CD8, file.ota.Neu, file.ota.Plasmablast, file.ota.mDC, file.ota.pDC, file.mesahis, file.genoa, file.mesa, file.jung, file.ishi.B, file.ishi.CD4, file.ishi.CD8, file.ishi.Mono, file.ishi.NK, file.ishi.PB, file.peruvian, file.eqtlgen, file.1k1k.B_IN, file.1k1k.B_Mem, file.1k1k.CD4_ET, file.1k1k.CD4_NC, file.1k1k.CD4_SOX4, file.1k1k.CD8_ET, file.1k1k.CD8_NC, file.1k1k.CD8_S100B, file.1k1k.DC, file.1k1k.Mono_C, file.1k1k.Mono_NC, file.1k1k.NK, file.1k1k.NK_R, file.1k1k.Plasma)
 # remove datasets that are not available for that gene
 for (d in datasets) {
 	if (!file.exists(d)){
@@ -549,6 +553,51 @@ if (sum(which(pred.wgt.peruvian != 0)) > 0){
 }
 
 
+#1k1k - only 1 allele in the dataset, so processing with a different function
+
+onek_process <- function(file, cell, wgts){
+	table.1k1k <- fread(file, select = c(4, 7, 9))
+	for (k in 1:nrow(table.1k1k)){
+		match=which(genos$bim$V2 == table.1k1k$SNP[k])
+		if (identical(match, integer(0))){
+			print(paste0("1k1k,", cell, ":", "no snp in common, skipping ref/alt check iteration"))
+		}else{
+		if (!is.na(table.1k1k$SNPassessedallele[k])){
+		if (genos$bim$V5[match] != table.1k1k$SNPassessedallele[k]) {
+			if (genos$bim$V6[match] == table.1k1k$SNPassessedallele[k]){
+				table.1k1k$rhocorrelationcoefficient[k] <- table.1k1k$rhocorrelationcoefficient[k] * -1
+			}else{
+				table.1k1k$rhocorrelationcoefficient[k] <- 0
+			}
+		}
+		}else {
+			 table.1k1k$rhocorrelationcoefficient[k] <- 0
+		}
+		}
+	}
+	m1k1k <- match(genos$bim[,2], table.1k1k$SNP)
+	table.1k1k <- table.1k1k[m1k1k,]
+	w1k1k <- which(is.na(table.1k1k[,1]))
+	if(length(w1k1k) > 0){table.1k1k[w1k1k,3] <- 0} 
+	assign(paste0("pred.wgt.1k1k.", cell ), table.1k1k$rhocorrelationcoefficient, envir = parent.frame())
+	if(sum(which(eval(parse(text = paste0("pred.wgt.1k1k.", cell))) != 0)) > 0){
+		wgts <- append(wgts, paste0("pred.wgt.1k1k.", cell))
+		return (wgts)
+	}else {
+		return (wgts)
+	}
+}
+
+all_1k1k <- c(file.1k1k.B_IN, file.1k1k.B_Mem, file.1k1k.CD4_ET, file.1k1k.CD4_NC, file.1k1k.CD4_SOX4, file.1k1k.CD8_ET, file.1k1k.CD8_NC, file.1k1k.CD8_S100B, file.1k1k.DC, file.1k1k.Mono_C, file.1k1k.Mono_NC, file.1k1k.NK, file.1k1k.NK_R, file.1k1k.Plasma)
+
+for (k in all_1k1k){
+	if(k %in% datasets){
+		splits <- strsplit(k, split = "/")[[1]][10]
+		print(splits)
+		wgts <- onek_process(k, splits, wgts)
+	}
+}
+
 #---------------------------------------------------------eQTL sum stats extracted 
 
 #metanalyze (by sample size) cell types from same dataset -----------------------
@@ -580,6 +629,20 @@ ishi_sum <- ishi_sum + eval(parse(text=i))
 pred.wgt.ishi <- ishi_sum/len_ishi
 new_wgts <- append(new_wgts, "pred.wgt.ishi")
 }
+
+i1k1k <- grep("1k1k", wgts)
+if (!identical(i1k1k, integer(0))){
+onek_used <- wgts[i1k1k]
+index <- append(index, i1k1k)
+len_1k1k <- length(onek_used)
+onek_sum <- 0
+for (k in onek_used){
+onek_sum <- onek_sum + eval(parse(text=k))
+}
+pred.wgt.1k1k <- onek_sum/len_1k1k
+new_wgts <- append(new_wgts, "pred.wgt.1k1k")
+}
+
 if (length(index) > 0){
 	new_wgts <- append(new_wgts, wgts[-index])
 	wgts = new_wgts
