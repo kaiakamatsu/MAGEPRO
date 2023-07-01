@@ -5,6 +5,9 @@ suppressMessages(library('glmnet'))
 suppressMessages(library('methods'))
 suppressMessages(library('data.table'))
 suppressMessages(library('hash'))
+suppressMessages(library('stats'))
+suppressMessages(library('caret'))
+
 
 option_list = list(
   make_option("--gene", action="store", default=NA, type='character',
@@ -56,6 +59,7 @@ option_list = list(
 		  
 )
 
+
 # parse command-line arguments
 opt = parse_args(OptionParser(option_list=option_list))
 print(opt)
@@ -68,19 +72,19 @@ print(name)
 file.test <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/","v8_allEUR_",opt$tissue,"/",opt$tissue,".",opt$gene,".wgt.RDat")
 ota_cells <- list("CD16p_Mono","CL_Mono","LDG","Mem_CD4","Mem_CD8","NK","Naive_B","Naive_CD4","Naive_CD8","Neu","Plasmablast","mDC","pDC")
 for (c in ota_cells){
-	assign(paste0("file.ota.", c), paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/OTA/genes/", c, "/", name, ".txt"))
+	assign(paste0("file.ota.", c), paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/OTA_nominal/genes/", c, "/", name, ".txt"))
 }
-file.mesahis <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA_HIS/filtered/clumped_sig/",name,".txt") 
-file.genoa <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/genoa/significant_clumped/clumped/",name,".txt")
-file.mesa <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA/filtered/clumped_sig/",name,".txt") 
-file.jung <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Jung/clumped/",name,".txt")
-file.ishi.B <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/B_permutation/clumped/",name,".txt")
-file.ishi.CD4 <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/CD4_permutation/clumped/",name,".txt")
-file.ishi.CD8 <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/CD8_permutation/clumped/",name,".txt")
-file.ishi.Mono <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/Mono_permutation/clumped/",name,".txt")
-file.ishi.NK <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/NK_permutation/clumped/",name,".txt")
-file.ishi.PB <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/PB_permutation/clumped/",name,".txt")
-file.eqtlgen <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/clumped/", name, ".txt")
+file.mesahis <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA_HIS/filtered/genes/",name,".txt") 
+file.genoa <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/genoa/genes_nominal/genes/",name,".txt")
+file.mesa <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA/filtered/genes/",name,".txt") 
+file.jung <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Jung/genes_nominal/genes/",name,".txt")
+file.ishi.B <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/B_permutation/genes/",name,".txt")
+file.ishi.CD4 <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/CD4_permutation/genes/",name,".txt")
+file.ishi.CD8 <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/CD8_permutation/genes/",name,".txt")
+file.ishi.Mono <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/Mono_permutation/genes/",name,".txt")
+file.ishi.NK <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/NK_permutation/genes/",name,".txt")
+file.ishi.PB <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/PB_permutation/genes/",name,".txt")
+file.eqtlgen <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/genes/", name, ".txt")
 file.peruvian <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/peruvian/genes/", name, ".txt")
 onekcells <- list("B_IN","B_Mem","CD4_ET","CD4_NC","CD4_SOX4","CD8_ET","CD8_NC","CD8_S100B","DC","Mono_C","Mono_NC","NK","NK_R","Plasma")
 for (k in onekcells){
@@ -102,6 +106,7 @@ h[["1k1k"]] <- 982
 
 # all available external datasets to a list
 datasets <- list(file.test, file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_CD4, file.ota.Mem_CD8, file.ota.NK, file.ota.Naive_B, file.ota.Naive_CD4, file.ota.Naive_CD8, file.ota.Neu, file.ota.Plasmablast, file.ota.mDC, file.ota.pDC, file.mesahis, file.genoa, file.mesa, file.jung, file.ishi.B, file.ishi.CD4, file.ishi.CD8, file.ishi.Mono, file.ishi.NK, file.ishi.PB, file.peruvian, file.eqtlgen, file.1k1k.B_IN, file.1k1k.B_Mem, file.1k1k.CD4_ET, file.1k1k.CD4_NC, file.1k1k.CD4_SOX4, file.1k1k.CD8_ET, file.1k1k.CD8_NC, file.1k1k.CD8_S100B, file.1k1k.DC, file.1k1k.Mono_C, file.1k1k.Mono_NC, file.1k1k.NK, file.1k1k.NK_R, file.1k1k.Plasma)
+
 # remove datasets that are not available for that gene
 for (d in datasets) {
 	if (!file.exists(d)){
@@ -404,8 +409,8 @@ for (k in 1:nrow(snps)){
 			print(paste0("eur:", "no snp in common, skipping ref/alt check iteration"))
 		}else{
 		if(!is.na(snps$V5[k]) && !is.na(snps$V6[k])){
-		if (genos$bim$V5[match] != snps$V5[k] || genos$bim$V6[match] != snps$V6[k]) {
-			if (genos$bim$V5[match] == snps$V6[k] && genos$bim$V6[match] == snps$V5[k]){
+		if (as.character(genos$bim$V5[match]) != as.character(snps$V5[k]) || as.character(genos$bim$V6[match]) != as.character(snps$V6[k])) {
+			if (as.character(genos$bim$V5[match]) == as.character(snps$V6[k]) && as.character(genos$bim$V6[match]) == as.character(snps$V5[k])){
 				pred.wgt.eur[k] <- pred.wgt.eur[k] * -1
 			}else{
 				pred.wgt.eur[k] <- 0
@@ -458,8 +463,8 @@ datasets_process <- function(dataset, file, cell, wgts, snp, A1, A0, B){
 			print(paste0(dataset, " ", cell, ":", "this snp not in GTEx, skipping ref/alt check iteration"))
 		}else{
 		if (!is.na(table[k, 2]) && !is.na(table[k, 3])){
-			if (genos$bim$V5[match] != table[k, 2] || genos$bim$V6[match] != table[k, 3]) {
-				if (genos$bim$V5[match] == table[k, 3] && genos$bim$V6[match] == table[k, 2]){
+			if (as.character(genos$bim$V5[match]) != as.character(table[k, 2]) || as.character(genos$bim$V6[match]) != as.character(table[k, 3])) {
+				if (as.character(genos$bim$V5[match]) == as.character(table[k, 3]) && as.character(genos$bim$V6[match]) == as.character(table[k, 2])){
 					table[k, 4] <- table[k, 4] * -1
 				}else{
 					table[k, 4] <- 0
@@ -474,17 +479,14 @@ datasets_process <- function(dataset, file, cell, wgts, snp, A1, A0, B){
 	table <- table[m,]
 	w <- which(is.na(table[[1]]))
 	if(length(w) > 0){table[w,4] <- 0}
-	assign(paste0("pred.wgt.", dataset ,cell ), table[[4]], envir = parent.frame())
-	if(sum(which(eval(parse(text = paste0("pred.wgt.", dataset,cell))) != 0)) > 0){
-		wgts <- append(wgts, paste0("pred.wgt.", dataset,cell))
+	assign(paste0("pred.wgt.", dataset , cell ), table[[4]], envir = parent.frame())
+	if(sum(which(eval(parse(text = paste0("pred.wgt.", dataset, cell))) != 0)) > 0){
+		wgts <- append(wgts, paste0("pred.wgt.", dataset, cell))
 		return (wgts)
 	}else {
 		return (wgts)
 	}
 }
-
-
-#-------------------------------------------------------------------
 
 #OTA
 all_ota <- c(file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_CD4, file.ota.Mem_CD8, file.ota.NK, file.ota.Naive_B, file.ota.Naive_CD4, file.ota.Naive_CD8, file.ota.Neu, file.ota.Plasmablast, file.ota.mDC, file.ota.pDC)
@@ -494,19 +496,19 @@ for (o in all_ota){
 	if(o %in% datasets){
 		cell <- strsplit(o, split = "/")[[1]][10]
 		print(cell)
-		wgts <- datasets_process("ota", o, cell, wgts, 6, 15, 16, 14)
+		wgts <- datasets_process("ota", o, cell, wgts, 6, 8, 7, 13)
 	}
 }
 
 #JUNG 
 if (file.jung %in% datasets){
-	wgts <- datasets_process("jung", file.jung, NA, wgts, 3, 14, 15, 13)
+	wgts <- datasets_process("jung", file.jung, NA, wgts, 3, 7, 6, 10)
 }
 
 
 #GENOA
 if (file.genoa %in% datasets){
-	wgts <- datasets_process("genoa", file.genoa, NA, wgts, 3, 15, 16, 13)
+	wgts <- datasets_process("genoa", file.genoa, NA, wgts, 3, 5, 6, 8)
 }
 
 
@@ -518,24 +520,24 @@ for (i in all_ishi){
 	if(i %in% datasets){
 		cell_p <- strsplit(i, split = "/")[[1]][10]
 		cell <- strsplit(cell_p, split = "_")[[1]][1]
-		wgts <- datasets_process("ishi", i, cell, wgts, 3, 14, 15, 13)
+		wgts <- datasets_process("ishi", i, cell, wgts, 3, 11, 12, 8)
 	}
 }
 
 
 #MESA
 if (file.mesa %in% datasets){
-	wgts <- datasets_process("mesa", file.mesa, NA, wgts, 3, 14, 15, 13)
+	wgts <- datasets_process("mesa", file.mesa, NA, wgts, 1, 14, 13, 6)
 }
 
 #MESA_HIS
 if (file.mesahis %in% datasets){
-	wgts <- datasets_process("mesahis", file.mesahis, NA, wgts, 3, 14, 15, 13)
+	wgts <- datasets_process("mesahis", file.mesahis, NA, wgts, 1, 14, 13, 6)
 }
 
 #eqtlgen
 if (file.eqtlgen %in% datasets){
-	wgts <- datasets_process("eqtlgen", file.eqtlgen, NA, wgts, 3, 14, 15, 13)
+	wgts <- datasets_process("eqtlgen", file.eqtlgen, NA, wgts, 1, 4, 5, 12)
 }
 
 
@@ -590,58 +592,39 @@ onek_process <- function(file, cell, wgts){
 
 all_1k1k <- c(file.1k1k.B_IN, file.1k1k.B_Mem, file.1k1k.CD4_ET, file.1k1k.CD4_NC, file.1k1k.CD4_SOX4, file.1k1k.CD8_ET, file.1k1k.CD8_NC, file.1k1k.CD8_S100B, file.1k1k.DC, file.1k1k.Mono_C, file.1k1k.Mono_NC, file.1k1k.NK, file.1k1k.NK_R, file.1k1k.Plasma)
 
-for (k in all_1k1k){
-	if(k %in% datasets){
-		splits <- strsplit(k, split = "/")[[1]][10]
-		print(splits)
-		wgts <- onek_process(k, splits, wgts)
-	}
-}
-
-#---------------------------------------------------------eQTL sum stats extracted 
 
 #metanalyze (by sample size) cell types from same dataset -----------------------
 
 new_wgts <- c()
 index <- c()
-iota <- grep("ota", wgts)
-if (!identical(iota, integer(0))){
-ota_used <- wgts[iota]
-index <- append(index, iota)
-len_ota <- length(ota_used)
-ota_sum <- 0
-for (o in ota_used){
-ota_sum <- ota_sum + eval(parse(text=o))
-}
-pred.wgt.ota <- ota_sum/len_ota
-new_wgts <- append(new_wgts, "pred.wgt.ota")
+
+#function to meta-analyze cell types - combine into one vector 
+#inputs 
+	#dataset = name of dataset 
+	#new_wgts = list of newly assigned weights 
+	#indices = list of indices that will be replaced by one new vector 
+meta_cells <- function(dataset, result_wgts, indices){
+	i <- grep(dataset, wgts)
+	if (!identical(i, integer(0))){
+	used <- wgts[i]
+	indices <- append(indices, i)
+	len <- length(used)
+	sum <- 0
+	for (u in used){
+		sum <- sum + eval(parse(text=u))
+	}
+	assign(paste0("pred.wgt.", dataset), sum/len, envir = parent.frame())
+	result_wgts <- append(result_wgts, paste0("pred.wgt.", dataset))
+	}
+	assign("new_wgts", result_wgts, envir=parent.frame())
+	assign("index", indices, envir = parent.frame())
 }
 
-iishi <- grep("ishi", wgts)
-if (!identical(iishi, integer(0))){
-ishigaki_used <- wgts[iishi]
-index <- append(index, iishi)
-len_ishi <- length(ishigaki_used)
-ishi_sum <- 0
-for (i in ishigaki_used){
-ishi_sum <- ishi_sum + eval(parse(text=i))
-}
-pred.wgt.ishi <- ishi_sum/len_ishi
-new_wgts <- append(new_wgts, "pred.wgt.ishi")
+cells_datasets <- c("ota", "ishi", "1k1k")
+for (c in cells_datasets){
+	meta <- meta_cells(c, new_wgts, index)
 }
 
-i1k1k <- grep("1k1k", wgts)
-if (!identical(i1k1k, integer(0))){
-onek_used <- wgts[i1k1k]
-index <- append(index, i1k1k)
-len_1k1k <- length(onek_used)
-onek_sum <- 0
-for (k in onek_used){
-onek_sum <- onek_sum + eval(parse(text=k))
-}
-pred.wgt.1k1k <- onek_sum/len_1k1k
-new_wgts <- append(new_wgts, "pred.wgt.1k1k")
-}
 
 if (length(index) > 0){
 	new_wgts <- append(new_wgts, wgts[-index])
@@ -651,8 +634,58 @@ if (length(index) > 0){
 }
 #------------------------------------------------------------
 
-
 ext <- length(wgts)
+
+# --- get indices of "important" snps to split each dataset into 2 vectors 
+
+lasso_h2 <- hsq_afr[1]
+if(lasso_h2 < 0){lasso_h2 <- 0.064251}
+afronly = weights.lasso( geno.file , lasso_h2 , snp=genos$bim[,2] )	
+if ( sum(is.na(afronly)) == length(afronly)) {
+afronly = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T )
+#print(afronly[order(afronly^2, decreasing = TRUE)])
+#distribution of betas, take Z > 1.96
+z_scores <- scale(afronly)
+top <- which(abs(z_scores) > 1.96)
+#if none of the snps are Z > 1.96	
+if (identical(integer(0), top)){
+threshold = max(round(length(afronly)/4), 1)
+top <- order(afronly^2, decreasing = TRUE)[1:threshold]
+}
+temp <- rep(0, length(afronly))
+temp[top] <- afronly[top]
+afronly = temp
+}
+nonzero <- which(afronly != 0)
+zero <- which(afronly==0)
+groups <- c()
+if (!identical(integer(0), nonzero)){
+	groups <- append(groups, "nonzero")
+}
+if (!identical(integer(0), zero)){
+	groups <- append(groups, "zero")
+}
+# ---
+
+
+#----------------split all datasets into 2 vectors
+
+wgt2 <- c()
+
+for (w in wgts){
+	for (g in groups){
+		vec <- eval(parse(text = w))
+		vec[-eval(parse(text = g))] <- 0
+		assign(paste0(w, ".", g), vec, envir = parent.frame())
+		wgt2 <- append(wgt2, paste0(w, ".", g))
+	}	
+}	
+ext2 <- length(wgt2)
+
+print(wgt2)
+
+#----------------
+
 
 for ( i in 1:opt$crossval ) { #for every chunk in crossval
 	
@@ -672,8 +705,7 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 
 		print("performing LASSO and top1 as backup")
 		
-		lasso_h2 <- hsq_afr[1]
-		if(lasso_h2 < 0){lasso_h2 <- 0.064251}
+		# lasso_h2 defined when we split datasets
 		pred.wgt = weights.lasso( cv.file , lasso_h2 , snp=genos$bim[,2] )
 		
 		if ( sum(is.na(pred.wgt)) == length(pred.wgt)) {
@@ -708,6 +740,7 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 		}
 		total = total + 80
 		pred.wgt.meta <- pred.wgt * (80/total)
+		#add sample size weighted contribution 
 		for (w in wgts){
 			dataset <- strsplit(w, split="[.]")[[1]][3]
 			size <- h[[dataset]]
@@ -722,16 +755,21 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 
 		#MAGEPRO----------------------------------------------------------------------
 
+		
+
 		#create a matrix of weights from all data sets - ridge regression input
 		w1 <- genos$bed[ cv.sample[ -indx ] , ] %*% pred.wgt
-		eq <- matrix(0, nrow = length (w1), ncol = ext + 1)
-		eq[, 1] <- w1
+		eq <- matrix(0, nrow = length (w1), ncol = ext2+1)
+		eq[,1] <- w1
+	
+		# add all other datasets split by maf to the matrix	
 		num = 2
-		for (w in wgts){
+		for (w in wgt2){
 			eq[,num] <- genos$bed[ cv.sample[ -indx ] , ] %*%  eval(parse(text = w))
 			num = num+1
 		}	
-	
+
+
 		#check if any columns are all 0	- situation when there is nonzero Beta but genotype at that snp has no variance 
 		remove <- c()
 		for (i in 1:ncol(eq)){
@@ -741,18 +779,19 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 		}
 		if (length(remove) > 0){
 			eq <- eq[, -remove]
-			ext <- ext - length(remove)
-			wgts <- wgts[-(remove-1)]
+			ext2 <- ext2 - length(remove)
+			wgt2 <- wgt2[-(remove-1)]
 		}
-		
+
+
 		#cv.glmnet runs if there are two or more columns
-		if (ext > 0){
+		if (ext2 > 0){
 			y <- cv.glmnet(x = eq , y = cv.train[,3], alpha = 0, nfold = 5, intercept = T, standardize = T)
-			cf = coef(y, s = "lambda.min")[2:(ext+2)]	
+			cf = coef(y, s = "lambda.min")[2:(ext2+2)]
 			predtext <- "cf[1]*pred.wgt"
 			for (i in 2:(length(cf))){
-					predtext <- paste0(predtext, " + cf[", i, "]*", wgts[(i-1)])
-			}	
+					predtext <- paste0(predtext, " + cf[", i, "]*", wgt2[(i-1)])
+			}
 			pred.wgt.magepro <- eval(parse(text = predtext))
 		}else{
 			pred.wgt.magepro <- pred.wgt
@@ -824,10 +863,10 @@ if(length(pred.wgt2) == 1){
 	pred.wgt2 <- t(pred.wgt2)
 }	
 w1 <- genos$bed %*% pred.wgt2
-eq2 <- matrix(0, nrow = length (w1), ncol = ext + 1)
+eq2 <- matrix(0, nrow = length (w1), ncol = ext2 + 1)
 eq2[, 1] <- w1
 num = 2
-for (w in wgts){
+for (w in wgt2){
 	
 	if(length(eval(parse(text = w))) == 1){
 		assign(w,t(eval(parse(text = w))))
@@ -838,27 +877,27 @@ for (w in wgts){
 }	
 
 #store alpha*beta for all snps per dataset (for downstream analysis of which datasets contribute the most)
-alpha_beta <- matrix(0, nrow = length(pred.wgt2), ncol = ext + 1)
+alpha_beta <- matrix(0, nrow = length(pred.wgt2), ncol = ext2 + 1)
 
 #run ridge regression to find optimal coefficients and compute multipop weight
-if (ext > 0){
+if (ext2 > 0){
 	y2 <- cv.glmnet(x = eq2 , y = pheno[,3], alpha = 0, nfold = 5, intercept = T, standardize = T)
-	cf_total = coef(y2, s = "lambda.min")[2:(ext+2)]	
+	cf_total = coef(y2, s = "lambda.min")[2:(ext2+2)]	
 	total_coeff <- cf_total
 	predtext2 <- "cf_total[1]*pred.wgt2"
 	alpha_beta[, 1] <- eval(parse(text = predtext2))
 	for (i in 2:(length(cf_total))){
-		predtext2 <- paste0(predtext2, " + cf_total[", i, "]*", wgts[(i-1)])
-		alpha_beta[, i] <- cf_total[i]*eval(parse(text = wgts[(i-1)]))
+		predtext2 <- paste0(predtext2, " + cf_total[", i, "]*", wgt2[(i-1)])
+		alpha_beta[, i] <- cf_total[i]*eval(parse(text = wgt2[(i-1)]))
 	}	
 	pred.wgt.multipop <- eval(parse(text = predtext2))
 }else{
-	pred.wgt.multipop <- pred.wgt
+	pred.wgt.multipop <- pred.wgt2
 	total_coeff = c(NA)
 	alpha_beta = NA
 }		
 
-print(cor(pheno[,3], (genos$bed %*% pred.wgt.multipop))^2 )
+#print(cor(pheno[,3], (genos$bed %*% pred.wgt.multipop))^2 )
 
 wgt.matrix[, 3] = pred.wgt.multipop
 
@@ -867,11 +906,10 @@ wgt.matrix[, 3] = pred.wgt.multipop
 snps = genos$bim
 
 #add african weight to the list of weights used
-wgts <- append("pred.wgt", wgts)
-print(total_coeff)
+wgt2 <- append("pred.wgt", wgt2)
 
 if (is.matrix(alpha_beta)){
-	colnames(alpha_beta) <- wgts
+	colnames(alpha_beta) <- wgt2
 }
 
 #if the alpha is 0 for any dataset, it did not add anything to the model
@@ -879,14 +917,14 @@ if (sum(is.na(total_coeff)) == 0){
 w <- which(total_coeff == 0)
 #remove that dataset from the list of datasets used in the model
 if (length(w) > 0 ) {
-wgts <- wgts[-w]
+wgt2 <- wgt2[-w]
 total_coeff <- total_coeff[-w]
 }
 }
-print(wgts)
 
+print(wgt2)
 
-save( wgt.matrix, alpha_beta, snps, cv.performance , hsq_afr, hsq_afr.pv, hsq_eur, hsq_eur.pv, N.tot , wgts, total_coeff, models, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( wgt.matrix, alpha_beta, snps, cv.performance , hsq_afr, hsq_afr.pv, hsq_eur, hsq_eur.pv, N.tot , wgt2, total_coeff, models, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("Cleaning up\n")
