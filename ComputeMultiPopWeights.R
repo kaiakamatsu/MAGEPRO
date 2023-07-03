@@ -5,8 +5,6 @@ suppressMessages(library('glmnet'))
 suppressMessages(library('methods'))
 suppressMessages(library('data.table'))
 suppressMessages(library('hash'))
-suppressMessages(library('stats'))
-suppressMessages(library('caret'))
 
 
 option_list = list(
@@ -592,6 +590,12 @@ onek_process <- function(file, cell, wgts){
 
 all_1k1k <- c(file.1k1k.B_IN, file.1k1k.B_Mem, file.1k1k.CD4_ET, file.1k1k.CD4_NC, file.1k1k.CD4_SOX4, file.1k1k.CD8_ET, file.1k1k.CD8_NC, file.1k1k.CD8_S100B, file.1k1k.DC, file.1k1k.Mono_C, file.1k1k.Mono_NC, file.1k1k.NK, file.1k1k.NK_R, file.1k1k.Plasma)
 
+for (k in all_1k1k){
+	if(k %in% datasets){
+		splits <- strsplit(k, split = "/")[[1]][10]
+		wgts <- onek_process(k, splits, wgts)
+	}
+}
 
 #metanalyze (by sample size) cell types from same dataset -----------------------
 
