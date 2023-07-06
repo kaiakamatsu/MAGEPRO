@@ -53,8 +53,9 @@ option_list = list(
 					blup:\t Best Unbiased Linear Predictor (dual of ridge regression)\n
 					bslmm:\t Bayesian Sparse Linear Model (spike/slab MCMC)\n
 					lasso:\t LASSO regression (with heritability used as lambda)\n
-					enet:\t Elastic-net regression (with mixing parameter of 0.5)\n")			  
-		  
+					enet:\t Elastic-net regression (with mixing parameter of 0.5)\n"),			  
+  make_option("--datasets", action="store", default="", type='character', 
+	      help="Comma-separated list of external datasets to include")
 )
 
 
@@ -66,13 +67,17 @@ print(opt)
 name <- strsplit(opt$gene, ".", fixed = TRUE)[[1]][1]
 print(name)
 
+# datasets to use
+datas <- strsplit(opt$datasets, ",", fixed = TRUE)[[1]]
+print(datas)
+
 # assign all external dataset file names
 file.test <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/","v8_allEUR_",opt$tissue,"/",opt$tissue,".",opt$gene,".wgt.RDat")
 ota_cells <- list("CD16p_Mono","CL_Mono","LDG","Mem_CD4","Mem_CD8","NK","Naive_B","Naive_CD4","Naive_CD8","Neu","Plasmablast","mDC","pDC")
 for (c in ota_cells){
 	assign(paste0("file.ota.", c), paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/OTA_nominal/genes/", c, "/", name, ".txt"))
 }
-file.mesahis <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA_HIS/filtered/genes/",name,".txt") 
+file.his <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA_HIS/filtered/genes/",name,".txt") 
 file.genoa <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/genoa/genes_nominal/genes/",name,".txt")
 file.mesa <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA/filtered/genes/",name,".txt") 
 file.jung <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Jung/genes_nominal/genes/",name,".txt")
@@ -97,13 +102,19 @@ h[["jung"]] <- 101
 h[["genoa"]] <- 1031
 h[["ishi"]] <- 105
 h[["mesa"]] <- 233
-h[["mesahis"]] <- 352
+h[["his"]] <- 352
 h[["eqtlgen"]] <- 31684 
 h[["peruvian"]] <- 259 
 h[["1k1k"]] <- 982
 
 # all available external datasets to a list
-datasets <- list(file.test, file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_CD4, file.ota.Mem_CD8, file.ota.NK, file.ota.Naive_B, file.ota.Naive_CD4, file.ota.Naive_CD8, file.ota.Neu, file.ota.Plasmablast, file.ota.mDC, file.ota.pDC, file.mesahis, file.genoa, file.mesa, file.jung, file.ishi.B, file.ishi.CD4, file.ishi.CD8, file.ishi.Mono, file.ishi.NK, file.ishi.PB, file.peruvian, file.eqtlgen, file.1k1k.B_IN, file.1k1k.B_Mem, file.1k1k.CD4_ET, file.1k1k.CD4_NC, file.1k1k.CD4_SOX4, file.1k1k.CD8_ET, file.1k1k.CD8_NC, file.1k1k.CD8_S100B, file.1k1k.DC, file.1k1k.Mono_C, file.1k1k.Mono_NC, file.1k1k.NK, file.1k1k.NK_R, file.1k1k.Plasma)
+datasets <- list("file.test", "file.ota.CD16p_Mono", "file.ota.CL_Mono", "file.ota.LDG", "file.ota.Mem_CD4", "file.ota.Mem_CD8", "file.ota.NK", "file.ota.Naive_B", "file.ota.Naive_CD4", "file.ota.Naive_CD8", "file.ota.Neu", "file.ota.Plasmablast", "file.ota.mDC", "file.ota.pDC", "file.his", "file.genoa", "file.mesa", "file.jung", "file.ishi.B", "file.ishi.CD4", "file.ishi.CD8", "file.ishi.Mono", "file.ishi.NK", "file.ishi.PB", "file.peruvian", "file.eqtlgen", "file.1k1k.B_IN", "file.1k1k.B_Mem", "file.1k1k.CD4_ET", "file.1k1k.CD4_NC", "file.1k1k.CD4_SOX4", "file.1k1k.CD8_ET", "file.1k1k.CD8_NC", "file.1k1k.CD8_S100B", "file.1k1k.DC", "file.1k1k.Mono_C", "file.1k1k.Mono_NC", "file.1k1k.NK", "file.1k1k.NK_R", "file.1k1k.Plasma")
+
+# remove datasets not being used
+datasets <- datasets[grepl(paste(datas, collapse = "|"), datasets)]
+print(datasets)
+
+datasets <- lapply(datasets, function(x) eval(parse(text=x)))
 
 # remove datasets that are not available for that gene
 for (d in datasets) {
@@ -376,6 +387,8 @@ cv.sample = sample(n) #sample randomly
 cv.all = cv.all[ cv.sample , ]
 folds = cut(seq(1,n),breaks=opt$crossval,labels=FALSE) #5 fold split - split into 5 groups 
 cv.calls = matrix(NA,nrow=n,ncol=3) 
+r2_training_magepro <- c()
+r2_training_afr <- c()
 }
 
 
@@ -461,7 +474,7 @@ datasets_process <- function(dataset, file, cell, wgts, snp, A1, A0, B){
 			print(paste0(dataset, " ", cell, ":", "this snp not in GTEx, skipping ref/alt check iteration"))
 		}else{
 		if (!is.na(table[k, 2]) && !is.na(table[k, 3])){
-			if (as.character(genos$bim$V5[match]) != as.character(table[k, 2]) || as.character(genos$bim$V6[match]) != as.character(table[k, 3])) {
+			if (as.character(genos$bim$V5[match]) != as.character(table[k, 2]) || as.character(genos$bim$V6[match]) != as.character(table[k, 3])) {  # check if A1 column is effect allele
 				if (as.character(genos$bim$V5[match]) == as.character(table[k, 3]) && as.character(genos$bim$V6[match]) == as.character(table[k, 2])){
 					table[k, 4] <- table[k, 4] * -1
 				}else{
@@ -486,10 +499,9 @@ datasets_process <- function(dataset, file, cell, wgts, snp, A1, A0, B){
 	}
 }
 
-#OTA
+#OTA 
 all_ota <- c(file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_CD4, file.ota.Mem_CD8, file.ota.NK, file.ota.Naive_B, file.ota.Naive_CD4, file.ota.Naive_CD8, file.ota.Neu, file.ota.Plasmablast, file.ota.mDC, file.ota.pDC)
 
-print("processing ota files")
 for (o in all_ota){
 	if(o %in% datasets){
 		cell <- strsplit(o, split = "/")[[1]][10]
@@ -513,7 +525,6 @@ if (file.genoa %in% datasets){
 #ISHIGAKI
 all_ishi <- c(file.ishi.B, file.ishi.CD4, file.ishi.CD8, file.ishi.Mono, file.ishi.NK, file.ishi.PB)
 
-print("processing ishi files")
 for (i in all_ishi){
 	if(i %in% datasets){
 		cell_p <- strsplit(i, split = "/")[[1]][10]
@@ -529,8 +540,8 @@ if (file.mesa %in% datasets){
 }
 
 #MESA_HIS
-if (file.mesahis %in% datasets){
-	wgts <- datasets_process("mesahis", file.mesahis, NA, wgts, 1, 14, 13, 6)
+if (file.his %in% datasets){
+	wgts <- datasets_process("his", file.his, NA, wgts, 1, 14, 13, 6)
 }
 
 #eqtlgen
@@ -640,6 +651,20 @@ if (length(index) > 0){
 
 ext <- length(wgts)
 
+# --- try investigating the correlation between all datasets -> is there a relationship to when meta > magepro?
+count = 1
+for (w in wgts){
+	if (count == 1){
+		dataset_weights <- data.frame(eval(parse(text=w)) )
+	}else{
+		dataset_weights <- cbind(dataset_weights, eval(parse(text = w))**2)
+	}
+	count = count + 1
+}
+datasets_cor <- cor(dataset_weights)
+print(paste0("correlation of weights: ", cor(dataset_weights)))
+
+
 # --- get indices of "important" snps to split each dataset into 2 vectors 
 
 lasso_h2 <- hsq_afr[1]
@@ -731,6 +756,10 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 		#cv.calls is a matrix of predicted value - 1 fold at a time
 		#pred.wgt - training on other 4 folds
 		#indx = people in 1 fold we removed when we trained using 4 fold
+		
+		pred_train_afr = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt))) #r^2 between predicted and actual 
+		r2_training_afr = append(r2_training_afr, pred_train_afr$adj.r.sq)
+		
 		#--------------------------------------------------------------------------
 
 		#META-ANALYSIS-------------------------------------------------------------
@@ -807,6 +836,12 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 		}	
 
 		cv.calls[ indx , mod*3 ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.magepro
+	
+		#store the r2 on training set
+		pred_train = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.magepro))) #r^2 between predicted and actual 
+		r2_training_magepro = append(r2_training_magepro, pred_train$adj.r.sq)
+		
+
 		#-------------------------------------------------------------------------------
 
 
@@ -909,6 +944,12 @@ wgt.matrix[, 3] = pred.wgt.multipop
 
 snps = genos$bim
 
+#take average of r2 on training set
+avg_training_r2_magepro <- mean(r2_training_magepro)
+print(paste0("average r2 accuracy on training set magepro: ", avg_training_r2_magepro))
+avg_training_r2_afr <- mean(r2_training_afr)
+print(paste0("average r2 accuracy on training set afr: ", avg_training_r2_afr))
+
 #add african weight to the list of weights used
 wgt2 <- append("pred.wgt", wgt2)
 
@@ -928,7 +969,7 @@ total_coeff <- total_coeff[-w]
 
 print(wgt2)
 
-save( wgt.matrix, alpha_beta, snps, cv.performance , hsq_afr, hsq_afr.pv, hsq_eur, hsq_eur.pv, N.tot , wgt2, total_coeff, models, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( wgt.matrix, alpha_beta, snps, cv.performance , hsq_afr, hsq_afr.pv, hsq_eur, hsq_eur.pv, N.tot , wgt2, total_coeff, models, avg_training_r2_magepro, avg_training_r2_afr, datasets_cor, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("Cleaning up\n")
