@@ -651,20 +651,6 @@ if (length(index) > 0){
 
 ext <- length(wgts)
 
-# --- try investigating the correlation between all datasets -> is there a relationship to when meta > magepro?
-count = 1
-for (w in wgts){
-	if (count == 1){
-		dataset_weights <- data.frame(eval(parse(text=w)) )
-	}else{
-		dataset_weights <- cbind(dataset_weights, eval(parse(text = w))**2)
-	}
-	count = count + 1
-}
-datasets_cor <- cor(dataset_weights)
-print(paste0("correlation of weights: ", cor(dataset_weights)))
-
-
 # --- get indices of "important" snps to split each dataset into 2 vectors 
 
 lasso_h2 <- hsq_afr[1]
@@ -695,6 +681,15 @@ if (!identical(integer(0), zero)){
 	groups <- append(groups, "zero")
 }
 # ---
+
+
+# --- try investigating the correlation between all datasets -> is there a relationship to when meta > magepro?
+dataset_weights <- data.frame(afronly)
+for (w in wgts){
+	dataset_weights <- cbind(dataset_weights, eval(parse(text = w)))
+}
+datasets_cor <- cor(dataset_weights)
+print(paste0("correlation of weights: ", cor(dataset_weights)))
 
 
 #----------------split all datasets into 2 vectors
