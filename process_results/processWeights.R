@@ -11,7 +11,7 @@ r2_h2 <- matrix(0, length(genes), 17)
 
 for (j in 1:length(genes)){
 
-file <- paste0("/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_MAGEPRO/",tissues[i],"/",tissues[i],".",genes[j],".wgt.RDat") 
+file <- paste0("/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_MAGEPRO_final/",tissues[i],"/",tissues[i],".",genes[j],".wgt.RDat") 
 
 print(genes[j])
 

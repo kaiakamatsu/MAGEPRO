@@ -52,7 +52,6 @@ option_list = list(
 
 
 # --- PREPARING EXTERNAL DATASET FILES AND PARSING OPTIONS
-
 # parse command-line arguments
 opt = parse_args(OptionParser(option_list=option_list))
 print(opt)
@@ -62,6 +61,10 @@ name <- strsplit(opt$gene, ".", fixed = TRUE)[[1]][1]
 
 # datasets to use
 datas <- strsplit(opt$datasets, ",", fixed = TRUE)[[1]]
+
+# datasets to use
+datas <- strsplit(opt$datasets, ",", fixed = TRUE)[[1]]
+print(datas)
 
 # assign all external dataset file names
 file.test <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/","v8_allEUR_",opt$tissue,"/",opt$tissue,".",opt$gene,".wgt.RDat")
@@ -453,12 +456,10 @@ for (o in all_ota){
 	}
 }
 
-
 #GENOA
 if (file.genoa %in% datasets){
 	wgts <- datasets_process("genoa", file.genoa, NA, wgts, 3, 5, 6, 8)
 }
-
 
 #MESA
 if (file.mesa %in% datasets){
@@ -573,6 +574,7 @@ if ( opt$verbose >= 2){
 	cat("External summary stats processed \n", "Printing the datasets being used: \n")
 	print(wgts)
 }
+#------------------------------------------------------------
 
 
 # --- Cross-Validation
@@ -684,7 +686,6 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 		
 
 	#-------------------------------------------------------------------------------
-
 
 }
 
