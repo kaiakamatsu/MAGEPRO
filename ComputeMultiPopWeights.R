@@ -46,18 +46,12 @@ option_list = list(
               help="Save heritability results even if weights are not computed [default: %default]"),			  
   make_option("--gemmaout", action="store", default=NA,type='character',
               help="Gemma must output to output/ directory that is child directory of directory from which fusion is run  [default: %default]"),
-  make_option("--models", action="store", default="blup,lasso,top1,enet", type='character',
-              help="Comma-separated list of prediction models [default: %default]\n
-					Available models:\n
-					top1:\tTop eQTL (standard marginal eQTL Z-scores always computed and stored)\n
-					blup:\t Best Unbiased Linear Predictor (dual of ridge regression)\n
-					bslmm:\t Bayesian Sparse Linear Model (spike/slab MCMC)\n
-					lasso:\t LASSO regression (with heritability used as lambda)\n
-					enet:\t Elastic-net regression (with mixing parameter of 0.5)\n"),			  
   make_option("--datasets", action="store", default="", type='character', 
 	      help="Comma-separated list of external datasets to include")
 )
 
+
+# --- PREPARING EXTERNAL DATASET FILES AND PARSING OPTIONS
 
 # parse command-line arguments
 opt = parse_args(OptionParser(option_list=option_list))
@@ -65,11 +59,9 @@ print(opt)
 
 # find gene name without version number
 name <- strsplit(opt$gene, ".", fixed = TRUE)[[1]][1]
-print(name)
 
 # datasets to use
 datas <- strsplit(opt$datasets, ",", fixed = TRUE)[[1]]
-print(datas)
 
 # assign all external dataset file names
 file.test <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/","v8_allEUR_",opt$tissue,"/",opt$tissue,".",opt$gene,".wgt.RDat")
@@ -80,40 +72,22 @@ for (c in ota_cells){
 file.his <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA_HIS/filtered/genes/",name,".txt") 
 file.genoa <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/genoa/genes_nominal/genes/",name,".txt")
 file.mesa <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA/filtered/genes/",name,".txt") 
-file.jung <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Jung/genes_nominal/genes/",name,".txt")
-file.ishi.B <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/B_permutation/genes/",name,".txt")
-file.ishi.CD4 <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/CD4_permutation/genes/",name,".txt")
-file.ishi.CD8 <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/CD8_permutation/genes/",name,".txt")
-file.ishi.Mono <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/Mono_permutation/genes/",name,".txt")
-file.ishi.NK <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/NK_permutation/genes/",name,".txt")
-file.ishi.PB <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/Ishigaki/permutation/PB_permutation/genes/",name,".txt")
 file.eqtlgen <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/genes/", name, ".txt")
-file.peruvian <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/peruvian/genes/", name, ".txt")
-onekcells <- list("B_IN","B_Mem","CD4_ET","CD4_NC","CD4_SOX4","CD8_ET","CD8_NC","CD8_S100B","DC","Mono_C","Mono_NC","NK","NK_R","Plasma")
-for (k in onekcells){
-	assign(paste0("file.1k1k.", k), paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/1k1k/genes/", k, "/", name, ".txt"))
-}
 
 # create a hashmap to store sample size of each datset (used later for sample-size weighted meta-analysis)
 h <- hash()
 h[["eur"]] <- 574
 h[["ota"]] <- 416
-h[["jung"]] <- 101
 h[["genoa"]] <- 1031
-h[["ishi"]] <- 105
 h[["mesa"]] <- 233
 h[["his"]] <- 352
 h[["eqtlgen"]] <- 31684 
-h[["peruvian"]] <- 259 
-h[["1k1k"]] <- 982
 
 # all available external datasets to a list
-datasets <- list("file.test", "file.ota.CD16p_Mono", "file.ota.CL_Mono", "file.ota.LDG", "file.ota.Mem_CD4", "file.ota.Mem_CD8", "file.ota.NK", "file.ota.Naive_B", "file.ota.Naive_CD4", "file.ota.Naive_CD8", "file.ota.Neu", "file.ota.Plasmablast", "file.ota.mDC", "file.ota.pDC", "file.his", "file.genoa", "file.mesa", "file.jung", "file.ishi.B", "file.ishi.CD4", "file.ishi.CD8", "file.ishi.Mono", "file.ishi.NK", "file.ishi.PB", "file.peruvian", "file.eqtlgen", "file.1k1k.B_IN", "file.1k1k.B_Mem", "file.1k1k.CD4_ET", "file.1k1k.CD4_NC", "file.1k1k.CD4_SOX4", "file.1k1k.CD8_ET", "file.1k1k.CD8_NC", "file.1k1k.CD8_S100B", "file.1k1k.DC", "file.1k1k.Mono_C", "file.1k1k.Mono_NC", "file.1k1k.NK", "file.1k1k.NK_R", "file.1k1k.Plasma")
+datasets <- list("file.test", "file.ota.CD16p_Mono", "file.ota.CL_Mono", "file.ota.LDG", "file.ota.Mem_CD4", "file.ota.Mem_CD8", "file.ota.NK", "file.ota.Naive_B", "file.ota.Naive_CD4", "file.ota.Naive_CD8", "file.ota.Neu", "file.ota.Plasmablast", "file.ota.mDC", "file.ota.pDC", "file.his", "file.genoa", "file.mesa", "file.eqtlgen")
 
-# remove datasets not being used
+# filter for datasets you want to provide MAGEPRO
 datasets <- datasets[grepl(paste(datas, collapse = "|"), datasets)]
-print(datasets)
-
 datasets <- lapply(datasets, function(x) eval(parse(text=x)))
 
 # remove datasets that are not available for that gene
@@ -122,12 +96,13 @@ for (d in datasets) {
 		datasets <- datasets[datasets != d]
 	}
 }
-print(datasets)
 
+if ( opt$verbose == 2 ) {
+	cat("Datasets available for this gene: \n")
+	print(datasets)
+}
 
 if(length(datasets) >= 0) {
-models = unique(unlist(strsplit(opt$models,','))) # a list of prediction models to be used
-M = length(models) # number of models 
 
 if ( opt$verbose == 2 ) {
   SYS_PRINT = F
@@ -136,21 +111,6 @@ if ( opt$verbose == 2 ) {
 }
 
 # --- PREDICTION MODELS
-
-# BSLMM
-weights.bslmm = function( input , bv_type , snp , out=NA ) {
-	if ( is.na(out) ) out = paste(input,".BSLMM",sep='')
-	print(out)
-	arg = paste( opt$PATH_gemma , " -miss 1 -maf 0 -r2 1 -rpace 1000 -wpace 1000 -bfile " , input , " -bslmm " , bv_type , " -o " , out , sep='' )
-	system( arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
-	eff = read.table( paste(getwd(), "/output/", out,".param.txt",sep=''),head=T,as.is=T)
-	eff.wgt = rep(NA,length(snp))
-	m = match( snp , eff$rs )
-	m.keep = !is.na(m)
-	m = m[m.keep]
-	eff.wgt[m.keep] = (eff$alpha + eff$beta * eff$gamma)[m]
-	return( eff.wgt )
-}
 
 # PLINK: LASSO
 weights.lasso = function( input , hsq , snp , out=NA ) {
@@ -178,18 +138,7 @@ weights.marginal = function( genos , pheno , beta=F ) {
 	return( eff.wgt )
 }
 
-# Elastic Net
-weights.enet = function( genos , pheno , alpha=0.5 ) {
-	eff.wgt = matrix( 0 , ncol=1 , nrow=ncol(genos) )
-	# remove monomorphics
-	sds = apply( genos  , 2 , sd )
-	keep = sds != 0 & !is.na(sds)
-	enet = cv.glmnet( x=genos[,keep] , y=pheno , alpha=alpha , nfold=5 , intercept=T , standardize=F )
-	eff.wgt[ keep ] = coef( enet , s = "lambda.min")[2:(sum(keep)+1)]
-	return( eff.wgt )
-}
-
-print("predictive models made")
+if ( opt$verbose == 2 ) cat("Predictive Models Prepared \n")
 
 # --- CLEANUP
 cleanup = function() {
@@ -201,7 +150,8 @@ cleanup = function() {
 	}
 }
 
-# Perform i/o checks here:
+
+# --- i/o CHECKS
 files = paste(opt$bfile,c(".bed",".bim",".fam"),sep='')
 if ( !is.na(opt$pheno) ) files = c(files,opt$pheno)
 if ( !is.na(opt$covar) ) files = c(files,opt$covar)
@@ -226,19 +176,13 @@ if ( !is.na(opt$hsq_set) && system( opt$PATH_gcta , ignore.stdout=T,ignore.stder
 	q()
 }
 
-if ( sum(models=="bslmm" | models=="blup") != 0 && system( paste(opt$PATH_gemma,"-h") , ignore.stdout=T,ignore.stderr=T ) != 0 ){
-	cat( "ERROR: gemma could not be executed, set with --PATH_gemma or remove 'bslmm' and 'blup' from models\n" , sep='', file=stderr() )
-	cleanup()
-	q()
-}
 
-print("io checks complete")
+if ( opt$verbose == 2 ) cat("I/O checks complete \n")
 
-# ---
+# --- PREPARE PHENO, LOAD COVAR
 
 #fam file read - the modified fam file version (added ge data)  
 fam = read.table(paste(opt$bfile,".fam",sep=''),as.is=T)
-print("fam file read")
 
 # Make/fetch the phenotype file
 if ( !is.na(opt$pheno) ) {
@@ -256,7 +200,7 @@ if ( !is.na(opt$pheno) ) {
 	write.table(pheno,quote=F,row.names=F,col.names=F,file=pheno.file)
 }
 
-print("made/fetched phenotype file")
+if ( opt$verbose == 2 ) cat("Made/Fetched phenotype \n")
 
 if ( opt$rn ) {
 	library('GenABEL')
@@ -266,7 +210,7 @@ if ( opt$rn ) {
 }
 
 # Load in the covariates if needed
-if ( !is.na(opt$covar) ) { #reorder covar file to match pheno file
+if ( !is.na(opt$covar) ) { 
 	covar = ( read.table(opt$covar,as.is=T,head=T) )
 	if ( opt$verbose >= 1 ) cat( "Loaded",ncol(covar)-2,"covariates\n")
 	# Match up data
@@ -276,7 +220,6 @@ if ( !is.na(opt$covar) ) { #reorder covar file to match pheno file
 	pheno = pheno[m.keep,]
 	m = m[m.keep]
 	covar = covar[m,] #reordering covariates to match fam file
-        #if there are few people, we may have more covariates, so limit to 5 peer factors maybe 
 	reg = summary(lm( pheno[,3] ~ as.matrix(covar[,3:ncol(covar)]) ))  
 	if ( opt$verbose >= 1 ) cat( reg$r.sq , "variance in phenotype explained by covariates\n" )
 	pheno[,3] = scale(reg$resid) #regressing out covar to single out genetic effect
@@ -285,64 +228,64 @@ if ( !is.na(opt$covar) ) { #reorder covar file to match pheno file
 	write.table(pheno,quote=F,row.names=F,col.names=F,file=pheno.file) #newly scaled pheno file 
 }
 
-print("covariate loaded and regressed out from pheno")
+
+if ( opt$verbose == 2 ) cat("Covariates loaded and regressed out of phenotype \n")
 
 geno.file = opt$tmp
 # recode to the intersection of samples and new phenotype
 arg = paste( opt$PATH_plink ," --allow-no-sex --bfile ",opt$bfile," --pheno ",pheno.file," --keep ",pheno.file," --make-bed --out ",geno.file,sep='')
 system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
 
-print("recode samples and new phenotype using plink")
 
 # --- HERITABILITY ANALYSIS
 if ( is.na(opt$hsq_set) ) {
-if ( opt$verbose >= 1 ) cat("### Estimating heritability\n")
+	if ( opt$verbose >= 1 ) cat("### Estimating heritability\n")
 
-# 1. generate GRM
-arg = paste( opt$PATH_plink," --allow-no-sex --bfile ",opt$tmp," --make-grm-bin --out ",opt$tmp,sep='')
-system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
-print("grm generated")
+	# 1. generate GRM
+	arg = paste( opt$PATH_plink," --allow-no-sex --bfile ",opt$tmp," --make-grm-bin --out ",opt$tmp,sep='')
+	system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
 
-# 2. estimate heritability
-if ( !is.na(opt$covar) ) {
-arg = paste( opt$PATH_gcta ," --grm ",opt$tmp," --pheno ",raw.pheno.file," --qcovar ",opt$covar," --out ",opt$tmp," --reml --reml-no-constrain --reml-lrt 1",sep='')
-} else {
-arg = paste( opt$PATH_gcta ," --grm ",opt$tmp," --pheno ",pheno.file," --out ",opt$tmp," --reml --reml-no-constrain --reml-lrt 1",sep='')
-}
-system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
-
-# 3. evaluate LRT and V(G)/Vp
-#V(G)/Vp = proportion of genotypic to phenotypic variation
-#LRT - likelihood ratio test - compare goodness of fit 
-if ( !file.exists( paste(opt$tmp,".hsq",sep='') ) ) {
-	cat(opt$tmp,"does not exist, likely GCTA could not converge, forcing h2 = 0.064251\n",file=stderr())
-	hsq_afr = 0.064251
-	hsq_afr.pv = NA
-	#if heritability estimate does not converge, push through with a preset heritability value = 0.064251 - smallest h2 that has p < 0.05
-}else{
-	hsq.file = read.table(file=paste(opt$tmp,".hsq",sep=''),as.is=T,fill=T)
-	hsq_afr = as.numeric(unlist(hsq.file[hsq.file[,1] == "V(G)/Vp",2:3]))
-	hsq_afr.pv = as.numeric(unlist(hsq.file[hsq.file[,1] == "Pval",2]))
-if ( opt$verbose >= 1 ) cat("Heritability (se):",hsq_afr,"LRT P-value:",hsq_afr.pv,'\n')
-if ( opt$save_hsq ) cat( opt$out , hsq_afr , hsq_afr.pv , '\n' , file=paste(opt$out,".hsq",sep='') )
-
-# 4. stop if insufficient
-# hsq_p set to 1, compute weights for all genes, regardless of hsq p value
-if (!is.na(hsq_afr.pv)){
-	if ( hsq_afr.pv > opt$hsq_p ) { 
-		cat(opt$tmp," : heritability ",hsq_afr[1],"; LRT P-value ",hsq_afr.pv," : skipping gene\n",sep='',file=stderr())
-		cleanup()
-		q()
+	# 2. estimate heritability
+	if ( !is.na(opt$covar) ) {
+		arg = paste( opt$PATH_gcta ," --grm ",opt$tmp," --pheno ",raw.pheno.file," --qcovar ",opt$covar," --out ",opt$tmp," --reml --reml-no-constrain --reml-lrt 1",sep='')
+	} else {
+		arg = paste( opt$PATH_gcta ," --grm ",opt$tmp," --pheno ",pheno.file," --out ",opt$tmp," --reml --reml-no-constrain --reml-lrt 1",sep='')
 	}
-}
-}
-}else {
-if ( opt$verbose >= 1 ) cat("### Skipping heritability estimate\n")
-hsq_afr = opt$hsq_set
-hsq_afr.pv = NA
+	system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
+
+	# 3. evaluate LRT and V(G)/Vp
+	#V(G)/Vp = proportion of genotypic to phenotypic variation
+	#LRT - likelihood ratio test - compare goodness of fit 
+	if ( !file.exists( paste(opt$tmp,".hsq",sep='') ) ) {
+		if ( opt$verbose >= 1 ) cat(opt$tmp,"does not exist, GCTA could not converge, forcing h2 = 0.064251\n",file=stderr())
+		hsq_afr = 0.064251
+		hsq_afr.pv = NA
+		#if heritability estimate does not converge, push through with a preset heritability value = 0.064251 - smallest h2 that has p < 0.05
+	}else{
+		hsq.file = read.table(file=paste(opt$tmp,".hsq",sep=''),as.is=T,fill=T)
+		hsq_afr = as.numeric(unlist(hsq.file[hsq.file[,1] == "V(G)/Vp",2:3]))
+		hsq_afr.pv = as.numeric(unlist(hsq.file[hsq.file[,1] == "Pval",2]))
+		if ( opt$verbose >= 1 ) cat("Heritability (se):",hsq_afr,"LRT P-value:",hsq_afr.pv,'\n')
+		if ( opt$save_hsq ) cat( opt$out , hsq_afr , hsq_afr.pv , '\n' , file=paste(opt$out,".hsq",sep='') )
+
+		# 4. stop if insufficient
+		# hsq_p set to 1, compute weights for all genes, regardless of hsq p value
+		if (!is.na(hsq_afr.pv)){
+			if ( hsq_afr.pv > opt$hsq_p ) { 
+				cat(opt$tmp," : heritability ",hsq_afr[1],"; LRT P-value ",hsq_afr.pv," : skipping gene\n",sep='',file=stderr())
+				cleanup()
+				q()
+			}
+		}
+	}
+} else {
+	if ( opt$verbose >= 1 ) cat("### Skipping heritability estimate\n")
+	hsq_afr = opt$hsq_set
+	hsq_afr.pv = NA
 }
 
-# read in genotypes
+
+# --- LOAD AND PREP GENOTYPES 
 genos = read_plink(geno.file,impute="avg")
 mafs = apply(genos$bed,2,mean)/2  
 sds = apply(genos$bed,2,sd)  
@@ -350,8 +293,6 @@ sds = apply(genos$bed,2,sd)
 genos$bed = scale(genos$bed)
 pheno = genos$fam[,c(1,2,6)]
 pheno[,3] = scale(pheno[,3])
-
-print("read genotype and scaled")
 
 # check if any genotypes are NA
 nasnps = apply( is.na(genos$bed) , 2 , sum )
@@ -362,16 +303,16 @@ if ( sum(nasnps) != 0 ) {
 
 # regress covariates out of the genotypes as well (this is more accurate but slower)
 if ( !is.na(opt$covar) && opt$resid ) {
-	if ( opt$verbose >= 1 ) cat("regressing covariates out of the genotypes\n")
+	if ( opt$verbose >= 1 ) cat("Regressing covariates out of the genotypes\n")
 	for ( i in 1:ncol(genos$bed) ) {
 		genos$bed[,i] = summary(lm( genos$bed[,i] ~ as.matrix(covar[,3:ncol(covar)]) ))$resid
 	}
 	genos$bed = scale(genos$bed)
 }
 
-
 N.tot = nrow(genos$bed)
 if ( opt$verbose >= 1 ) cat(nrow(pheno),"phenotyped samples, ",nrow(genos$bed),"genotyped samples, ",ncol(genos$bed)," markers\n")
+
 
 # --- CROSSVALIDATION ANALYSES
 set.seed(1)
@@ -396,7 +337,7 @@ r2_training_afr <- c()
 wgts <- list()
 
 
-#process EUR gene model here--------------------------------------------- 
+# --- EUR gene model
 if (file.test %in% datasets){
 load(file.test) 
 #wgt.RDat includes the following: 
@@ -414,23 +355,26 @@ if(bestmod == 1){
 pred.wgt.eur <- wgt.matrix[,bestmod] #take weights for each snp from the best model 
 pred.wgt.eur[is.na(pred.wgt.eur)] <- 0 
 
+#flip weights based on effect allele
 for (k in 1:nrow(snps)){
-		match=which(genos$bim$V2 == snps$V2[k])
-		if (identical(match, integer(0))){
-			print(paste0("eur:", "no snp in common, skipping ref/alt check iteration"))
-		}else{
+		
+	match=which(genos$bim$V2 == snps$V2[k])
+	
+	if (identical(match, integer(0))){
+		print(paste0("eur:", "no snp in common, skipping ref/alt check iteration"))
+	}else{
 		if(!is.na(snps$V5[k]) && !is.na(snps$V6[k])){
-		if (as.character(genos$bim$V5[match]) != as.character(snps$V5[k]) || as.character(genos$bim$V6[match]) != as.character(snps$V6[k])) {
-			if (as.character(genos$bim$V5[match]) == as.character(snps$V6[k]) && as.character(genos$bim$V6[match]) == as.character(snps$V5[k])){
-				pred.wgt.eur[k] <- pred.wgt.eur[k] * -1
-			}else{
-				pred.wgt.eur[k] <- 0
+			if (as.character(genos$bim$V5[match]) != as.character(snps$V5[k]) || as.character(genos$bim$V6[match]) != as.character(snps$V6[k])) {
+				if (as.character(genos$bim$V5[match]) == as.character(snps$V6[k]) && as.character(genos$bim$V6[match]) == as.character(snps$V5[k])){
+					pred.wgt.eur[k] <- pred.wgt.eur[k] * -1
+				}else{
+					pred.wgt.eur[k] <- 0
+				}
 			}
-		}
 		}else {
 			pred.wgt.eur[k] <- 0
 		}
-		}
+	}
 }
 
 m <- match(genos$bim[,2],names(pred.wgt.eur))
@@ -443,17 +387,19 @@ if(length(w)>0){pred.wgt.eur[w] <- 0}
 if(sum(which(pred.wgt.eur != 0)) > 0){
 	wgts <- append(wgts, "pred.wgt.eur")
 }
+
 }else{
 	hsq_eur <- NA
 	hsq_eur.pv <- NA
 }
-#-------------------------------------------------------------------
+
+if ( opt$verbose == 2) cat("EUR gene models processed \n")
 
 #IMPORTANT: for the eQTL stats, use only snps present in both populations above 
 #Note: SNPs in the eQTL stats that are not in AFR data are removed, SNPs in the AFR but not in the eQTL stats will have a weight 0 in the eQTL weights 
 #If the SNP in AFR is in neither EUR or other populations, only the AFR weight is used. 
 
-#process function to handle ref/alt flips for external datasets---------------------------------
+# --- PROCESS OTHER EXTERNAL DATASETS
 
 datasets_process <- function(dataset, file, cell, wgts, snp, A1, A0, B){
 	#dataset = name of dataset
@@ -470,20 +416,18 @@ datasets_process <- function(dataset, file, cell, wgts, snp, A1, A0, B){
 	table <- fread(file, select = c(snp, A1, A0, B)) 
 	for (k in 1:nrow(table)){
 		match=which(genos$bim$V2 == table[k, 1])
-		if (identical(match, integer(0))){
-			print(paste0(dataset, " ", cell, ":", "this snp not in GTEx, skipping ref/alt check iteration"))
-		}else{
-		if (!is.na(table[k, 2]) && !is.na(table[k, 3])){
-			if (as.character(genos$bim$V5[match]) != as.character(table[k, 2]) || as.character(genos$bim$V6[match]) != as.character(table[k, 3])) {  # check if A1 column is effect allele
-				if (as.character(genos$bim$V5[match]) == as.character(table[k, 3]) && as.character(genos$bim$V6[match]) == as.character(table[k, 2])){
-					table[k, 4] <- table[k, 4] * -1
-				}else{
-					table[k, 4] <- 0
+		if (! identical(match, integer(0))){
+			if (!is.na(table[k, 2]) && !is.na(table[k, 3])){
+				if (as.character(genos$bim$V5[match]) != as.character(table[k, 2]) || as.character(genos$bim$V6[match]) != as.character(table[k, 3])) {  # check if A1 column is effect allele
+					if (as.character(genos$bim$V5[match]) == as.character(table[k, 3]) && as.character(genos$bim$V6[match]) == as.character(table[k, 2])){
+						table[k, 4] <- table[k, 4] * -1
+					}else{
+						table[k, 4] <- 0
+					}
 				}
+			} else {
+				table[k, 4] <- 0
 			}
-		} else {
-			table[k, 4] <- 0
-		}
 		}
 	}
 	m <- match(genos$bim[,2], table[[1]])
@@ -505,32 +449,14 @@ all_ota <- c(file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_C
 for (o in all_ota){
 	if(o %in% datasets){
 		cell <- strsplit(o, split = "/")[[1]][10]
-		print(cell)
 		wgts <- datasets_process("ota", o, cell, wgts, 6, 8, 7, 13)
 	}
-}
-
-#JUNG 
-if (file.jung %in% datasets){
-	wgts <- datasets_process("jung", file.jung, NA, wgts, 3, 7, 6, 10)
 }
 
 
 #GENOA
 if (file.genoa %in% datasets){
 	wgts <- datasets_process("genoa", file.genoa, NA, wgts, 3, 5, 6, 8)
-}
-
-
-#ISHIGAKI
-all_ishi <- c(file.ishi.B, file.ishi.CD4, file.ishi.CD8, file.ishi.Mono, file.ishi.NK, file.ishi.PB)
-
-for (i in all_ishi){
-	if(i %in% datasets){
-		cell_p <- strsplit(i, split = "/")[[1]][10]
-		cell <- strsplit(cell_p, split = "_")[[1]][1]
-		wgts <- datasets_process("ishi", i, cell, wgts, 3, 11, 12, 8)
-	}
 }
 
 
@@ -550,66 +476,8 @@ if (file.eqtlgen %in% datasets){
 }
 
 
-#peruvian - flipped signs of beta during processing
-if (file.peruvian %in% datasets){
-table.peruvian <- fread(file.peruvian, select = c(3, 7)) 
-mperuvian <- match(genos$bim[,2], table.peruvian$rsid)
-table.peruvian <- table.peruvian[mperuvian,]
-wperuvian <- which(is.na(table.peruvian[,2]))
-if(length(wperuvian) > 0){table.peruvian[wperuvian,1] <- 0} 
-pred.wgt.peruvian <- table.peruvian$Beta
-if (sum(which(pred.wgt.peruvian != 0)) > 0){
-	wgts <- append(wgts, "pred.wgt.peruvian")
-}
-}
 
-
-#1k1k - only 1 allele in the dataset, so processing with a different function
-
-onek_process <- function(file, cell, wgts){
-	table.1k1k <- fread(file, select = c(4, 7, 9))
-	for (k in 1:nrow(table.1k1k)){
-		match=which(genos$bim$V2 == table.1k1k$SNP[k])
-		if (identical(match, integer(0))){
-			print(paste0("1k1k,", cell, ":", "no snp in common, skipping ref/alt check iteration"))
-		}else{
-		if (!is.na(table.1k1k$SNPassessedallele[k])){
-		if (genos$bim$V5[match] != table.1k1k$SNPassessedallele[k]) {
-			if (genos$bim$V6[match] == table.1k1k$SNPassessedallele[k]){
-				table.1k1k$rhocorrelationcoefficient[k] <- table.1k1k$rhocorrelationcoefficient[k] * -1
-			}else{
-				table.1k1k$rhocorrelationcoefficient[k] <- 0
-			}
-		}
-		}else {
-			 table.1k1k$rhocorrelationcoefficient[k] <- 0
-		}
-		}
-	}
-	m1k1k <- match(genos$bim[,2], table.1k1k$SNP)
-	table.1k1k <- table.1k1k[m1k1k,]
-	w1k1k <- which(is.na(table.1k1k[,1]))
-	if(length(w1k1k) > 0){table.1k1k[w1k1k,3] <- 0} 
-	assign(paste0("pred.wgt.1k1k.", cell ), table.1k1k$rhocorrelationcoefficient, envir = parent.frame())
-	if(sum(which(eval(parse(text = paste0("pred.wgt.1k1k.", cell))) != 0)) > 0){
-		wgts <- append(wgts, paste0("pred.wgt.1k1k.", cell))
-		return (wgts)
-	}else {
-		return (wgts)
-	}
-}
-
-all_1k1k <- c(file.1k1k.B_IN, file.1k1k.B_Mem, file.1k1k.CD4_ET, file.1k1k.CD4_NC, file.1k1k.CD4_SOX4, file.1k1k.CD8_ET, file.1k1k.CD8_NC, file.1k1k.CD8_S100B, file.1k1k.DC, file.1k1k.Mono_C, file.1k1k.Mono_NC, file.1k1k.NK, file.1k1k.NK_R, file.1k1k.Plasma)
-
-for (k in all_1k1k){
-	if(k %in% datasets){
-		splits <- strsplit(k, split = "/")[[1]][10]
-		wgts <- onek_process(k, splits, wgts)
-	}
-}
-
-#metanalyze (by sample size) cell types from same dataset -----------------------
-
+# --- META-ANALYZE DIFFERENT CELL TYPES TOGETHER
 new_wgts <- c()
 index <- c()
 
@@ -635,7 +503,7 @@ meta_cells <- function(dataset, result_wgts, indices){
 	assign("index", indices, envir = parent.frame())
 }
 
-cells_datasets <- c("ota", "ishi", "1k1k")
+cells_datasets <- c("ota")
 for (c in cells_datasets){
 	meta <- meta_cells(c, new_wgts, index)
 }
@@ -644,32 +512,38 @@ for (c in cells_datasets){
 if (length(index) > 0){
 	new_wgts <- append(new_wgts, wgts[-index])
 	wgts = new_wgts
-	print(wgts)
-	print("cell types combined")
 }
-#------------------------------------------------------------
 
 ext <- length(wgts)
 
-# --- get indices of "important" snps to split each dataset into 2 vectors 
+# --- COMPUTE TOTAL SAMPLE SIZE -> USED LATER IN META-ANALYSIS
 
+total <- 0
+for (w in wgts){
+	dataset <- strsplit(w, split="[.]")[[1]][3]
+	size <- h[[dataset]]
+	total = total + size
+}
+total = total + 80
+
+
+# --- SPLIT DATASETS 
 lasso_h2 <- hsq_afr[1]
 if(lasso_h2 < 0){lasso_h2 <- 0.064251}
 afronly = weights.lasso( geno.file , lasso_h2 , snp=genos$bim[,2] )	
 if ( sum(is.na(afronly)) == length(afronly)) {
-afronly = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T )
-#print(afronly[order(afronly^2, decreasing = TRUE)])
-#distribution of betas, take Z > 1.96
-z_scores <- scale(afronly)
-top <- which(abs(z_scores) > 1.96)
-#if none of the snps are Z > 1.96	
-if (identical(integer(0), top)){
-threshold = max(round(length(afronly)/4), 1)
-top <- order(afronly^2, decreasing = TRUE)[1:threshold]
-}
-temp <- rep(0, length(afronly))
-temp[top] <- afronly[top]
-afronly = temp
+	afronly = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T )
+	#distribution of betas, take Z > 1.96
+	z_scores <- scale(afronly)
+	top <- which(abs(z_scores) > 1.96)
+	#if none of the snps are Z > 1.96	
+	if (identical(integer(0), top)){
+		threshold = max(round(length(afronly)/4), 1)
+		top <- order(afronly^2, decreasing = TRUE)[1:threshold]
+	}
+	temp <- rep(0, length(afronly))
+	temp[top] <- afronly[top]
+	afronly = temp
 }
 nonzero <- which(afronly != 0)
 zero <- which(afronly==0)
@@ -680,19 +554,6 @@ if (!identical(integer(0), nonzero)){
 if (!identical(integer(0), zero)){
 	groups <- append(groups, "zero")
 }
-# ---
-
-
-# --- try investigating the correlation between all datasets -> is there a relationship to when meta > magepro?
-dataset_weights <- data.frame(afronly)
-for (w in wgts){
-	dataset_weights <- cbind(dataset_weights, eval(parse(text = w)))
-}
-datasets_cor <- cor(dataset_weights)
-print(paste0("correlation of weights: ", cor(dataset_weights)))
-
-
-#----------------split all datasets into 2 vectors
 
 wgt2 <- c()
 
@@ -704,13 +565,17 @@ for (w in wgts){
 		wgt2 <- append(wgt2, paste0(w, ".", g))
 	}	
 }	
+
 ext2 <- length(wgt2)
 
-print(wgt2)
 
-#----------------
+if ( opt$verbose >= 2){
+	cat("External summary stats processed \n", "Printing the datasets being used: \n")
+	print(wgts)
+}
 
 
+# --- Cross-Validation
 for ( i in 1:opt$crossval ) { #for every chunk in crossval
 	
 	
@@ -725,124 +590,105 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 	arg = paste( opt$PATH_plink ," --allow-no-sex --bfile ",opt$tmp," --keep ",cv.file,".keep --out ",cv.file," --make-bed",sep='')
 	system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
 
-	for ( mod in 1:1 ) {
 
-		print("performing LASSO and top1 as backup")
-		
-		# lasso_h2 defined when we split datasets
-		pred.wgt = weights.lasso( cv.file , lasso_h2 , snp=genos$bim[,2] )
-		
-		if ( sum(is.na(pred.wgt)) == length(pred.wgt)) {
-			print("all weights pushed to 0, using top1 as backup")
-			pred.wgt = weights.marginal( genos$bed[ cv.sample[ -indx ],] , as.matrix(cv.train[,3,drop=F]) , beta=T )
-			pred.wgt[ - which.max( pred.wgt^2 ) ] = 0
-		}
-		# predict from weights into sample
-
-		print("predicting from weights into sample")
-		
-		# when there is only 1 snp in the wgt file, we need to reformat	
-		if (length(pred.wgt) == 1){
-			pred.wgt <- t(pred.wgt)
-		}
-		
-		#AFR ONLY------------------------------------------------------------------
-		cv.calls[ indx , mod*3-2 ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt
-		#cv.calls is a matrix of predicted value - 1 fold at a time
-		#pred.wgt - training on other 4 folds
-		#indx = people in 1 fold we removed when we trained using 4 fold
-		
-		pred_train_afr = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt))) #r^2 between predicted and actual 
-		r2_training_afr = append(r2_training_afr, pred_train_afr$adj.r.sq)
-		
-		#--------------------------------------------------------------------------
-
-		#META-ANALYSIS-------------------------------------------------------------
-		#sample-size weighted meta-analysis 
-		#calculate total sample size 
-		total <- 0
-		for (w in wgts){
-			dataset <- strsplit(w, split="[.]")[[1]][3]
-			size <- h[[dataset]]
-			total = total + size
-		}
-		total = total + 80
-		pred.wgt.meta <- pred.wgt * (80/total)
-		#add sample size weighted contribution 
-		for (w in wgts){
-			dataset <- strsplit(w, split="[.]")[[1]][3]
-			size <- h[[dataset]]
-			pred.wgt.meta = pred.wgt.meta + (eval(parse(text=w)) * (size/total))
-		}
-		if (length(pred.wgt.meta) == 1){
-			pred.wgt.meta <- t(pred.wgt.meta)
-		}
+	# lasso_h2 defined when we split datasets
+	pred.wgt = weights.lasso( cv.file , lasso_h2 , snp=genos$bim[,2] )
 	
-		cv.calls[ indx , mod*3-1 ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.meta 
-		#-----------------------------------------------------------------------------
-
-		#MAGEPRO----------------------------------------------------------------------
-
-		
-
-		#create a matrix of weights from all data sets - ridge regression input
-		w1 <- genos$bed[ cv.sample[ -indx ] , ] %*% pred.wgt
-		eq <- matrix(0, nrow = length (w1), ncol = ext2+1)
-		eq[,1] <- w1
-	
-		# add all other datasets split by maf to the matrix	
-		num = 2
-		for (w in wgt2){
-			eq[,num] <- genos$bed[ cv.sample[ -indx ] , ] %*%  eval(parse(text = w))
-			num = num+1
-		}	
-
-
-		#check if any columns are all 0	- situation when there is nonzero Beta but genotype at that snp has no variance 
-		remove <- c()
-		for (i in 1:ncol(eq)){
-			if (length(which(eq[,i] == 0)) == nrow(eq)){
-				remove <- append(remove, i)
-			}
-		}
-		if (length(remove) > 0){
-			eq <- eq[, -remove]
-			ext2 <- ext2 - length(remove)
-			wgt2 <- wgt2[-(remove-1)]
-		}
-
-
-		#cv.glmnet runs if there are two or more columns
-		if (ext2 > 0){
-			y <- cv.glmnet(x = eq , y = cv.train[,3], alpha = 0, nfold = 5, intercept = T, standardize = T)
-			cf = coef(y, s = "lambda.min")[2:(ext2+2)]
-			predtext <- "cf[1]*pred.wgt"
-			for (i in 2:(length(cf))){
-					predtext <- paste0(predtext, " + cf[", i, "]*", wgt2[(i-1)])
-			}
-			pred.wgt.magepro <- eval(parse(text = predtext))
-		}else{
-			pred.wgt.magepro <- pred.wgt
-			cf = NA
-		}
-
-		if(length(pred.wgt.magepro) == 1){
-			pred.wgt.magepro <- t(pred.wgt.magepro)
-		}	
-
-		cv.calls[ indx , mod*3 ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.magepro
-	
-		#store the r2 on training set
-		pred_train = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.magepro))) #r^2 between predicted and actual 
-		r2_training_magepro = append(r2_training_magepro, pred_train$adj.r.sq)
-		
-
-		#-------------------------------------------------------------------------------
-
-
+	if ( sum(is.na(pred.wgt)) == length(pred.wgt)) {
+		if ( opt$verbose >= 1 ) cat("LASSO pushed all weights to 0, using top1 as backup \n")
+		pred.wgt = weights.marginal( genos$bed[ cv.sample[ -indx ],] , as.matrix(cv.train[,3,drop=F]) , beta=T )
+		pred.wgt[ - which.max( pred.wgt^2 ) ] = 0
 	}
+	# predict from weights into sample
+
+	# when there is only 1 snp in the wgt file, we need to reformat	
+	if (length(pred.wgt) == 1){
+		pred.wgt <- t(pred.wgt)
+	}
+		
+	#AFR ONLY------------------------------------------------------------------
+	cv.calls[ indx , 1 ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt
+	#cv.calls is a matrix of predicted value - 1 fold at a time
+	#pred.wgt - training on other 4 folds
+	#indx = people in 1 fold we removed when we trained using 4 fold
+	
+	pred_train_afr = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt))) #r^2 between predicted and actual 
+	r2_training_afr = append(r2_training_afr, pred_train_afr$adj.r.sq)
+		
+	#--------------------------------------------------------------------------
+
+	#META-ANALYSIS-------------------------------------------------------------
+	#sample-size weighted meta-analysis 
+	#calculate total sample size 
+	pred.wgt.meta <- pred.wgt * (80/total)
+	#add sample size weighted contribution 
+	for (w in wgts){
+		dataset <- strsplit(w, split="[.]")[[1]][3]
+		size <- h[[dataset]]
+		pred.wgt.meta = pred.wgt.meta + (eval(parse(text=w)) * (size/total))
+	}
+	if (length(pred.wgt.meta) == 1){
+		pred.wgt.meta <- t(pred.wgt.meta)
+	}
+
+	cv.calls[ indx , 2 ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.meta 
+	#-----------------------------------------------------------------------------
+
+	#MAGEPRO----------------------------------------------------------------------
+	#create a matrix of weights from all data sets - ridge regression input
+	w1 <- genos$bed[ cv.sample[ -indx ] , ] %*% pred.wgt
+	eq <- matrix(0, nrow = length (w1), ncol = ext2+1)
+	eq[,1] <- w1
+	num = 2
+	for (w in wgt2){
+		eq[,num] <- genos$bed[ cv.sample[ -indx ] , ] %*%  eval(parse(text = w))
+		num = num+1
+	}	
+
+	#check if any columns are all 0	- situation when there is nonzero Beta but genotype at that snp has no variance 
+	remove <- c()
+	for (i in 1:ncol(eq)){
+		if (length(which(eq[,i] == 0)) == nrow(eq)){
+			remove <- append(remove, i)
+		}
+	}
+	if (length(remove) > 0){
+		eq <- eq[, -remove]
+		ext2 <- ext2 - length(remove)
+		wgt2 <- wgt2[-(remove-1)]
+	}
+
+	#cv.glmnet runs if there are two or more columns
+	if (ext2 > 0){
+		y <- cv.glmnet(x = eq , y = cv.train[,3], alpha = 0, nfold = 5, intercept = T, standardize = T)
+		cf = coef(y, s = "lambda.min")[2:(ext2+2)]
+		predtext <- "cf[1]*pred.wgt"
+		for (i in 2:(length(cf))){
+			predtext <- paste0(predtext, " + cf[", i, "]*", wgt2[(i-1)])
+		}
+		pred.wgt.magepro <- eval(parse(text = predtext))
+	}else{
+		pred.wgt.magepro <- pred.wgt #magepro weight defaults to afronly if no external datasets available
+		cf = NA
+	}
+	
+	if(length(pred.wgt.magepro) == 1){
+		pred.wgt.magepro <- t(pred.wgt.magepro)
+	}	
+
+	cv.calls[ indx , 3 ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.magepro
+
+	#store the r2 on training set
+	pred_train = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.magepro))) #r^2 between predicted and actual 
+	r2_training_magepro = append(r2_training_magepro, pred_train$adj.r.sq)
+		
+
+	#-------------------------------------------------------------------------------
+
+
 }
 
+if (opt$verbose >= 1) cat("Cross-validation complete \n")
 
 #uses 80% of data to predict into 20%, then uses another 80% to predict into the next 20%, and so on. 
 #after everyone has a prediction, compute rsq and p value. 
@@ -850,13 +696,11 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 #compute rsq + P-value for each model
 cv.performance = matrix(NA,nrow=2,ncol=3)  
 rownames(cv.performance) = c("rsq","pval") 
-types <- c("afr","meta","multipop") 
-x <- c() 
-for (i in models){for (j in types){x <- c(x,paste0(i,",",j))}} #model,type 
-colnames(cv.performance) = x  
+types <- c("afr","meta","magepro") 
+colnames(cv.performance) = types 
 
 for ( mod in 1:ncol(cv.calls) ) { 
-	if ( !is.na(sd(cv.calls[,mod])) && sd(cv.calls[,mod]) != 0 ) { #length 1 or 0 vector -> sd = NA, all values are identical -> sd = 0  
+	if ( !is.na(sd(cv.calls[,mod])) && sd(cv.calls[,mod]) != 0 ) {   
 		reg = summary(lm( cv.all[,3] ~ cv.calls[,mod] )) #r^2 between predicted and actual 
 		cv.performance[ 1, mod ] = reg$adj.r.sq
 		cv.performance[ 2, mod ] = reg$coef[2,4]
@@ -867,18 +711,17 @@ for ( mod in 1:ncol(cv.calls) ) {
 }
 if ( opt$verbose >= 1 ) write.table(cv.performance,quote=F,sep='\t')
 
-# ---- Full Analysis (all 80 individuals) ----------------------------------------------------------- 
+# ---- Full Analysis (all 80 individuals)  
 if (opt$verbose >= 1) cat("Computing full-sample weights \n")
 
 wgt.matrix = matrix(0, nrow=nrow(genos$bim), ncol=3) 
-colnames(wgt.matrix) = c("AFRONLY","META","MULTIPOP")
+colnames(wgt.matrix) = c("AFRONLY","META","MAGEPRO")
 rownames(wgt.matrix) = genos$bim[,2]
 
 pred.wgt2 = weights.lasso( geno.file , lasso_h2 , snp=genos$bim[,2] )	
 if ( sum(is.na(pred.wgt2)) == length(pred.wgt2)) {
-if (opt$verbose >= 1) cat("all weights pushed to 0, using top1 as backup\n")
-pred.wgt2 = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T )
-pred.wgt2[ - which.max( pred.wgt2^2 ) ] = 0
+	pred.wgt2 = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T )
+	pred.wgt2[ - which.max( pred.wgt2^2 ) ] = 0
 }
 
 wgt.matrix[, 1] = pred.wgt2
@@ -900,12 +743,7 @@ w1 <- genos$bed %*% pred.wgt2
 eq2 <- matrix(0, nrow = length (w1), ncol = ext2 + 1)
 eq2[, 1] <- w1
 num = 2
-for (w in wgt2){
-	
-	if(length(eval(parse(text = w))) == 1){
-		assign(w,t(eval(parse(text = w))))
-	}	
-	
+for (w in wgt2){	
 	eq2[,num] <- genos$bed %*% eval(parse(text = w))
 	num = num+1
 }	
@@ -917,7 +755,7 @@ alpha_beta <- matrix(0, nrow = length(pred.wgt2), ncol = ext2 + 1)
 if (ext2 > 0){
 	y2 <- cv.glmnet(x = eq2 , y = pheno[,3], alpha = 0, nfold = 5, intercept = T, standardize = T)
 	cf_total = coef(y2, s = "lambda.min")[2:(ext2+2)]	
-	total_coeff <- cf_total
+	total_coeff <- cf_total #saved for down-stream analysis
 	predtext2 <- "cf_total[1]*pred.wgt2"
 	alpha_beta[, 1] <- eval(parse(text = predtext2))
 	for (i in 2:(length(cf_total))){
@@ -931,8 +769,6 @@ if (ext2 > 0){
 	alpha_beta = NA
 }		
 
-#print(cor(pheno[,3], (genos$bed %*% pred.wgt.multipop))^2 )
-
 wgt.matrix[, 3] = pred.wgt.multipop
 
 #---
@@ -941,9 +777,7 @@ snps = genos$bim
 
 #take average of r2 on training set
 avg_training_r2_magepro <- mean(r2_training_magepro)
-print(paste0("average r2 accuracy on training set magepro: ", avg_training_r2_magepro))
 avg_training_r2_afr <- mean(r2_training_afr)
-print(paste0("average r2 accuracy on training set afr: ", avg_training_r2_afr))
 
 #add african weight to the list of weights used
 wgt2 <- append("pred.wgt", wgt2)
@@ -959,12 +793,11 @@ w <- which(total_coeff == 0)
 if (length(w) > 0 ) {
 wgt2 <- wgt2[-w]
 total_coeff <- total_coeff[-w]
+alpha_beta <- alpha_beta[, -w]
 }
 }
 
-print(wgt2)
-
-save( wgt.matrix, alpha_beta, snps, cv.performance , hsq_afr, hsq_afr.pv, hsq_eur, hsq_eur.pv, N.tot , wgt2, total_coeff, models, avg_training_r2_magepro, avg_training_r2_afr, datasets_cor, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( wgt.matrix, alpha_beta, snps, cv.performance , hsq_afr, hsq_afr.pv, hsq_eur, hsq_eur.pv, N.tot , wgt2, total_coeff, avg_training_r2_magepro, avg_training_r2_afr, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("Cleaning up\n")

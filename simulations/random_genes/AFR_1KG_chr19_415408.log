@@ -1,28 +1,28 @@
 PLINK v1.90b6.26 64-bit (2 Apr 2022)
 Options in effect:
-  --bfile /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/1000g/1000G_AFR/1000G_AFR_12
-  --chr 12
-  --from-bp 3312163
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/1000g/1000G_AFR/1000G_AFR_19
+  --chr 19
+  --from-bp 0
   --make-bed
-  --out random_genes/AFR_1KG_chr12_3812163
-  --to-bp 4312163
+  --out random_genes/AFR_1KG_chr19_415408
+  --to-bp 915408
 
 Hostname: exp-9-55
 Working directory: /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO/simulations
-Start time: Thu Jul  6 18:35:48 2023
+Start time: Fri Jul  7 20:56:21 2023
 
-Random number seed: 1688693748
+Random number seed: 1688788581
 257504 MB RAM detected; reserving 128752 MB for main workspace.
-15064 out of 1848256 variants loaded from .bim file.
+15338 out of 885236 variants loaded from .bim file.
 661 people (319 males, 342 females) loaded from .fam.
 Using 1 thread (no multithreaded calculations invoked).
 Before main variant filters, 661 founders and 0 nonfounders present.
 Calculating allele frequencies... done.
 Total genotyping rate is exactly 1.
-15064 variants and 661 people pass filters and QC.
+15338 variants and 661 people pass filters and QC.
 Note: No phenotypes present.
---make-bed to random_genes/AFR_1KG_chr12_3812163.bed +
-random_genes/AFR_1KG_chr12_3812163.bim + random_genes/AFR_1KG_chr12_3812163.fam
+--make-bed to random_genes/AFR_1KG_chr19_415408.bed +
+random_genes/AFR_1KG_chr19_415408.bim + random_genes/AFR_1KG_chr19_415408.fam
 ... done.
 
-End time: Thu Jul  6 18:35:49 2023
+End time: Fri Jul  7 20:56:22 2023

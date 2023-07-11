@@ -53,8 +53,8 @@ fi
 
 
 # simulate genotypes using python script 
-python3 Sim_geno.py 'random_genes/EUR_1KG_chr${chr}_${random_position}' 1500 'EUR'
-python3 Sim_geno.py 'random_genes/AFR_1KG_chr${chr}_${random_position}' 1500 'AFR'
+python3 Sim_geno.py random_genes/EUR_1KG_chr${chr}_${random_position} 1500 EUR
+python3 Sim_geno.py random_genes/AFR_1KG_chr${chr}_${random_position} 1500 AFR
 
 # simulate total expression (with h2 = 0.05 betas and simulated genotypes)
 

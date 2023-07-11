@@ -4,23 +4,16 @@ import sys
 import numpy as np
 import pandas as pd
 import scipy.linalg as linalg
-from numpy.linalg import multi_dot as mdot
 from pandas_plink import read_plink
 from scipy import stats
-from sklearn import linear_model as lm
 import random
 import warnings
 import scipy
-from sklearn.model_selection import KFold
-from sklearn.model_selection import cross_val_score
-#from sklearn.utils.testing import ignore_warnings #not loading 
-from sklearn.exceptions import ConvergenceWarning
 import time
 import subprocess, os
 import gzip
 import os.path  #new
 from os import path  #new
-from statsmodels.regression.linear_model import OLS
 
 mvn = stats.multivariate_normal
 
@@ -46,6 +39,8 @@ args = sys.argv
 file_name = args[1] # path to plink files of simulated gene
 nums_people = args[2] # number of people to simulated genotypes for 
 pop = args[3] # population group for naming
+
+print(file_name)
 
 # Create simulated 1Kg cohort for imputation 
 
