@@ -67,7 +67,7 @@ datas <- strsplit(opt$datasets, ",", fixed = TRUE)[[1]]
 print(datas)
 
 # assign all external dataset file names
-file.test <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/","v8_allEUR_",opt$tissue,"/",opt$tissue,".",opt$gene,".wgt.RDat")
+file.eur <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/GTEx_EUR/GTEx_Analysis_v8_eQTL/Whole_Blood_Gene/", opt$gene, ".txt")
 ota_cells <- list("CD16p_Mono","CL_Mono","LDG","Mem_CD4","Mem_CD8","NK","Naive_B","Naive_CD4","Naive_CD8","Neu","Plasmablast","mDC","pDC")
 for (c in ota_cells){
 	assign(paste0("file.ota.", c), paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/OTA_nominal/genes/", c, "/", name, ".txt"))
@@ -87,7 +87,7 @@ h[["his"]] <- 352
 h[["eqtlgen"]] <- 31684 
 
 # all available external datasets to a list
-datasets <- list("file.test", "file.ota.CD16p_Mono", "file.ota.CL_Mono", "file.ota.LDG", "file.ota.Mem_CD4", "file.ota.Mem_CD8", "file.ota.NK", "file.ota.Naive_B", "file.ota.Naive_CD4", "file.ota.Naive_CD8", "file.ota.Neu", "file.ota.Plasmablast", "file.ota.mDC", "file.ota.pDC", "file.his", "file.genoa", "file.mesa", "file.eqtlgen")
+datasets <- list("file.eur", "file.ota.CD16p_Mono", "file.ota.CL_Mono", "file.ota.LDG", "file.ota.Mem_CD4", "file.ota.Mem_CD8", "file.ota.NK", "file.ota.Naive_B", "file.ota.Naive_CD4", "file.ota.Naive_CD8", "file.ota.Neu", "file.ota.Plasmablast", "file.ota.mDC", "file.ota.pDC", "file.his", "file.genoa", "file.mesa", "file.eqtlgen")
 
 # filter for datasets you want to provide MAGEPRO
 datasets <- datasets[grepl(paste(datas, collapse = "|"), datasets)]
@@ -340,64 +340,6 @@ r2_training_afr <- c()
 wgts <- list()
 
 
-# --- EUR gene model
-if (file.test %in% datasets){
-load(file.test) 
-#wgt.RDat includes the following: 
-	#snps
-	#cv.performance - rsq and pval for all 4 models 
-	#wgt.matrix - weights for each snp for each model 
-hsq_eur <- hsq
-hsq_eur.pv <- hsq.pv
-
-bestmod <- which.min(cv.performance[2,]) #model with the smallest p value 
-if(bestmod == 1){
-	wgt.matrix[ - which.max( wgt.matrix[,1]^2 ) , 1] = 0
-} 
-#for top1, identify the snp with all the weight and set everything else to 0  #how do we know which snp carries all the weight? largest weight^2
-pred.wgt.eur <- wgt.matrix[,bestmod] #take weights for each snp from the best model 
-pred.wgt.eur[is.na(pred.wgt.eur)] <- 0 
-
-#flip weights based on effect allele
-for (k in 1:nrow(snps)){
-		
-	match=which(genos$bim$V2 == snps$V2[k])
-	
-	if (identical(match, integer(0))){
-		print(paste0("eur:", "no snp in common, skipping ref/alt check iteration"))
-	}else{
-		if(!is.na(snps$V5[k]) && !is.na(snps$V6[k])){
-			if (as.character(genos$bim$V5[match]) != as.character(snps$V5[k]) || as.character(genos$bim$V6[match]) != as.character(snps$V6[k])) {
-				if (as.character(genos$bim$V5[match]) == as.character(snps$V6[k]) && as.character(genos$bim$V6[match]) == as.character(snps$V5[k])){
-					pred.wgt.eur[k] <- pred.wgt.eur[k] * -1
-				}else{
-					pred.wgt.eur[k] <- 0
-				}
-			}
-		}else {
-			pred.wgt.eur[k] <- 0
-		}
-	}
-}
-
-m <- match(genos$bim[,2],names(pred.wgt.eur))
-pred.wgt.eur <- pred.wgt.eur[m] #reorder eur if necessary - confirmed that order of the snps are the same 
-#if there are more snps in eur than afr, they will be removed in the line above 
-#if there are more snps in afr than in eur, they will simply have value of NA from the line above. 
-#therefore, weight must be zero for any NA values
-w <- which(is.na(pred.wgt.eur))
-if(length(w)>0){pred.wgt.eur[w] <- 0}
-if(sum(which(pred.wgt.eur != 0)) > 0){
-	wgts <- append(wgts, "pred.wgt.eur")
-}
-
-}else{
-	hsq_eur <- NA
-	hsq_eur.pv <- NA
-}
-
-if ( opt$verbose == 2) cat("EUR gene models processed \n")
-
 #IMPORTANT: for the eQTL stats, use only snps present in both populations above 
 #Note: SNPs in the eQTL stats that are not in AFR data are removed, SNPs in the AFR but not in the eQTL stats will have a weight 0 in the eQTL weights 
 #If the SNP in AFR is in neither EUR or other populations, only the AFR weight is used. 
@@ -445,6 +387,13 @@ datasets_process <- function(dataset, file, cell, wgts, snp, A1, A0, B){
 		return (wgts)
 	}
 }
+
+
+#EUR GTEX
+if (file.eur %in% datasets){
+	wgts <- datasets_process("eur", file.eur, NA, wgts, 13, 15, 16, 8)
+}
+
 
 #OTA 
 all_ota <- c(file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_CD4, file.ota.Mem_CD8, file.ota.NK, file.ota.Naive_B, file.ota.Naive_CD4, file.ota.Naive_CD8, file.ota.Neu, file.ota.Plasmablast, file.ota.mDC, file.ota.pDC)
@@ -783,6 +732,8 @@ avg_training_r2_afr <- mean(r2_training_afr)
 #add african weight to the list of weights used
 wgt2 <- append("pred.wgt", wgt2)
 
+print(wgt2)
+
 if (is.matrix(alpha_beta)){
 	colnames(alpha_beta) <- wgt2
 }
@@ -798,7 +749,7 @@ alpha_beta <- alpha_beta[, -w]
 }
 }
 
-save( wgt.matrix, alpha_beta, snps, cv.performance , hsq_afr, hsq_afr.pv, hsq_eur, hsq_eur.pv, N.tot , wgt2, total_coeff, avg_training_r2_magepro, avg_training_r2_afr, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( wgt.matrix, alpha_beta, snps, cv.performance , hsq_afr, hsq_afr.pv, N.tot , wgt2, total_coeff, avg_training_r2_magepro, avg_training_r2_afr, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("Cleaning up\n")
