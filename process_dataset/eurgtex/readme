@@ -1,0 +1,8 @@
+see eurgtex_main.sh for full pipeline
+
+loop_download.sh - to download raw sumstats file from google cloud posted by gtex
+
+gtex stores snps with chr_#_pos_A1_A0_b38 instead of rsid 
+	use create_rsid_ref.R to create a file that maps gtex bim file rsid into chr_#_pos_A1_A0_b38 format 
+	use split_merge.R to filter full sumstats to only keep snps in bim file, split data by gene 
+

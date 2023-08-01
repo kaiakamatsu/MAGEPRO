@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=2G
-#SBATCH -t 05:00:00
+#SBATCH -t 03:00:00
 #SBATCH -J MAGEPRO
 #SBATCH -A ddp412
 #SBATCH -o ../workingerr/MAGEPRO.%j.%N.out
@@ -26,7 +26,7 @@ batch=$2
 
 tmpdir=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/tmp_${tissue}
 mkdir $tmpdir
-weights=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_MAGEPRO_final/$tissue
+weights=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_MAGEPRO_fullsumstats/$tissue
 mkdir -p $weights
 wd=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_$tissue
 mkdir $wd

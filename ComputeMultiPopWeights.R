@@ -67,14 +67,14 @@ datas <- strsplit(opt$datasets, ",", fixed = TRUE)[[1]]
 print(datas)
 
 # assign all external dataset file names
-file.eur <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/GTEx_EUR/GTEx_Analysis_v8_eQTL/Whole_Blood_Gene/", opt$gene, ".txt")
+file.eur <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/GTEx_EUR/genes/", opt$gene, ".txt")
 ota_cells <- list("CD16p_Mono","CL_Mono","LDG","Mem_CD4","Mem_CD8","NK","Naive_B","Naive_CD4","Naive_CD8","Neu","Plasmablast","mDC","pDC")
 for (c in ota_cells){
 	assign(paste0("file.ota.", c), paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/OTA_nominal/genes/", c, "/", name, ".txt"))
 }
-file.his <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA_HIS/filtered/genes/",name,".txt") 
+file.his <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA_HIS/genes/",name,".txt") 
 file.genoa <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/genoa/genes_nominal/genes/",name,".txt")
-file.mesa <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA/filtered/genes/",name,".txt") 
+file.mesa <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/MESA/genes/",name,".txt") 
 file.eqtlgen <- paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/genes/", name, ".txt")
 
 # create a hashmap to store sample size of each datset (used later for sample-size weighted meta-analysis)
@@ -391,7 +391,7 @@ datasets_process <- function(dataset, file, cell, wgts, snp, A1, A0, B){
 
 #EUR GTEX
 if (file.eur %in% datasets){
-	wgts <- datasets_process("eur", file.eur, NA, wgts, 13, 15, 16, 8)
+	wgts <- datasets_process("eur", file.eur, NA, wgts, 11, 13, 14, 8)
 }
 
 
@@ -434,8 +434,8 @@ index <- c()
 #function to meta-analyze cell types - combine into one vector 
 #inputs 
 	#dataset = name of dataset 
-	#new_wgts = list of newly assigned weights 
-	#indices = list of indices that will be replaced by one new vector 
+	#new_wgts = storing weights (cell types meta-analyzed together into one)
+	#indices = list of indices (indicies to remove from the original weights list)
 meta_cells <- function(dataset, result_wgts, indices){
 	i <- grep(dataset, wgts)
 	if (!identical(i, integer(0))){
@@ -457,7 +457,6 @@ cells_datasets <- c("ota")
 for (c in cells_datasets){
 	meta <- meta_cells(c, new_wgts, index)
 }
-
 
 if (length(index) > 0){
 	new_wgts <- append(new_wgts, wgts[-index])
@@ -748,6 +747,7 @@ total_coeff <- total_coeff[-w]
 alpha_beta <- alpha_beta[, -w]
 }
 }
+
 
 save( wgt.matrix, alpha_beta, snps, cv.performance , hsq_afr, hsq_afr.pv, N.tot , wgt2, total_coeff, avg_training_r2_magepro, avg_training_r2_afr, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 

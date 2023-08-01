@@ -1,0 +1,8 @@
+download eqtlgen data from https://molgenis26.gcc.rug.nl/downloads/eqtlgen/cis-eqtl/SMR_formatted/cis-eQTL-SMR_20191212.tar.gz
+acquire smr software tool executable from https://yanglab.westlake.edu.cn/software/smr/#Download
+
+
+bash eqtlgen_main.sh <path to smr software directory> <path to directory containing eqtl smr format> <path to output eqtl data split by chromosome> <path to snp reference file> <path to output directory to store gene specific files>
+
+	run this to process and prepare eqtlgen data
+

@@ -1,0 +1,858 @@
+1
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 14:54:45,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 1
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/1
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+2052 probes are extracted from chromosome [1].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 2052 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 11915920 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/1.txt].
+
+Analysis completed: 14:55:58,Sat Jul 29,2023
+Computational time: 0:1:13
+2
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 14:55:58,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 2
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/2
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+1294 probes are extracted from chromosome [2].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 1294 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 7794714 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/2.txt].
+
+Analysis completed: 14:56:58,Sat Jul 29,2023
+Computational time: 0:1:0
+3
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 14:56:58,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 3
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/3
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+1038 probes are extracted from chromosome [3].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 1038 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 6524443 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/3.txt].
+
+Analysis completed: 14:57:54,Sat Jul 29,2023
+Computational time: 0:0:56
+4
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 14:57:54,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/4
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+681 probes are extracted from chromosome [4].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 681 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 4782375 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/4.txt].
+
+Analysis completed: 14:58:46,Sat Jul 29,2023
+Computational time: 0:0:52
+5
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 14:58:46,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 5
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/5
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+853 probes are extracted from chromosome [5].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 853 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 5466020 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/5.txt].
+
+Analysis completed: 14:59:39,Sat Jul 29,2023
+Computational time: 0:0:53
+6
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 14:59:39,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 6
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/6
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+978 probes are extracted from chromosome [6].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 978 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 9442624 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/6.txt].
+
+Analysis completed: 15:0:45,Sat Jul 29,2023
+Computational time: 0:1:6
+7
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:0:45,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 7
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/7
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+1001 probes are extracted from chromosome [7].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 1001 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 6468808 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/7.txt].
+
+Analysis completed: 15:1:41,Sat Jul 29,2023
+Computational time: 0:0:56
+8
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:1:41,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 8
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/8
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+644 probes are extracted from chromosome [8].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 644 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 4267672 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/8.txt].
+
+Analysis completed: 15:3:21,Sat Jul 29,2023
+Computational time: 0:1:40
+9
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:3:21,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 9
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/9
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+756 probes are extracted from chromosome [9].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 756 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 4846763 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/9.txt].
+
+Analysis completed: 15:4:13,Sat Jul 29,2023
+Computational time: 0:0:52
+10
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:4:13,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 10
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/10
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+732 probes are extracted from chromosome [10].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 732 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 4885467 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/10.txt].
+
+Analysis completed: 15:5:5,Sat Jul 29,2023
+Computational time: 0:0:52
+11
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:5:5,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 11
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/11
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+1095 probes are extracted from chromosome [11].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 1095 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 6970314 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/11.txt].
+
+Analysis completed: 15:6:2,Sat Jul 29,2023
+Computational time: 0:0:57
+12
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:6:2,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 12
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/12
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+1053 probes are extracted from chromosome [12].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 1053 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 6837323 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/12.txt].
+
+Analysis completed: 15:6:59,Sat Jul 29,2023
+Computational time: 0:0:57
+13
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:6:59,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 13
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/13
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+321 probes are extracted from chromosome [13].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 321 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 2246726 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/13.txt].
+
+Analysis completed: 15:7:44,Sat Jul 29,2023
+Computational time: 0:0:45
+14
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:7:44,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 14
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/14
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+776 probes are extracted from chromosome [14].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 776 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 5331268 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/14.txt].
+
+Analysis completed: 15:8:36,Sat Jul 29,2023
+Computational time: 0:0:52
+15
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:8:36,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 15
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/15
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+636 probes are extracted from chromosome [15].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 636 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 3779770 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/15.txt].
+
+Analysis completed: 15:9:24,Sat Jul 29,2023
+Computational time: 0:0:48
+16
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:9:25,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 16
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/16
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+961 probes are extracted from chromosome [16].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 961 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 5987720 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/16.txt].
+
+Analysis completed: 15:10:19,Sat Jul 29,2023
+Computational time: 0:0:54
+17
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:10:19,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 17
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/17
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+1294 probes are extracted from chromosome [17].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 1294 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 7902490 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/17.txt].
+
+Analysis completed: 15:11:20,Sat Jul 29,2023
+Computational time: 0:1:1
+18
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:11:20,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 18
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/18
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+282 probes are extracted from chromosome [18].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 282 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 1941179 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/18.txt].
+
+Analysis completed: 15:12:4,Sat Jul 29,2023
+Computational time: 0:0:44
+19
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:12:4,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 19
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/19
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+1514 probes are extracted from chromosome [19].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 1514 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 11209328 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/19.txt].
+
+Analysis completed: 15:13:14,Sat Jul 29,2023
+Computational time: 0:1:10
+20
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:13:14,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 20
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/20
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+510 probes are extracted from chromosome [20].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 510 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 3375932 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/20.txt].
+
+Analysis completed: 15:14:2,Sat Jul 29,2023
+Computational time: 0:0:48
+21
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:14:2,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 21
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/21
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+214 probes are extracted from chromosome [21].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 214 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 1552986 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/21.txt].
+
+Analysis completed: 15:14:44,Sat Jul 29,2023
+Computational time: 0:0:42
+22
+*******************************************************************
+* Summary-data-based Mendelian Randomization (SMR)
+* Version 1.3.1
+* Build at Sep 21 2022 12:13:19, by GCC 8.3
+* (C) 2015 Futao Zhang, Zhihong Zhu and Jian Yang
+* The University of Queensland
+* MIT License
+*******************************************************************
+Analysis started: 15:14:44,Sat Jul 29,2023
+
+Options:
+--beqtl-summary /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense
+--query   1.00e+00
+--probe-chr 22
+--out /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/22
+
+
+Reading eQTL summary data...
+Reading eQTL probe information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+19250 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.epi].
+565 probes are extracted from chromosome [22].
+Reading eQTL SNP information from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+8932843 SNPs to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.esi].
+Reading eQTL summary data from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+eQTL summary data of 565 Probes to be included from [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN//cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense.besd].
+Extracted results of 3807549 SNPs have been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr/22.txt].
+
+Analysis completed: 15:15:31,Sat Jul 29,2023
+Computational time: 0:0:47
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+[1] "file split by gene"
