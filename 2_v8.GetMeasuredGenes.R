@@ -1,38 +1,34 @@
 library(data.table)
 
-tissues <- c("Whole_Blood")
+#--- read in command-line args
+args <- commandArgs(trailingOnly = TRUE)
+ge_file <- args[1]
+gene_beds <- args[2]
+intermed <- args[3]
 
+print("EXTRACTING GENES WITH GE DATA")
+#--- parsing through ge file to grab TSS information for each gene
 ensg <- data.frame() 
-for (i in 1:length(tissues)){
-print(i)
-ge <- fread(paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO/data/",tissues[i],".v8.normalized_expression.bed.gz"), header = T)
+ge <- fread(ge_file, header = T)
 chrs <- sapply(1:nrow(ge), function(x) strsplit(ge$`#chr`[x], split = "chr")[[1]][2]) #modify the #chr column: "1" instead of "chr1" 
 ge$`#chr` <- chrs
 wremove <- which(chrs == "X") #remove X chr genes, Y is not included  
 if(length(wremove)>0){ge <- ge[-wremove,]}
 dump <- ge[,1:4] #grabbing just the first 4 columns (#chr, start, end, gene_id)
 ensg <- rbind(ensg,dump) #add it to the ensg
-}
-
 ensg <- unique(ensg) #delete duplicates 
-print(nrow(ensg)) #19696 for whole_blood 
+print( paste0( "number of genes with ge data: ", nrow(ensg))) #19696 for whole_blood 
+write.table(ensg[,4], paste0(intermed, "/All_Genes_Expressed.txt"), row.names = F, col.names = F, sep ="\t", quote = F)
 
-#comment out if starting from scratch 
-#already_existing_genes <- list.files("/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/gene_beds/") #list of files in gene_beds
-#already_existing_genes <- gsub(already_existing_genes, pattern  = ".bed", replacement = "") #remove the .bed part
-#w <- which(is.na(match(ensg$gene_id,already_existing_genes))) #match it with the gene_id just read #1492
-#ensg <- ensg[w,] 
-
-#ensg <- ensg[sample(nrow(ensg), size = 1000, replace = F),] #downsampling
-
+print( "CREATING GENE BEDS" )
+#--- write files detailing the cis-region bp of every gene
 for (i in 1:nrow(ensg)){  
-print(i)
 bounds_l <- max(0,ensg$start[i] - 500000) #left bound = whichever is bigger 0 or start - 500kb
 bounds_r <- ensg$end[i] + 500000 #it's not the gene end, it's just the transcription start site (TSS), so we have done +/- 500kb of gene TSS, because GTEx doesn't give us the end windows to look for SNPs based on genes 
 chr <- ensg$`#chr`[i] #store chr #
 bed <- c(chr,bounds_l,bounds_r,ensg$gene_id[i],0,"+")
 bed <- matrix(bed, nrow = 1, ncol = 6) #make a 1 row x 6 column matrix 
 #make bed file 
-write.table(bed, paste0("/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/gene_beds/",ensg$gene_id[i],".bed"), row.names = F, col.names = F, sep ="\t", quote = F)
+write.table(bed, paste0(gene_beds, "/",ensg$gene_id[i],".bed"), row.names = F, col.names = F, sep ="\t", quote = F)
 }
 #note: some genes do not have variants. 

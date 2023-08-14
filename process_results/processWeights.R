@@ -3,15 +3,18 @@ library(dplyr)
 
 
 tissues <- "Whole_Blood"
+args <- commandArgs(trailingOnly = TRUE)
+output <- args[1] #path to output directory
+genes_assign <- args[2] #path to genes assigned file
 
 for (i in 1:length(tissues)){
-genes <- read.table(file = paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/intermedfiles/genes_assign_Whole_Blood2",".txt"), header = F)$V1 #all genes in analysis
+genes <- read.table(file = genes_assign, header = F)$V1 #all genes in analysis
 
 r2_h2 <- matrix(0, length(genes), 15)
 
 for (j in 1:length(genes)){
 
-file <- paste0("/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_MAGEPRO_fullsumstats/",tissues[i],"/",tissues[i],".",genes[j],".wgt.RDat") 
+file <- paste0(output,"/",genes[j],".wgt.RDat") 
 
 print(genes[j])
 
@@ -66,6 +69,6 @@ h <- which(r2_h2[,2] == 0)
 if(length(h) > 0){r2_h2 <- r2_h2[-h,]}
 
 
-write.table(r2_h2, file = "/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO/process_results/MAGEPRO_fullsumstats_r2_h2.txt", row.names = F, col.names = T, sep = "\t", quote = F)
+write.table(r2_h2, file = "MAGEPRO_results.txt", row.names = F, col.names = T, sep = "\t", quote = F)
 }
 

@@ -10,8 +10,6 @@ suppressMessages(library('hash'))
 option_list = list(
   make_option("--gene", action="store", default=NA, type='character',
               help="ENSG ID, for ex ENSG00000013503.9"),
-  make_option("--tissue", action="store", default=NA, type='character',
-              help="Tissue name, for ex Whole_Blood"),
   make_option("--bfile", action="store", default=NA, type='character',
               help="Path to PLINK binary input file prefix (minus bed/bim/fam) [required]"),
   make_option("--out", action="store", default=NA, type='character',
@@ -23,8 +21,6 @@ option_list = list(
   make_option("--PATH_plink", action="store", default="plink", type='character',
               help="Path to plink executable [%default]"),
   make_option("--PATH_gcta", action="store", default="gcta_nr_robust", type='character',
-              help="Path to plink executable [%default]"),
-  make_option("--PATH_gemma", action="store", default="gemma", type='character',
               help="Path to plink executable [%default]"),
   make_option("--covar", action="store", default=NA, type='character',
               help="Path to quantitative covariates (PLINK format) [optional]"),
@@ -44,8 +40,6 @@ option_list = list(
               help="Rank-normalize the phenotype after all QC: [default: %default]"),
   make_option("--save_hsq", action="store_true", default=FALSE,
               help="Save heritability results even if weights are not computed [default: %default]"),			  
-  make_option("--gemmaout", action="store", default=NA,type='character',
-              help="Gemma must output to output/ directory that is child directory of directory from which fusion is run  [default: %default]"),
   make_option("--datasets", action="store", default="", type='character', 
 	      help="Comma-separated list of external datasets to include")
 )
@@ -58,9 +52,6 @@ print(opt)
 
 # find gene name without version number
 name <- strsplit(opt$gene, ".", fixed = TRUE)[[1]][1]
-
-# datasets to use
-datas <- strsplit(opt$datasets, ",", fixed = TRUE)[[1]]
 
 # datasets to use
 datas <- strsplit(opt$datasets, ",", fixed = TRUE)[[1]]
@@ -147,8 +138,6 @@ if ( opt$verbose == 2 ) cat("Predictive Models Prepared \n")
 cleanup = function() {
 	if ( ! opt$noclean ) {
 		arg = paste("rm -f " , opt$tmp , "*", sep='')
-		system(arg)
-                arg = paste("rm -f " , opt$gemmaout , "*", sep='')  
 		system(arg)
 	}
 }
@@ -260,8 +249,9 @@ if ( is.na(opt$hsq_set) ) {
 	#V(G)/Vp = proportion of genotypic to phenotypic variation
 	#LRT - likelihood ratio test - compare goodness of fit 
 	if ( !file.exists( paste(opt$tmp,".hsq",sep='') ) ) {
-		if ( opt$verbose >= 1 ) cat(opt$tmp,"does not exist, GCTA could not converge, forcing h2 = 0.064251\n",file=stderr())
-		hsq_afr = 0.064251
+		if ( opt$verbose >= 1 ) cat(opt$tmp,"does not exist, GCTA could not converge, forcing h2 to fixed value\n",file=stderr()) #change to lowest h2 that is considered significant #AFR = 0.064251 #EUR = 0.008909 
+		#hsq_afr = 0.064251
+		hsq_afr = 0.008909
 		hsq_afr.pv = NA
 		#if heritability estimate does not converge, push through with a preset heritability value = 0.064251 - smallest h2 that has p < 0.05
 	}else{

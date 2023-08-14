@@ -20,4 +20,7 @@ module load slurm
 source ~/.bashrc
 conda activate r_env
 
-Rscript processWeights.R
+output=$1 #/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO_gtexEUR/weights
+genes=$2 #/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO_gtexEUR/intermediate/genes_assign_Whole_Blood.txt
+
+Rscript processWeights.R $output $genes
