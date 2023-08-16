@@ -250,14 +250,15 @@ if ( is.na(opt$hsq_set) ) {
 	#LRT - likelihood ratio test - compare goodness of fit 
 	if ( !file.exists( paste(opt$tmp,".hsq",sep='') ) ) {
 		if ( opt$verbose >= 1 ) cat(opt$tmp,"does not exist, GCTA could not converge, forcing h2 to fixed value\n",file=stderr()) #change to lowest h2 that is considered significant #AFR = 0.064251 #EUR = 0.008909 
-		#hsq_afr = 0.064251
-		hsq_afr = 0.008909
+		hsq_afr = 0.064251
+		#hsq_afr = 0.008909
 		hsq_afr.pv = NA
 		#if heritability estimate does not converge, push through with a preset heritability value = 0.064251 - smallest h2 that has p < 0.05
 	}else{
 		hsq.file = read.table(file=paste(opt$tmp,".hsq",sep=''),as.is=T,fill=T)
 		hsq_afr = as.numeric(unlist(hsq.file[hsq.file[,1] == "V(G)/Vp",2:3]))
 		hsq_afr.pv = as.numeric(unlist(hsq.file[hsq.file[,1] == "Pval",2]))
+		if (hsq_afr[1] > 1){hsq_afr = 1}
 		if ( opt$verbose >= 1 ) cat("Heritability (se):",hsq_afr,"LRT P-value:",hsq_afr.pv,'\n')
 		if ( opt$save_hsq ) cat( opt$out , hsq_afr , hsq_afr.pv , '\n' , file=paste(opt$out,".hsq",sep='') )
 

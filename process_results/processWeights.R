@@ -62,7 +62,7 @@ r2_h2[j, 15] <- paste(total_coeff, collapse = ",")
 }
 
 
-newcolnamesr2h2 <- c("gene", "lasso.top1_afr", "lasso.top1_meta","lasso.top1_magepro", "lasso.top1_afr_pv", "lasso.top1_meta_pv","lasso.top1_magepro_pv", "hsq_afr", "hsq_afr_se", "hsq_afr.pv", "datasets", "nonzeroAFR", "nonzeroMAGEPRO", "alpha_beta", "alphas")
+newcolnamesr2h2 <- c("gene", "lasso.top1_eur", "lasso.top1_meta","lasso.top1_magepro", "lasso.top1_eur_pv", "lasso.top1_meta_pv","lasso.top1_magepro_pv", "hsq_eur", "hsq_eur_se", "hsq_eur.pv", "datasets", "nonzeroEUR", "nonzeroMAGEPRO", "alpha_beta", "alphas")
 colnames(r2_h2) <- newcolnamesr2h2
 
 h <- which(r2_h2[,2] == 0)
