@@ -5,6 +5,19 @@ MAGEPRO is a predictive genetics method to create powerful gene expression predi
 
 ## Dependencies 
 
+R version 4.2.3
+Packages:
+> data.table_1.14.8
+> glmnet_4.1-7
+> plink2R_1.1
+> optparse_1.7.3
+
+GCTA 
+Download from either ...
+- https://github.com/gusevlab/fusion_twas.git
+- https://yanglab.westlake.edu.cn/software/gcta/#Overview
+
+
 ## Command-line options for the full pipeline
 
 ## Output format
