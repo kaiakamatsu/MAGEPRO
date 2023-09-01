@@ -7,10 +7,10 @@ MAGEPRO is a predictive genetics method to create powerful gene expression predi
 
 R version 4.2.3
 Packages:
-> data.table_1.14.8
-> glmnet_4.1-7
-> plink2R_1.1
-> optparse_1.7.3
+- data.table_1.14.8
+- glmnet_4.1-7
+- plink2R_1.1
+- optparse_1.7.3
 
 GCTA 
 Download from either ...
