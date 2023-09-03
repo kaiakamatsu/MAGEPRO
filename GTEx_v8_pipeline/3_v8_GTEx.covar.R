@@ -9,7 +9,7 @@ intermediate_dir <- args[2]
 print("MATCHING COVARS DATA TO PEOPLE")
 covar <- fread(covar_file, header = T)
 #format needs people on the rows, col1 = fam col 1, col2 = fam col 2, rest = covar
-covar_t <- t(covar) #transpose matrix
+covar_t <- t(covar) #transpose matrix to get people on row 1
 covar_t <- cbind(0,rownames(covar_t),covar_t)  
 rownames(covar_t) <- NULL
 colnames(covar_t) <- covar_t[1,] #add first row as column names 

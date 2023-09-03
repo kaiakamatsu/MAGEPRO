@@ -37,11 +37,16 @@ if (file.exists(EQTL)){
 df_sumstats <- merge(df_sumstats, SNPS, by = 'variant_id')
 # only variants present in both are kept
 
+df_sumstats <- df_sumstats[, c(2, 11, 13, 14, 8)]
+
+print(head(df_sumstats))
+
 groups <- split(df_sumstats, df_sumstats$phenotype_id)
 print("file split")
 
 for (x in groups){
-	print(x[1,2])
-	write.table(x, file = paste(OUT, paste0(x[1,2], ".txt"), sep = "/"), quote = FALSE, row.names = F)
+	gene <- strsplit(x[1,1], split = "[.]")[[1]][1]
+	print(gene)
+	write.table(x, file = paste(OUT, paste0(gene, ".txt"), sep = "/"), quote = FALSE, row.names = F)
 }
 print("split by genes")

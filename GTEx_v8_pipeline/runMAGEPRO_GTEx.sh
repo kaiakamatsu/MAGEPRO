@@ -6,8 +6,8 @@
 #SBATCH -t 03:00:00
 #SBATCH -J MAGEPRO
 #SBATCH -A ddp412
-#SBATCH -o ../workingerr/MAGEPRO.%j.%N.out
-#SBATCH -e ../workingerr/MAGEPRO.%j.%N.err
+#SBATCH -o ../../workingerr/MAGEPRO.%j.%N.out
+#SBATCH -e ../../workingerr/MAGEPRO.%j.%N.err
 #SBATCH --export=ALL
 #SBATCH --constraint="lustre"
 
@@ -47,7 +47,7 @@ ind=$intermed/All_Individuals.txt #all individuals with both genotype and ge dat
 genes=$(awk '$2 == '${batch}' {print $1}' $batchfile) #all genes with the batch number passed in to the script 
 #grabbing just the individuals we want
 alldonors=$(zcat $gefile | head -n 1)
-colind=$(echo $alldonors | sed 's| |\n|g' | nl | grep -f $ind | awk 'BEGIN {ORS=","} {print $1}') 
+colind=$(echo $alldonors | sed 's| |\n|g' | nl | grep -f $ind | awk 'BEGIN {ORS=","} {print $1}') #DONORS MAY BE TAB DELIMITED OR SPACE - CHECK!
 colind2=${colind%,} #remove last comma - at this point we have a comma delimited list of column numbers of individuals we want to extract from the ge data 
 
 for gene in $genes
@@ -63,7 +63,7 @@ then
     mv $wd/$gene.mod.fam $wd/$gene.fam 
     TMP=$tmpdir/${gene}
     OUT=$weights/${gene}
-    Rscript ComputeMultiPopWeights.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --hsq_p 1 --tmp $TMP --out $OUT --PATH_gcta $gcta --verbose 2 --PATH_plink ${plink_exec1} --datasets $dataset #FUSION USES PLINK1.9 FOR --lasso FLAG
+    Rscript MAGEPRO_GTEx.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --hsq_p 1 --tmp $TMP --out $OUT --PATH_gcta $gcta --verbose 2 --PATH_plink ${plink_exec1} --datasets $dataset #FUSION USES PLINK1.9 FOR --lasso FLAG
     rm $wd/$gene.* 
 
 fi

@@ -39,6 +39,9 @@ if (file.exists(file)){
 file <- getSNPs(file, SNPS)
 print("snps extracted")
 
+file <- file[, c(1, 6, 8, 7, 13)]
+print(head(file))
+
 groups <- split(file, file$Gene_id)
 print("file split by genes")
 

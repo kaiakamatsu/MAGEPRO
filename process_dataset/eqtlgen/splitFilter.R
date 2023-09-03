@@ -56,6 +56,8 @@ if (file.exists(SNPS)){ #check if SNPS file exists
 extracted <- getSNPs(eQTL, SNPs)
 print("extraction completed")
 
+extracted <- extracted[, c(10, 1, 4, 5, 12)]
+print(head(extracted))
 
 #split the eQTL file by gene into multiple data frames using the splitGene function 
 split <- splitGene(extracted)
@@ -64,6 +66,6 @@ print("file split by gene")
 
 #write a new txt file into the scratch directory (OUT) per gene table, change column number of gene depending on eQTL file  
 for (x in split){
-	write.table(x, file = paste(OUT, paste0(x[1,10], ".txt"), sep = "/"), quote = FALSE, row.names = F)
+	write.table(x, file = paste(OUT, paste0(x[1,1], ".txt"), sep = "/"), quote = FALSE, row.names = F)
 }
 

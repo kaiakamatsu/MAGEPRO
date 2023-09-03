@@ -1,4 +1,4 @@
-#bash eurgtex_main.sh /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/GTEx_EUR/Whole_Blood_all /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/GTEx_plink/GTEx_v8_genotype_AFR_HM3_exclude_dups.allchr.bim /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/GTEx_EUR/genes
+#bash eurgtex_main.sh /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/GTEx_EUR/Whole_Blood_all /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/GTEx_plink/GTEx_v8_genotype_AFR_HM3_exclude_dups.allchr.bim /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/GTEx_EUR/genes_format
 
 
 output_full=$1 #output directory for fullsumstats
