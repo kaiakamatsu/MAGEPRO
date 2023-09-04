@@ -1,19 +1,280 @@
 install.packages("devtools")
 install.packages("R.utils")
-install.packages('ggplot2')
-install.packages('dplyr')
+install.packages("ggplot2")
+install.packages("data.table")
+install.packages("dplyr", verbose=T)
 library(ggplot2)
 library(dplyr)
 library(data.table)
 library(R.utils)
 library(devtools)
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("biomaRt")
+library(biomaRt)
 
 install.packages("VennDiagram")
 library(VennDiagram)
 
 # --- analysis for tiffany 
 
+# create a set of genes either significantly heritable in EUR or AFR 
 
+stats_afr <- read.table(file='C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/MAGEPRO_fullsumstats_r2_h2.txt', as.is = T, header = T)
+stats_eur <- read.table(file='C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/MAGEPRO_results_eur.txt', as.is = T, header = T)
+
+colnames(stats_afr)
+stats_afr_sigh2 <- filter(stats_afr, hsq_afr.pv < 0.01 & hsq_afr > 0)
+
+colnames(stats_eur)
+stats_eur_sigh2 <- filter(stats_eur, hsq_eur.pv < 0.01 & hsq_eur > 0)
+
+afr_genes <- stats_afr_sigh2$gene
+eur_genes <- stats_eur_sigh2$gene
+length(afr_genes)
+length(eur_genes)
+
+result <- union(afr_genes, eur_genes)
+bonfer <- length(result)
+thresh <- 0.05/bonfer
+
+genes <- as.data.frame(result)
+write.table(genes, file = "C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/genes_sigh2_either.txt", quote = FALSE, col.names = FALSE, row.names = FALSE)
+
+#https://www.biotools.fr/human/ensembl_symbol_converter
+#genes_names <- read.table(file='C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/sigh2_AFR_EA_name.txt', as.is = T, header = F, sep = "\t")
+#colnames(genes_names) <- c("ID", "NAME")
+
+#try biomaRt
+mart <- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
+ensemble <- c()
+for (r in genes$result){
+  ensemble <- append(ensemble, strsplit(r, split="[.]")[[1]][1])
+}
+genes_list = ensemble
+G_list <- getBM(filters= "ensembl_gene_id", attributes= c("ensembl_gene_id","hgnc_symbol"),values=genes_list,mart= mart)
+genes <- cbind(genes, ensemble)
+colnames(genes) <- c("ID", "ensembl_gene_id")
+genes_table <- merge(genes, G_list, by = "ensembl_gene_id", all = TRUE)
+nrow(genes_table)
+
+# find ancestry specific TWAS hits (bonferroni)
+
+phenos <- c("BAS", "HGB", "MCHC", "MPV", "RBC", "EOS", "LYM", "MCV", "NEU", "RDW", "HCT", "MCH", "MON", "PLT", "WBC")
+cols <- NA
+sig_magepro <- matrix(nrow = 0, ncol = 21)
+for (pheno in phenos){
+  twasdata <- fread(paste0("C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/outputMAGEPRO_BCX_LETTER/", pheno,".combined.txt"), header= T)
+  twasdata_sig_genes <- filter(twasdata, ID %in% genes_table$ID)
+  twasdata_sig <- filter(twasdata_sig_genes, TWAS.P < thresh)
+  PHENO <- rep(pheno, times = nrow(twasdata_sig))
+  sig <- cbind(twasdata_sig, PHENO)
+  if (nrow(sig) > 0){
+    sig_magepro <- rbind(sig_magepro, as.matrix(sig))
+    cols <<- colnames(sig)
+  }
+}
+
+magepro <- as.data.frame(sig_magepro)
+colnames(magepro) <- cols
+nrow(magepro) # 144 which is more than 116 reported by MA-FOCUS
+
+magepro_names <- filter(genes_table, ID %in% magepro$ID)
+combined_magepro <- merge(magepro, magepro_names, by = "ID", all = TRUE)
+nrow(combined_magepro)
+
+write.table(combined_magepro, file = "C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/TWAS/MAGEPRO_bonferroni_sigh2_either.txt", quote = FALSE, col.names = TRUE, row.names = FALSE)
+
+# AFR 
+
+phenos <- c("BAS", "HGB", "MCHC", "MPV", "RBC", "EOS", "LYM", "MCV", "NEU", "RDW", "HCT", "MCH", "MON", "PLT", "WBC")
+cols <- NA
+sig_afr <- matrix(nrow = 0, ncol = 21)
+for (pheno in phenos){
+  twasdata <- fread(paste0("C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/outputAFR_BCX_LETTER/", pheno,".combined.txt"), header= T)
+  twasdata_sig_genes <- filter(twasdata, ID %in% genes_table$ID)
+  twasdata_sig <- filter(twasdata_sig_genes, TWAS.P < thresh)
+  PHENO <- rep(pheno, times = nrow(twasdata_sig))
+  sig <- cbind(twasdata_sig, PHENO)
+  if (nrow(sig) > 0){
+    sig_afr <- rbind(sig_afr, as.matrix(sig))
+    cols <<- colnames(sig)
+  }
+}
+
+afr <- as.data.frame(sig_afr)
+colnames(afr) <- cols
+nrow(afr) #131
+
+# EUR model 
+
+phenos <- c("BAS", "HGB", "MCHC", "MPV", "RBC", "EOS", "LYM", "MCV", "NEU", "RDW", "HCT", "MCH", "MON", "PLT", "WBC")
+cols <- NA
+sig_eur <- matrix(nrow = 0, ncol = 21)
+for (pheno in phenos){
+  twasdata <- fread(paste0("C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/outputEUR_BCX_LETTER/", pheno,".combined.txt"), header= T)
+  twasdata_sig_genes <- filter(twasdata, ID %in% genes_table$ID)
+  twasdata_sig <- filter(twasdata_sig_genes, TWAS.P < thresh)
+  PHENO <- rep(pheno, times = nrow(twasdata_sig))
+  sig <- cbind(twasdata_sig, PHENO)
+  if (nrow(sig) > 0){
+    sig_eur <- rbind(sig_eur, as.matrix(sig))
+    cols <<- colnames(sig)
+  }
+}
+
+eur <- as.data.frame(sig_eur)
+colnames(eur) <- cols
+nrow(eur) #6827 compared to 6,236 in MA-FOCUS
+
+eur_names <- filter(genes_table, ID %in% eur$ID)
+combined_eur <- merge(eur, eur_names, by = "ID", all = TRUE)
+nrow(combined_eur)
+
+write.table(combined_eur, file = "C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/TWAS/EUR_bonferroni_sigh2_either.txt", quote = FALSE, col.names = TRUE, row.names = FALSE)
+
+# compare our TWAS hits to MA-FOCUS 
+
+load("C:/Users/kaiak/Downloads/twas.RData") #https://github.com/mancusolab/MA-FOCUS-data-code/blob/main/real-data/data/twas.RData
+df_mafocus <- as.data.frame(twas_all)
+
+unique(df_mafocus$POP)
+df_eur_mafocus <- filter(df_mafocus, POP == "EA")
+df_afr_mafocus <- filter(df_mafocus, POP == "AA")
+
+eur_mafocus <- split(df_eur_mafocus, df_eur_mafocus$PHEN)
+afr_mafocus <- split(df_afr_mafocus, df_afr_mafocus$PHEN)
+
+# what proportion of our hits are also hits in MA-FOCUS? (p < 0.05/4579)
+phenos <- c("BAS", "HGB", "MCHC", "MPV", "RBC", "EOS", "LYM", "MCV", "NEU", "RDW", "HCT", "MCH", "MON", "PLT", "WBC")
+#AFR(MAGEPRO)
+percent_common <- c() #0.00000000 0.00000000 0.00000000 0.20000000 0.33333333 0.07692308 0.00000000 0.37500000 0.00000000 0.33333333 0.06382979
+for (pheno in phenos){
+  twasdata <- fread(paste0("C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/outputMAGEPRO_BCX_LETTER/", pheno,".combined.txt"), header= T)
+  twasdata_sig_genes <- filter(twasdata, ID %in% genes_table$ID)
+  twasdata_sig <- filter(twasdata_sig_genes, TWAS.P < thresh)
+  if (nrow(twasdata_sig) > 0){
+    
+    names <- filter(genes_table, ID %in% twasdata_sig$ID)
+    combined <- merge(twasdata_sig, names, by = "ID", all = TRUE)
+    
+    comparison <- afr_mafocus[[pheno]]
+    comparison_sig <- filter(comparison, TWAS.P < (0.05/4579))
+    
+    total <- nrow(combined)
+    common <- length(which(combined$hgnc_symbol %in% comparison_sig$ID))
+    
+    percent_common <- append(percent_common, common/total)
+  }
+}
+#EUR
+percent_common <- c() #0.1592357 0.2094241 0.1709845 0.1876209 0.1970534 0.1876380 0.2004008 0.1953642 0.1760870 0.1926782 0.2170330 0.1780000 0.2054507 0.2116317 0.2014787
+for (pheno in phenos){
+  twasdata <- fread(paste0("C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/outputEUR_BCX_LETTER/", pheno,".combined.txt"), header= T)
+  twasdata_sig_genes <- filter(twasdata, ID %in% genes_table$ID)
+  twasdata_sig <- filter(twasdata_sig_genes, TWAS.P < thresh)
+  if (nrow(twasdata_sig) > 0){
+    
+    names <- filter(genes_table, ID %in% twasdata_sig$ID)
+    combined <- merge(twasdata_sig, names, by = "ID", all = TRUE)
+    
+    comparison <- eur_mafocus[[pheno]]
+    comparison_sig <- filter(comparison, TWAS.P < (0.05/4579))
+    
+    total <- nrow(combined)
+    common <- length(which(combined$hgnc_symbol %in% comparison_sig$ID))
+    
+    percent_common <- append(percent_common, common/total)
+  }
+}
+
+# subset to hits in common and check correlation? 
+
+# across all results, what is the correlation? 
+#Afr
+phenos <- c("BAS", "HGB", "MCHC", "MPV", "RBC", "EOS", "LYM", "MCV", "NEU", "RDW", "HCT", "MCH", "MON", "PLT", "WBC")
+cors <- c() #0.1673255 0.1809370 0.2019416 0.1706386 0.1638782 0.1609890 0.2665420 0.1873377 0.2079294 0.1773886 0.1660443 0.1822299 0.2042523 0.1986272 0.2338586
+for (p in phenos){
+  twasdata <- fread(paste0("C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/outputMAGEPRO_BCX_LETTER/", p,".combined.txt"), header= T)
+  names <- filter(genes_table, ID %in% twasdata$ID)
+  combined <- merge(twasdata, names, by = "ID", all = TRUE)
+  comparison <- afr_mafocus[[p]]
+  # filter for genes in common and reorder both to be in the same order
+  comparison = filter(comparison, ID %in% combined$hgnc_symbol)
+  combined = filter(combined, hgnc_symbol %in% comparison$ID)
+  m1 <- match(comparison$ID, combined$hgnc_symbol)
+  combined <- combined[m1, ]
+  df <- data.frame(combined$TWAS.Z, comparison$TWAS.Z)
+  df <- na.omit(df)
+  colnames(df) <- c("MAGEPRO","MAFOCUS")
+  cors <- append(cors, cor(df$MAGEPRO, df$MAFOCUS))
+}
+
+#EUR
+phenos <- c("BAS", "HGB", "MCHC", "MPV", "RBC", "EOS", "LYM", "MCV", "NEU", "RDW", "HCT", "MCH", "MON", "PLT", "WBC")
+cors <- c() #0.11659153 0.17198161 0.25387615 0.19224023 0.18605941 0.05944016 0.14975165 0.31742256 0.10850904 0.19631324 0.19116171 0.27288473 0.05538389 0.16896935 0.15632017
+for (p in phenos){
+  twasdata <- fread(paste0("C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/outputEUR_BCX_LETTER/", p,".combined.txt"), header= T)
+  names <- filter(genes_table, ID %in% twasdata$ID)
+  combined <- merge(twasdata, names, by = "ID", all = TRUE)
+  comparison <- eur_mafocus[[p]]
+  # filter for genes in common and reorder both to be in the same order
+  comparison = filter(comparison, ID %in% combined$hgnc_symbol)
+  combined = filter(combined, hgnc_symbol %in% comparison$ID)
+  m1 <- match(comparison$ID, combined$hgnc_symbol)
+  combined <- combined[m1, ]
+  df <- data.frame(combined$TWAS.Z, comparison$TWAS.Z)
+  df <- na.omit(df)
+  colnames(df) <- c("EURour","MAFOCUS")
+  cors <- append(cors, cor(df$EURour, df$MAFOCUS))
+}
+
+#--- ancestry specific hits 
+
+#all TWAS eur
+eur <- matrix(nrow = 0, ncol = 21)
+cols <- NA
+for (pheno in phenos){
+  twasdata <- fread(paste0("C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/outputEUR_BCX_LETTER/", pheno,".combined.txt"), header= T)
+  twasdata_sig_genes <- filter(twasdata, ID %in% genes_table$ID)
+  PHENO <- rep(pheno, times = nrow(twasdata_sig_genes))
+  all <- cbind(twasdata_sig_genes, PHENO)
+  if (nrow(all) > 0){
+    eur <- rbind(eur, as.matrix(all))
+    cols <<- colnames(all)
+  }
+}
+eur <- as.data.frame(eur)
+colnames(eur) <- cols
+eursplit <- split(eur, eur$PHENO)
+
+aa_specific <- combined_magepro[which(! combined_magepro$ID %in% combined_eur$ID),]
+TWASeur_p <- c()
+TWASeur_z <- c()
+GWASeur_id <- c()
+GWASeur_z <- c()
+EQTLeur.ID <- c()
+EQTLeur.R2 <- c()
+EQTLeur.Z <- c()
+
+for(a in 1:nrow(aa_specific)){
+  pheno <- aa_specific$PHENO[a]
+  eur_data <- eursplit[[pheno]]
+  w <- which(eur_data$ID == aa_specific$ID[a])
+  TWASeur_p <- append(TWASeur_p, eur_data$TWAS.P[w])
+  TWASeur_z <- append(TWASeur_z, eur_data$TWAS.Z[w])
+  GWASeur_id <- append(GWASeur_id, eur_data$BEST.GWAS.ID[w])
+  GWASeur_z <- append(GWASeur_z, eur_data$BEST.GWAS.Z[w])
+  EQTLeur.ID <- append(EQTLeur.ID, eur_data$EQTL.ID[w])
+  EQTLeur.R2 <- append(EQTLeur.R2, eur_data$EQTL.R2[w])
+  EQTLeur.Z <- append(EQTLeur.Z, eur_data$EQTL.Z[w])
+}
+
+aa_specific_with_eur <- cbind(aa_specific, EQTLeur.ID, EQTLeur.R2, EQTLeur.Z, GWASeur_id, GWASeur_z, TWASeur_z, TWASeur_p)
+nrow(aa_specific_with_eur)
+rownames(aa_specific_with_eur) <- NULL
+
+write.table(aa_specific_with_eur, file = "C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/AA_specific_genes.txt", quote = FALSE, col.names = TRUE, row.names = FALSE)
 
 
 # --- MANHATTAN 
