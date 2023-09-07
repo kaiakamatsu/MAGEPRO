@@ -13,7 +13,7 @@ Packages:
 - optparse_1.7.3
 
 GCTA 
-Download from either ...
+Download gcta from either ...
 - https://github.com/gusevlab/fusion_twas.git
 - https://yanglab.westlake.edu.cn/software/gcta/#Overview
 
@@ -27,6 +27,21 @@ Download from either ...
 ## Typical application of MAGEPRO on GTEx Tissues
 
 ## Command-line options for the computing gene-models one gene at a time
+
+## Directories 
+
+| Directory | Description |
+| -------- | -------- |
+| GALA_SAGE | Scripts used to apply MAGEPRO to GALA II and SAGE data |
+| MAGEPRO_PIPELINE | Intermediate scripts that are a part of the main MAGEPRO pipeline |
+| GTEx_v8_pipeline | Example of applying MAGEPRO to GTEx v8 data |
+| TWAS | Transcriptome-wide association studies using MAGEPRO gene models |
+| images | Images used in github |
+| plots | R scripts used to visualize data |
+| process_dataset | Scripts used to extract and process eQTL summary statistics from various studies |
+| process_results | Scripts to process and summarize gene model performance |
+| supplemental_analysis | All other supplementary analysis |
+| test_1gene | Scripts for testing |
 
 # Support 
 > contact kakamatsu@ucsd.edu
