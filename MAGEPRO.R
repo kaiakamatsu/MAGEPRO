@@ -42,6 +42,8 @@ option_list = list(
               help="Also regress the covariates out of the genotypes [default: %default]"),              
   make_option("--hsq_p", action="store", default=0.01, type='double',
               help="Minimum heritability p-value for which to compute weights [default: %default]"),
+  make_option("--lassohsq", action="store", default=0.05, type='double',
+              help="Backup heritability value to use in lasso regression if skipping heritability estimate or gcta fails (when ss is very small)"),
   make_option("--hsq_set", action="store", default=NA, type='double',
               help="Skip heritability estimation and set hsq estimate to this value [optional]"),
   make_option("--crossval", action="store", default=5, type='double',
@@ -316,7 +318,7 @@ if ( system( paste(opt$PATH_plink,"--help") , ignore.stdout=T,ignore.stderr=T ) 
 	q()
 }
 
-if ( (!is.na(opt$hsq_set)) & ( system( opt$PATH_gcta , ignore.stdout=T,ignore.stderr=T ) != 0 ) ){
+if ( !is.na(opt$hsq_set) && system( opt$PATH_gcta , ignore.stdout=T,ignore.stderr=T ) != 0 ){
 	cat( "ERROR: gcta executable not found, set with --PATH_gcta\n" , sep='', file=stderr() )
 	cleanup()
 	q()
@@ -458,7 +460,7 @@ if ( opt$verbose >= 1 ) cat(nrow(pheno),"phenotyped samples, ",nrow(genos$bed),"
 # --- SETUP SUMSTATS FOR META and MAGEPRO 
 
 lasso_h2 <- hsq[1]
-if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){lasso_h2 <- 0.05}  #when gcta does not converge or yield wild estimates, default set to 0.05
+if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){lasso_h2 <- opt$lassohsq}  #when gcta does not converge or yield wild estimates
 
 if ("MAGEPRO" %in% model | "META" %in% model){
 
