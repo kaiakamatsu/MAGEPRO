@@ -32,19 +32,19 @@ Download gcta from either ...
 
 | Directory | Description |
 | -------- | -------- |
+| BENCHMARK | Scripts to benchmark MAGEPRO against other models |
 | GALA_SAGE | Scripts used to apply MAGEPRO to GALA II and SAGE data |
 | GTEx_v8_pipeline | Example of applying MAGEPRO to GTEx v8 data |
+| IMAGES | Images used in github |
 | MAGEPRO_PIPELINE | Intermediate scripts that are a part of the main MAGEPRO pipeline |
+| PLOTS | R scripts used to visualize data |
+| PROCESS_DATASET | Scripts used to extract and process eQTL summary statistics from various studies |
+| PROCESS_RESULTS | Scripts to process and summarize gene model performance |
+| SIMULATIONS | Scripts for testing MAGEPRO in simulation
+| SUPPLEMENTAL_ANALYSIS | All other supplementary analysis |
 | TWAS | Transcriptome-wide association studies using MAGEPRO gene models |
-| benchmark | Scripts to benchmark MAGEPRO against other models
-| images | Images used in github |
-| plots | R scripts used to visualize data |
-| process_dataset | Scripts used to extract and process eQTL summary statistics from various studies |
-| process_results | Scripts to process and summarize gene model performance |
-| simulations | Scripts for testing MAGEPRO in simulation
-| supplemental_analysis | All other supplementary analysis |
+| VALIDATE_MODELS | Validating MAGEPRO gene models | 
 | test_1gene | Scripts for testing |
-| validate_models | Validating MAGEPRO gene models | 
 
 # Support 
 > contact kakamatsu@ucsd.edu
