@@ -41,7 +41,7 @@ Download gcta from either ...
 | process_dataset | Scripts used to extract and process eQTL summary statistics from various studies |
 | process_results | Scripts to process and summarize gene model performance |
 | supplemental_analysis | All other supplementary analysis |
-| test_1gene | scripts for testing |
+| test_1gene | Scripts for testing |
 
 # Support 
 > contact kakamatsu@ucsd.edu
