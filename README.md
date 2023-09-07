@@ -28,14 +28,20 @@ Download gcta from either ...
 
 ## Command-line options for the computing gene-models one gene at a time
 
-## Directory 
+## Directories 
 
 | Directory | Description |
 | -------- | -------- |
-| try | try |
-| -------- | -------- |
-| -------- | -------- |
-| -------- | -------- |
+| GALA_SAGE | Scripts used to apply MAGEPRO to GALA II and SAGE data |
+| MAGEPRO_PIPELINE | Intermediate scripts that are a part of the main MAGEPRO pipeline |
+| GTEx_v8_pipeline | Example of applying MAGEPRO to GTEx v8 data |
+| TWAS | Transcriptome-wide association studies using MAGEPRO gene models |
+| images | Images used in github |
+| plots | R scripts used to visualize data |
+| process_dataset | Scripts used to extract and process eQTL summary statistics from various studies |
+| process_results | Scripts to process and summarize gene model performance |
+| supplemental_analysis | All other supplementary analysis |
+| test_1gene | scripts for testing |
 
 # Support 
 > contact kakamatsu@ucsd.edu
