@@ -12,7 +12,10 @@ paste --delimiters='\t' <(cut -f1-5 /expanse/lustre/scratch/kakamatsu/temp_proje
 
 mv /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_Whole_Blood/$gene.mod.fam /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_Whole_Blood/$gene.fam
 
-Rscript ../ComputeMultiPopWeights.R --gene $gene --bfile /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_Whole_Blood/$gene --covar /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/intermedfiles/Covar_All_Whole_Blood.txt --hsq_p 1 --tmp /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/tmp_Whole_Blood/"$gene"_Whole_Blood --out /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_trials/Whole_Blood/Whole_Blood.$gene --PATH_gcta /expanse/lustre/projects/ddp412/kakamatsu/fusion_twas-master/gcta_nr_robust --verbose 1 --PATH_plink ../../plink --sumstats_dir /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_datasets --sumstats eqtlgen,genoa,mesahis,eurgtex,mesaafr,ota_CD16p_Mono,ota_CL_Mono,ota_LDG,ota_mDC,ota_Mem_CD4,ota_Mem_CD8,ota_Naive_B,ota_Naive_CD4,ota_Naive_CD8,ota_Neu,ota_NK,ota_pDC,ota_Plasmablast --models SINGLE,META,MAGEPRO --ss 31684,1031,352,574,233,416,416,416,416,416,416,416,416,416,416,416,416,416 --cell_type_meta ota 
+Rscript ../MAGEPRO.R --gene $gene --bfile /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_Whole_Blood/$gene --covar /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/intermedfiles/Covar_All_Whole_Blood.txt --hsq_p 1 --tmp /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/tmp_Whole_Blood/"$gene"_Whole_Blood --out /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_trials/Whole_Blood/Whole_Blood.$gene --PATH_gcta /expanse/lustre/projects/ddp412/kakamatsu/fusion_twas-master/gcta_nr_robust --verbose 1 --PATH_plink ../../plink --sumstats_dir /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_datasets --sumstats eqtlgen,genoa,mesahis,eurgtex,mesaafr,ota_CD16p_Mono,ota_CL_Mono,ota_LDG,ota_mDC,ota_Mem_CD4,ota_Mem_CD8,ota_Naive_B,ota_Naive_CD4,ota_Naive_CD8,ota_Neu,ota_NK,ota_pDC,ota_Plasmablast --models SINGLE,META,MAGEPRO --cell_type_meta ota --ss 31684,1031,352,574,233,416,416,416,416,416,416,416,416,416,416,416,416,416
 
 
 #--crossval 1
+#--cell_type_meta ota 
+#--ss 31684,1031,352,574,233,416,416,416,416,416,416,416,416,416,416,416,416,416
+

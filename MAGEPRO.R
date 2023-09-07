@@ -192,21 +192,21 @@ magepro_split <- function(genos_file, h2, ge){
 	# ge = gene expression as a matrix with 1 column 
 	# RETURN: groupings: vector of strings, each string is the name of the variable where indices are stored 
 	geno = read_plink(genos_file,impute="avg")
-	afronly = weights.lasso( genos_file , h2 , snp=geno$bim[,2] )	
-	if ( sum(is.na(afronly)) == length(afronly)) {
-		afronly = weights.marginal( geno$bed , ge , beta=T )
+	singleonly = weights.lasso( genos_file , h2 , snp=geno$bim[,2] )	
+	if ( sum(is.na(singleonly)) == length(singleonly)) {
+		singleonly = weights.marginal( geno$bed , ge , beta=T )
 		#distribution of betas, take Z > 1.96 (nominally significant)
-		z_scores <- scale(afronly)
+		z_scores <- scale(singleonly)
 		top <- which(abs(z_scores) > 1.96)
 		#if none of the snps are Z > 1.96	
 		if (identical(integer(0), top)){
-			threshold = max(round(length(afronly)/4), 1) # split at the top 1/4 of eqtls
-			top <- order(afronly^2, decreasing = TRUE)[1:threshold]
+			threshold = max(round(length(singleonly)/4), 1) # split at the top 1/4 of eqtls
+			top <- order(singleonly^2, decreasing = TRUE)[1:threshold]
 		}
-		afronly[!top] <- 0
+		singleonly[!top] <- 0
 	}
-	nonzero <<- which(afronly != 0)
-	zero <<- which(afronly==0)
+	nonzero <<- which(singleonly != 0)
+	zero <<- which(singleonly==0)
 	groupings <- c()
 	if (!identical(integer(0), nonzero)){
 		groupings <- append(groupings, "nonzero")
@@ -237,6 +237,10 @@ if ( sum(! model %in% c("SINGLE", "META", "MAGEPRO")) > 0 | length(model) > 3 ){
 }
 if (opt$verbose >= 1) cat("### USING THE FOLLOWING MODELS:", opt$models, "\n")
 
+order <- c("SINGLE","META","MAGEPRO") 
+types <- model[match(order, model)]
+types <- unique(types[!is.na(types)])
+
 #list of datasets to be used
 datasets <- list()
 
@@ -256,7 +260,7 @@ if (opt$sumstats != ""){
 				}
 			}
 		}else{ #if there is no directory of eqtl sumstats in the --sumstats_dir path
-			cat( "ERROR: make sure --sumstats_dir has a directory named ", s ,"that contains gene-specific files of eqtl data from that sumstat dataset\n" , sep='', file=stderr() )
+			cat( "ERROR: make sure --sumstats_dir has a directory named ", s ," that contains gene-specific files of eqtl data from that sumstat dataset\n" , sep='', file=stderr() )
 			cleanup()
 			q()
 		}
@@ -273,6 +277,11 @@ h <- list() #hashmap for sample sizes per dataset
 if ( ("META" %in% model) | ( !is.na(opt$cell_type_meta) )){
 	if (!is.na(opt$ss)){
 		sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
+		if (length(sumstats) != length(sample_sizes)){
+			cat( "ERROR: --ss flag required an entry for every dataset\n" , sep='', file=stderr() )
+                	cleanup()
+                	q()
+		}
 		for (i in 1:length(sumstats)){
 			h[[sumstats[i]]] <- as.numeric(sample_sizes[i])
 		}
@@ -307,7 +316,7 @@ if ( system( paste(opt$PATH_plink,"--help") , ignore.stdout=T,ignore.stderr=T ) 
 	q()
 }
 
-if ( !is.na(opt$hsq_set) && system( opt$PATH_gcta , ignore.stdout=T,ignore.stderr=T ) != 0 ){
+if ( (!is.na(opt$hsq_set)) & ( system( opt$PATH_gcta , ignore.stdout=T,ignore.stderr=T ) != 0 ) ){
 	cat( "ERROR: gcta executable not found, set with --PATH_gcta\n" , sep='', file=stderr() )
 	cleanup()
 	q()
@@ -369,7 +378,7 @@ system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
 
 # --- HERITABILITY ANALYSIS (FUSION FRAMEWORK)
 if ( is.na(opt$hsq_set) ) {
-	if ( opt$verbose >= 1 ) cat("### Estimating heritability\n")
+	if ( opt$verbose >= 1 ) cat("### ESTIMATING HERITABILITY\n")
 
 	# 1. generate GRM
 	arg = paste( opt$PATH_plink," --allow-no-sex --bfile ",opt$tmp," --make-grm-bin --out ",opt$tmp,sep='')
@@ -389,32 +398,32 @@ if ( is.na(opt$hsq_set) ) {
 	if ( !file.exists( paste(opt$tmp,".hsq",sep='') ) ) {
 		if ( opt$verbose >= 1 ) cat(opt$tmp,"does not exist, GCTA could not converge, forcing h2 to fixed value\n",file=stderr()) 
 			#change to lowest h2 that is considered significant 
-			#hisq_afr = 0.064251
+			#hsq_afr = 0.064251
 			#hsq_eur = 0.008909
-		hsq_afr = NA
-		hsq_afr.pv = NA
+		hsq = NA
+		hsq.pv = NA
 		#if heritability estimate does not converge, push through with a preset heritability value = 0.064251 - smallest h2 that has p < 0.05
 	}else{
 		hsq.file = read.table(file=paste(opt$tmp,".hsq",sep=''),as.is=T,fill=T)
-		hsq_afr = as.numeric(unlist(hsq.file[hsq.file[,1] == "V(G)/Vp",2:3]))
-		hsq_afr.pv = as.numeric(unlist(hsq.file[hsq.file[,1] == "Pval",2]))
-		if ( hsq_afr[1] > 1 ){hsq_afr = 1} #should not happen but gcta may overestimate at very low sample sizes
-		if ( opt$verbose >= 1 ) cat("Heritability (se):",hsq_afr,"LRT P-value:",hsq_afr.pv,'\n')
-		if ( opt$save_hsq ) cat( opt$out , hsq_afr , hsq_afr.pv , '\n' , file=paste(opt$out,".hsq",sep='') )
+		hsq = as.numeric(unlist(hsq.file[hsq.file[,1] == "V(G)/Vp",2:3]))
+		hsq.pv = as.numeric(unlist(hsq.file[hsq.file[,1] == "Pval",2]))
+		if ( hsq[1] > 1 ){hsq = 1} #should not happen but gcta may overestimate at very low sample sizes
+		if ( opt$verbose >= 1 ) cat("Heritability (se):",hsq,"LRT P-value:",hsq.pv,'\n')
+		if ( opt$save_hsq ) cat( opt$out , hsq , hsq.pv , '\n' , file=paste(opt$out,".hsq",sep='') )
 
 		# 4. stop if insufficient
-		if (!is.na(hsq_afr.pv)){
-			if ( hsq_afr.pv > opt$hsq_p ) { 
-				cat(opt$tmp," : heritability ",hsq_afr[1],"; LRT P-value ",hsq_afr.pv," : skipping gene\n",sep='',file=stderr())
+		if (!is.na(hsq.pv)){
+			if ( hsq.pv > opt$hsq_p ) { 
+				cat(opt$tmp," : heritability ",hsq[1],"; LRT P-value ",hsq.pv," : skipping gene\n",sep='',file=stderr())
 				cleanup()
 				q()
 			}
 		}
 	}
 } else {
-	if ( opt$verbose >= 1 ) cat("### Skipping heritability estimate\n")
-	hsq_afr = opt$hsq_set
-	hsq_afr.pv = NA
+	if ( opt$verbose >= 1 ) cat("### SKIPPING HERITABILITY ESTIMATE\n")
+	hsq = opt$hsq_set
+	hsq.pv = NA
 }
 
 # --- LOAD AND PREP GENOTYPES (FUSION FRAMEWORK)
@@ -447,6 +456,9 @@ N.tot = nrow(genos$bed)
 if ( opt$verbose >= 1 ) cat(nrow(pheno),"phenotyped samples, ",nrow(genos$bed),"genotyped samples, ",ncol(genos$bed)," markers\n")
 
 # --- SETUP SUMSTATS FOR META and MAGEPRO 
+
+lasso_h2 <- hsq[1]
+if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){lasso_h2 <- 0.05}  #when gcta does not converge or yield wild estimates, default set to 0.05
 
 if ("MAGEPRO" %in% model | "META" %in% model){
 
@@ -497,8 +509,6 @@ if ("MAGEPRO" %in% model){
 wgt2 <- c() #magepro weights
 
 # SPLIT DATASETS 
-lasso_h2 <- hsq_afr[1]
-if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){lasso_h2 <- 0.05}  #when gcta does not converge or yield wild estimates, default set to 0.05
 groups <- magepro_split(geno.file, lasso_h2, as.matrix(pheno[,3]) )
 
 for (w in wgts){
@@ -520,13 +530,13 @@ set.seed(1)
 
 #default crossval = 5 fold split
 if ( opt$crossval <= 1 ) { 
-if ( opt$verbose >= 1 ) cat("### skipping cross-validation\n")
+if ( opt$verbose >= 1 ) cat("### SKIPPING CROSS-VALIDATION\n")
 avg_training_r2_magepro <- NA
-avg_training_r2_afr <- NA
+avg_training_r2_single <- NA
 avg_training_r2_meta <- NA
 cv.performance <- NA
 } else {
-if ( opt$verbose >= 1 ) cat("### performing",opt$crossval,"fold cross-validation\n")
+if ( opt$verbose >= 1 ) cat("### PERFORMING",opt$crossval,"FOLD CROSS-VALIDATION\n")
 cv.all = pheno 
 n = nrow(cv.all)
 cv.sample = sample(n) #sample randomly 
@@ -536,7 +546,7 @@ cv.calls = matrix(NA,nrow=n,ncol=length(model))
 
 r2_training_magepro <- c()
 r2_training_meta <- c()
-r2_training_afr <- c()
+r2_training_single <- c()
 
 if ("META" %in% model){
 training_ss <- N.tot * ((opt$crossval - 1)/opt$crossval)
@@ -571,8 +581,8 @@ for ( i in 1:opt$crossval ) {
 	if ("SINGLE" %in% model){
 
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt
-	pred_train_afr = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt)))
-	r2_training_afr = append(r2_training_afr, pred_train_afr$adj.r.sq)
+	pred_train_single = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt)))
+	r2_training_single = append(r2_training_single, pred_train_single$adj.r.sq)
 	
 	colcount = colcount + 1
 
@@ -594,7 +604,7 @@ for ( i in 1:opt$crossval ) {
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.meta 
 	pred_train_meta = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.meta))) 
         r2_training_meta = append(r2_training_meta, pred_train_meta$adj.r.sq)
-	
+
 	colcount = colcount + 1
 	
 	}
@@ -631,18 +641,18 @@ for ( i in 1:opt$crossval ) {
 		pred.wgt.magepro <- t(pred.wgt.magepro)
 	}	
 
-	cv.calls[ indx , 3 ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.magepro
+	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.magepro
 
 	#store the r2 on training set
-	pred_train = summary(lm( cv.all[-indx,colcount] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.magepro))) #r^2 between predicted and actual 
+	pred_train = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.magepro))) #r^2 between predicted and actual 
 	r2_training_magepro = append(r2_training_magepro, pred_train$adj.r.sq)	
-	
+
 	}
 	#-------------------------------------------------------------------------------
 
 }
 
-if (opt$verbose >= 1) cat("### Printing Cross-Validation results \n")
+if (opt$verbose >= 1) cat("### COLLECTING CROSS VALIDATION RESULTS \n")
 
 #uses 80% of data to predict into 20%, then uses another 80% to predict into the next 20%, and so on. 
 #after everyone has a prediction, compute rsq and p value. 
@@ -650,9 +660,6 @@ if (opt$verbose >= 1) cat("### Printing Cross-Validation results \n")
 #compute rsq + P-value for each model
 cv.performance = matrix(NA,nrow=2,ncol=length(model))  
 rownames(cv.performance) = c("rsq","pval") 
-order <- c("SINGLE","META","MAGEPRO") 
-types <- model[match(order, model)]
-types <- unique(types[!is.na(types)])
 colnames(cv.performance) = types 
 
 for ( mod in 1:ncol(cv.calls) ) { 
@@ -669,92 +676,92 @@ if ( opt$verbose >= 1 ) write.table(cv.performance,quote=F,sep='\t')
 
 
 #take average of r2 on training set
-avg_training_r2_magepro <- mean(r2_training_magepro)
-avg_training_r2_afr <- mean(r2_training_afr)
-avg_training_r2_meta <- mean(r2_training_meta)
+avg_training_r2_single <- avg_training_r2_meta <- avg_training_r2_magepro <- NA
+if ("SINGLE" %in% model) avg_training_r2_single <- mean(r2_training_single)
+if ("META" %in% model) avg_training_r2_meta <- mean(r2_training_meta)
+if ("MAGEPRO" %in% model) avg_training_r2_magepro <- mean(r2_training_magepro)
 
 }
-
-#START HERE LATER
-
 
 # ---- Full Analysis 
-if (opt$verbose >= 1) cat("### Computing full-sample weights \n")
+if (opt$verbose >= 1) cat("### COMPUTING FULL GENE MODELS \n")
 
-total_ss_full <- total_ss_sumstats + N.tot
-
-wgt.matrix = matrix(0, nrow=nrow(genos$bim), ncol=3) 
-colnames(wgt.matrix) = c("AFRONLY","META","MAGEPRO")
+wgt.matrix = matrix(0, nrow=nrow(genos$bim), ncol=length(model)) 
+colnames(wgt.matrix) = types
 rownames(wgt.matrix) = genos$bim[,2]
 
-# --- SINGLE ANCESTRY
-pred.wgt2 = weights.lasso( geno.file , lasso_h2 , snp=genos$bim[,2] )	
-if ( sum(is.na(pred.wgt2)) == length(pred.wgt2)) {
-	pred.wgt2 = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T )
-	pred.wgt2[ - which.max( pred.wgt2^2 ) ] = 0
-}
-if(length(pred.wgt2) == 1){
-	pred.wgt2 <- t(pred.wgt2)
-}
-wgt.matrix[, 1] = pred.wgt2
+colcount = 1
 
+# --- SINGLE ANCESTRY
+pred.wgtfull = weights.lasso( geno.file , lasso_h2 , snp=genos$bim[,2] )	
+if ( sum(is.na(pred.wgtfull)) == length(pred.wgtfull)) {
+	pred.wgtfull = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T )
+	pred.wgtfull[ - which.max( pred.wgtfull^2 ) ] = 0
+}
+if(length(pred.wgtfull) == 1){
+	pred.wgtfull <- t(pred.wgtfull)
+}
+if ("SINGLE" %in% model){
+wgt.matrix[, colcount] = pred.wgtfull
+colcount = colcount + 1
+}
 # --- SS-WEIGHTED META-ANALYSIS
-pred.wgt.meta2 <- pred.wgt2 * (N.tot/total_ss_full)
+if ("META" %in% model){
+total_ss_full <- total_ss_sumstats + N.tot
+pred.wgt.metafull <- pred.wgtfull * (N.tot/total_ss_full)
 for (w in wgts){
 	dataset <- strsplit(w, split="[.]")[[1]][3]
 	size <- h[[dataset]]
-	pred.wgt.meta2 = pred.wgt.meta2 + (eval(parse(text=w)) * (size/total_ss_full))
+	pred.wgt.metafull = pred.wgt.metafull + (eval(parse(text=w)) * (size/total_ss_full))
 }
-if(length(pred.wgt.meta2) == 1){
-        pred.wgt.meta2 <- t(pred.wgt.meta2)
+if(length(pred.wgt.metafull) == 1){
+        pred.wgt.metafull <- t(pred.wgt.metafull)
 }
-wgt.matrix[, 2] = pred.wgt.meta2
-
+wgt.matrix[, colcount] = pred.wgt.metafull
+colcount = colcount + 1
+}
 # --- MAGEPRO
-w1 <- genos$bed %*% pred.wgt2
-eq2 <- matrix(0, nrow = length (w1), ncol = ext2 + 1)
-eq2[, 1] <- w1
+cf_total = NA
+if ("MAGEPRO" %in% model){
+w1 <- genos$bed %*% pred.wgtfull
+eqfull <- matrix(0, nrow = length (w1), ncol = ext2 + 1)
+eqfull[, 1] <- w1
 num = 2
 for (w in wgt2){	
-	eq2[,num] <- genos$bed %*% eval(parse(text = w))
+	eqfull[,num] <- genos$bed %*% eval(parse(text = w))
 	num = num+1
 }	
-
 #run ridge regression to find optimal coefficients and compute multipop weight
-if (ext2 > 0){
-	y2 <- cv.glmnet(x = eq2 , y = pheno[,3], alpha = 0, nfold = 5, intercept = T, standardize = T)
-	cf_total = coef(y2, s = "lambda.min")[2:(ext2+2)]	
-	total_coeff <- cf_total
-	predtext2 <- "cf_total[1]*pred.wgt2"
-	for (i in 2:(length(cf_total))){
-		predtext2 <- paste0(predtext2, " + cf_total[", i, "]*", wgt2[(i-1)])
-	}	
-	pred.wgt.magepro2 <- eval(parse(text = predtext2))
-}else{
-	pred.wgt.magepro2 <- pred.wgt2
-	total_coeff = c(NA)
-}		
-if(length(pred.wgt.magepro2) == 1){
-                pred.wgt.magepro2 <- t(pred.wgt.magepro2)
+yfull <- cv.glmnet(x = eqfull , y = pheno[,3], alpha = 0, nfold = 5, intercept = T, standardize = T)
+cf_total = coef(yfull, s = "lambda.min")[2:(ext2+2)]	
+predtextfull <- "cf_total[1]*pred.wgtfull"
+for (i in 2:(length(cf_total))){
+	predtextfull <- paste0(predtextfull, " + cf_total[", i, "]*", wgt2[(i-1)])
+}	
+pred.wgt.mageprofull <- eval(parse(text = predtextfull))
+if(length(pred.wgt.mageprofull) == 1){
+                pred.wgt.mageprofull <- t(pred.wgt.mageprofull)
 }
-wgt.matrix[, 3] = pred.wgt.magepro2
-
+wgt.matrix[, colcount] = pred.wgt.mageprofull
+}
 
 #--- SAVE RESULTS
-
 snps = genos$bim
-wgt2 <- append("pred.wgt", wgt2)
-if (sum(is.na(total_coeff)) == 0){ #coef = 0? remove from list of datasets used
-w <- which(total_coeff == 0)
+if ("MAGEPRO" %in% model){
+wgtmagepro <- append("pred.wgt", wgt2)
+w <- which(cf_total == 0)
 if (length(w) > 0 ) {
-wgt2 <- wgt2[-w]
-total_coeff <- total_coeff[-w]
+wgtmagepro <- wgtmagepro[-w]
+cf_total <- cf_total[-w]
 }
+}else{
+wgtmagepro = NA
 }
 
-save( wgt.matrix, snps, cv.performance, hsq_afr, hsq_afr.pv, N.tot , wgt2, total_coeff, avg_training_r2_afr, avg_training_r2_meta, avg_training_r2_magepro, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+print(cf_total)
 
+save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_magepro, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
-if ( opt$verbose >= 1 ) cat("### Cleaning up\n")
+if ( opt$verbose >= 1 ) cat("### CLEANING UP\n")
 cleanup()
