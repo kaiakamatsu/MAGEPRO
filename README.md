@@ -49,6 +49,7 @@ If you would like to run MAGEPRO on one gene, it is possible to run MAGEPRO.R se
 | --covar | Path to quantitative covariates in PLINK format (optional) |
 | --resid | Also regress the covariates out of the genotypes (default FALSE) |
 | --hsq_p | Minimum heritability p-value for which to compute weights (default 0.01, significantly heritable) |
+| --lassohsq | Backup heritability value to use in lasso regression if heritability is not calculated with gcta or gcta fails to produce a reasonable estimate (h2 > 0) |
 | --hsq_set | Skip heritability estimation and set hsq estimate to this value (optional, heritability computed with gcta otherwise) |
 | --crossval | Number of cross-validations (0 or 1 to skip) |
 | --verbose | How much chatter to print: 0=nothing; 1=minimal; 2=all (default 1) |
