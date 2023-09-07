@@ -28,7 +28,7 @@ Download gcta from either ...
 
 ## Command-line options for the computing gene-models one gene at a time
 
-> If you would like to run MAGEPRO on one gene, it is possible to run MAGEPRO.R separately with the following flags
+If you would like to run MAGEPRO on one gene, it is possible to run MAGEPRO.R separately with the following flags
 
 **required flags are bolded**
 
