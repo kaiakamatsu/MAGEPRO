@@ -13,7 +13,7 @@ Packages:
 - optparse_1.7.3
 
 GCTA 
-Download from either ...
+Download gcta from either ...
 - https://github.com/gusevlab/fusion_twas.git
 - https://yanglab.westlake.edu.cn/software/gcta/#Overview
 
@@ -27,6 +27,15 @@ Download from either ...
 ## Typical application of MAGEPRO on GTEx Tissues
 
 ## Command-line options for the computing gene-models one gene at a time
+
+## Directory 
+
+| Directory | Description |
+| -------- | -------- |
+| try | try |
+| -------- | -------- |
+| -------- | -------- |
+| -------- | -------- |
 
 # Support 
 > contact kakamatsu@ucsd.edu
