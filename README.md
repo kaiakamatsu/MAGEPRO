@@ -42,7 +42,7 @@ If you would like to run MAGEPRO on one gene, it is possible to run MAGEPRO.R se
 | --sumstats | Comma-separated list of external datasets to include (required if using MAGEPRO or META models) |
 | --model | Comma-separated list of models to use. Options: "SINGLE" "META" and "MAGEPRO" (default SINGLE,META,MAGEPRO) |
 | --ss | Comma-separated list of sample sizes of sumstats in the same order as --sumstats (required if using "META" model or --cell_type_meta) |
-| --cell_type_meta  | Comma-separated list of prefixes of eqtl datasets to cell type meta-analyze (--ss required) |
+| --cell_meta  | Comma-separated list of prefixes of eqtl datasets to cell type meta-analyze (--ss required) |
 | --pheno | Path to molecular phenotype file in PLINK format (taken from bfile otherwise) |
 | --PATH_plink | Path to plink executable (default "plink") |
 | --PATH-gcta | Path to gcta executable (default "gcta_nr_robust") |
