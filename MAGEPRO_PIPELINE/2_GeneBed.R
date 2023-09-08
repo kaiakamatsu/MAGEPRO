@@ -1,12 +1,13 @@
 library(data.table)
+library(dplyr)
 
 #--- read in command-line args
 args <- commandArgs(trailingOnly = TRUE)
 ge_file <- args[1]
 gene_beds <- args[2]
 intermed <- args[3]
+subset <- args[4]
 
-print("EXTRACTING GENES WITH GE DATA")
 #--- parsing through ge file to grab TSS information for each gene
 ensg <- data.frame() 
 ge <- fread(ge_file, header = T)
@@ -17,10 +18,13 @@ if(length(wremove)>0){ge <- ge[-wremove,]}
 dump <- ge[,1:4] #grabbing just the first 4 columns (#chr, start, end, gene_id)
 ensg <- rbind(ensg,dump) #add it to the ensg
 ensg <- unique(ensg) #delete duplicates 
-print( paste0( "number of genes with ge data: ", nrow(ensg))) #19696 for whole_blood 
+if (subset != 'NA'){
+subset_genes <- fread(subset, header = F)
+ensg <- filter(ensg, gene_id %in% subset_genes$V1)
+}
+print( paste0( "number of genes with ge data in analysis: ", nrow(ensg))) #19696 for whole_blood 
 write.table(ensg[,4], paste0(intermed, "/All_Genes_Expressed.txt"), row.names = F, col.names = F, sep ="\t", quote = F)
 
-print( "CREATING GENE BEDS" )
 #--- write files detailing the cis-region bp of every gene
 for (i in 1:nrow(ensg)){  
 bounds_l <- max(0,ensg$start[i] - 500000) #left bound = whichever is bigger 0 or start - 500kb

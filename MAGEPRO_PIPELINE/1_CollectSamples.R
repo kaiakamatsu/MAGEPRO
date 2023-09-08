@@ -1,7 +1,5 @@
 library(data.table)
 
-print("EXTRACTING INDIVIDUALS WITH BOTH GENOTYPE AND GE DATA")
-
 #--- read in command line arguments 
 args <- commandArgs(trailingOnly = TRUE)
 fam_file <- paste0(args[1], "1.fam") #path to plink files containing all individuals of interest 

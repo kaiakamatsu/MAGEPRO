@@ -7,7 +7,6 @@ intermediate_dir <- args[2]
 scratchplink <- args[3]
 
 #--- get all of genes names from the scratch directory and split them up into jobs 
-print("ASSIGNING BATCHES TO GENES")
 allgenes <- list.files(path = paste0(scratchplink,"/"), pattern = ".fam")
 allgenenames <- as.data.frame(gsub(patter = ".fam", replacement = "", x=allgenes))
 #goal: first col = gene name, second col = batch number 

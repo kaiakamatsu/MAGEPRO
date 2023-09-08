@@ -63,7 +63,7 @@ then
     mv $wd/$gene.mod.fam $wd/$gene.fam 
     TMP=$tmpdir/${gene}
     OUT=$weights/${gene}
-    Rscript ComputeMultiPopWeights.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --hsq_p 1 --tmp $TMP --out $OUT --PATH_gcta $gcta --verbose 2 --PATH_plink ${plink_exec1} --datasets $dataset #FUSION USES PLINK1.9 FOR --lasso FLAG
+    Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --hsq_p 1 --tmp $TMP --out $OUT --PATH_gcta $gcta --verbose 2 --PATH_plink ${plink_exec1} --datasets $dataset #FUSION USES PLINK1.9 FOR --lasso FLAG
     rm $wd/$gene.* 
 
 fi

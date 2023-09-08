@@ -25,7 +25,7 @@ option_list = list(
 	      MAGEPRO = magepro model"),
   make_option("--ss", action="store", default=NA, type='character',
               help="Comma-separated list of sample sizes of sumstats (in the same order)"), 
-  make_option("--cell_type_meta", action="store", default=NA, type='character',
+  make_option("--cell_meta", action="store", default=NA, type='character',
               help="Comma-separated list of prefixes of eqtl datasets to ss-meta-analyze (--ss required) \n 
 	      for ex. --cell-type-meta ota will meta-analyze [ota_CD16, ota_CD4]. \n 
 	      NOTE: this cell-type meta-analysis happens before the --meta flag meta-analysis across all datasets. \n 
@@ -58,7 +58,7 @@ option_list = list(
 
 # --- PARSE COMMAND LINE ARGS
 opt = parse_args(OptionParser(option_list=option_list))
-print(opt)
+if ( opt$verbose >= 1 ) print(opt)
 
 if ( opt$verbose == 2 ) {
   SYS_PRINT = F
@@ -276,7 +276,7 @@ if (opt$sumstats != ""){
 }
 
 h <- list() #hashmap for sample sizes per dataset
-if ( ("META" %in% model) | ( !is.na(opt$cell_type_meta) )){
+if ( ("META" %in% model) | ( !is.na(opt$cell_meta) )){
 	if (!is.na(opt$ss)){
 		sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
 		if (length(sumstats) != length(sample_sizes)){
@@ -460,7 +460,10 @@ if ( opt$verbose >= 1 ) cat(nrow(pheno),"phenotyped samples, ",nrow(genos$bed),"
 # --- SETUP SUMSTATS FOR META and MAGEPRO 
 
 lasso_h2 <- hsq[1]
-if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){lasso_h2 <- opt$lassohsq}  #when gcta does not converge or yield wild estimates
+if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){
+	if ( opt$verbose >= 1 ) cat("forcing lasso heritability to ", opt$lassohsq, " \n")
+	lasso_h2 <- opt$lassohsq
+}  #when gcta does not converge or yield wild estimates
 
 if ("MAGEPRO" %in% model | "META" %in% model){
 
@@ -475,13 +478,13 @@ for (d in datasets){
 	wgts <- datasets_process(genos$bim, name, eval(parse(text = d)), wgts) # Run process dataset function on all datasets
 }
 
-if (!is.na(opt$cell_type_meta)){
+if (!is.na(opt$cell_meta)){
 if (opt$verbose == 2){
-	cat("Meta-analyzing cell types together to create one eqtl profile per --cell_type_meta prefix \n")
+	cat("Meta-analyzing cell types together to create one eqtl profile per --cell_meta prefix \n")
 }
 new_wgts <- c()
 index <- c()
-cells_datasets <- strsplit(opt$cell_type_meta, split = ",")[[1]]
+cells_datasets <- strsplit(opt$cell_meta, split = ",")[[1]]
 for (c in cells_datasets){
 	wgts_index <- meta_cells(c, new_wgts, index)
 	new_wgts <<- wgts_index[[1]]
@@ -760,7 +763,6 @@ cf_total <- cf_total[-w]
 wgtmagepro = NA
 }
 
-print(cf_total)
 
 save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_magepro, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
