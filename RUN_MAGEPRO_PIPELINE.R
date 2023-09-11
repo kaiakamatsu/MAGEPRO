@@ -13,6 +13,8 @@ option_list = list(
               help="Path to quantitative covariates (PLINK format) [optional]"),
   make_option("--num_covar", action="store", default=NA, type='double',
               help="Number of covariate to use (number of rows to extract from --covar file). Default ALL rows below sample ids [optional]"),
+  make_option("--num_batches", action="store", default=20, type='double',
+              help="Number of batch jobs to split the genes into. Default 20 [optional]"),
   make_option("--rerun", action="store_true", default=FALSE,
               help="Are you rerunning the pipeline? TRUE = skip recreating plink files per gene"),
   make_option("--out", action="store", default=NA, type='character',
@@ -121,11 +123,20 @@ if ( opt$verbose >= 1 ) cat("### SKIPPING COVAR FILE PROCESSING \n")
 }
 
 # --- SPLIT UP GENES INTO BATCHES, SUBSET TO GENES OF INTEREST
-
-#4_AssignBatches.R  
-
+if ( opt$verbose >= 1 ) cat("### ASSIGNING GENE BATCHES \n")
+arg = paste("Rscript MAGEPRO_PIPELINE/4_AssignBatches.R", opt$intermed_dir, opt$num_batches, sep = " ")
+system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+if ( opt$verbose >= 1 ) cat("### WROTE GENE BATCH FILE IN ", opt$intermed_dir, "/Genes_Assigned.txt\n", sep = "")
 
 # --- RUN SLURM JOBS PER BATCH 
+# read batch file and split genes per batch number 
+if ( opt$verbose >= 1 ) cat("### RUNNING JOBS \n")
+batches <- c(1:opt$num_batches)
+for (batch in 1){
+arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$cell_meta, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, sep = " ") #FIX THIS HSQ_SET PASSES NA AS A STRING
+system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+}
+
 #5_RunJobs.sh
 
 

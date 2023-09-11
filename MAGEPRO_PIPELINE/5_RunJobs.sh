@@ -6,12 +6,11 @@
 #SBATCH -t 03:00:00
 #SBATCH -J MAGEPRO
 #SBATCH -A ddp412
-#SBATCH -o ../workingerr/MAGEPRO.%j.%N.out
-#SBATCH -e ../workingerr/MAGEPRO.%j.%N.err
+#SBATCH -o ../working_err/MAGEPRO.%j.%N.out
+#SBATCH -e ../working_err/MAGEPRO.%j.%N.err
 #SBATCH --export=ALL
 #SBATCH --constraint="lustre"
 
-#Compute Weights
 module purge
 module load cpu/0.15.4
 module load gcc/9.2.0
@@ -22,16 +21,25 @@ conda activate r_env
 
 #--- read command line arguments
 batch=$1
-dataset=$2
-gefile=$3
-scratch=$4 #make wd and temp, get plink
-intermed=$5
-weights=$6
-plink_exec=$7
-plink_exec1=$8
-gcta=$9
-
-echo $plink_exec1
+gefile=$2
+scratch=$3 #make wd and temp, get plink
+intermed=$4
+weights=$5
+plink_exec=$6
+gcta=$7
+sumstats_dir=$8
+sumstats=$9
+models=${10}
+ss=${11}
+cell_meta=${12}
+resid=${13}
+hsq_p=${14}
+lassohsq=${15}
+hsq_set=${16}
+crossval=${17}
+verbose=${18}
+noclean=${19}
+save_hsq=${20}
 
 #--- create paths
 tmpdir=$scratch/tmp
@@ -39,7 +47,7 @@ mkdir $tmpdir
 wd=$scratch/wd
 mkdir $wd
 plinkdir=$scratch/plink_gene
-batchfile=$intermed/genes_assign_Whole_Blood.txt 
+batchfile=$intermed/Genes_Assigned.txt 
 geneids=$intermed/All_Genes_Expressed.txt 
 ind=$intermed/All_Individuals.txt #all individuals with both genotype and ge data 
 
@@ -63,9 +71,8 @@ then
     mv $wd/$gene.mod.fam $wd/$gene.fam 
     TMP=$tmpdir/${gene}
     OUT=$weights/${gene}
-    Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --hsq_p 1 --tmp $TMP --out $OUT --PATH_gcta $gcta --verbose 2 --PATH_plink ${plink_exec1} --datasets $dataset #FUSION USES PLINK1.9 FOR --lasso FLAG
+    Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --cell_meta $cell_meta --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq
     rm $wd/$gene.* 
-
 fi
 
 done

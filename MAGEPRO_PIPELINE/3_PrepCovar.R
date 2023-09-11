@@ -24,7 +24,7 @@ if(nums_covar != 'NA'){
 	# if I want 2 covars, nums_covar = 2, we take columns 3:4, 4 = 2+2
 }
 covar_DS <- covar_DS[, c(3:endcol)]
-print(head(covar_DS))
+
 
 #--- write output
 write.table(covar_DS, file=paste0( intermediate_dir, "/Covar_All.txt"),row.names = F, col.names = T, sep = "\t", quote = F)
