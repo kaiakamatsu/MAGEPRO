@@ -20,6 +20,35 @@ Download gcta from either ...
 
 ## Command-line options for the full pipeline (RUN_MAGEPRO_PIPELINE.R)
 
+**required flags are bolded**
+
+| Flags | Description |
+| -------- | -------- |
+| **--bfile** | Path to PLINK binary input file prefix (this pipeline will only use sample IDs with both GE and GENOTYPE data) |
+| **--out** | Path to save output files |
+| **--scratch** | Path to scratch directory (temporary files will be stored here) |
+| **--ge** | Path to individual-level, normalized gene expression data in matrix format (see input formats below for more details) |
+| --covar | Optional path to quantitative covariates (PLINK format) |
+| --num_covar | Number of covariate to use (number of rows to extract from --covar file). Default ALL rows below sample ids. |
+| --num_batches | Number of batch jobs to split the genes into. Default 20. |
+| --rerun | Boolean to indicate if the pipeline is being reran (TRUE = skip creation of plink files per gene) |
+| --intermed_dir | Directory to store intermediate files |
+| --subset_genes | Path to file with genes of interest in one column |
+| --sumstats_dir | Path to external datasets (required if using MAGEPRO or META models) |
+| --sumstats | Comma-separated list of external datasets to include (required if using MAGEPRO or META models) |
+| --model | Comma-separated list of models to use. Options: "SINGLE" "META" and "MAGEPRO" (default SINGLE,META,MAGEPRO) |
+| --ss | Comma-separated list of sample sizes of sumstats in the same order as --sumstats (required if using "META" model or --cell_type_meta) |
+| --cell_meta  | Comma-separated list of prefixes of eqtl datasets to cell type meta-analyze (--ss required) |
+| --PATH_plink | Path to plink executable (default "plink") |
+| --PATH-gcta | Path to gcta executable (default "gcta_nr_robust") |
+| --resid | Also regress the covariates out of the genotypes (default FALSE) |
+| --hsq_p | Minimum heritability p-value for which to compute weights (default 0.01, significantly heritable) |
+| --lassohsq | Backup heritability value to use in lasso regression if heritability is not calculated with gcta or gcta fails to produce a reasonable estimate (h2 > 0) |
+| --hsq_set | Skip heritability estimation and set hsq estimate to this value (optional, heritability computed with gcta otherwise) |
+| --crossval | Number of cross-validations (0 or 1 to skip) |
+| --verbose | How much chatter to print: 0=nothing; 1=minimal; 2=all (default 1) |
+| --noclean | Do not delete any temporary files (default FLASE) |
+| --save_hsq | Save heritability results even if weights are not computed (default FALSE) |
 
 ## Output format
 
