@@ -106,6 +106,12 @@ afr <- as.data.frame(sig_afr)
 colnames(afr) <- cols
 nrow(afr) #131
 
+afr_names <- filter(genes_table, ID %in% afr$ID)
+combined_afr <- merge(afr, afr_names, by = "ID", all = TRUE)
+
+write.table(combined_afr, file = "C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/TWAS/AFR_bonferroni_sigh2_either.txt", quote = FALSE, col.names = TRUE, row.names = FALSE)
+
+
 # EUR model 
 
 phenos <- c("BAS", "HGB", "MCHC", "MPV", "RBC", "EOS", "LYM", "MCV", "NEU", "RDW", "HCT", "MCH", "MON", "PLT", "WBC")
@@ -248,7 +254,8 @@ eur <- as.data.frame(eur)
 colnames(eur) <- cols
 eursplit <- split(eur, eur$PHENO)
 
-aa_specific <- combined_magepro[which(! combined_magepro$ID %in% combined_eur$ID),]
+aa_specific <- combined_magepro[which(! combined_magepro$ID %in% combined_eur$ID),] #in magepro afr but not in eur
+aa_specific <- combined_magepro[which( (! combined_magepro$ID %in% combined_eur$ID) & (! combined_magepro$ID %in% combined_afr$ID) ),] #in magepro afr, not in afronly and eur
 TWASeur_p <- c()
 TWASeur_z <- c()
 GWASeur_id <- c()
@@ -274,7 +281,7 @@ aa_specific_with_eur <- cbind(aa_specific, EQTLeur.ID, EQTLeur.R2, EQTLeur.Z, GW
 nrow(aa_specific_with_eur)
 rownames(aa_specific_with_eur) <- NULL
 
-write.table(aa_specific_with_eur, file = "C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/AA_specific_genes.txt", quote = FALSE, col.names = TRUE, row.names = FALSE)
+write.table(aa_specific_with_eur, file = "C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/MAGEPROaa_specific_gene_trait_assoc.txt", quote = FALSE, col.names = TRUE, row.names = FALSE)
 
 
 # --- MANHATTAN 

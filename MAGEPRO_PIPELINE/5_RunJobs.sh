@@ -22,7 +22,7 @@ conda activate r_env
 #--- read command line arguments
 batch=$1
 gefile=$2
-scratch=$3 #make wd and temp, get plink
+scratch=$3 
 intermed=$4
 weights=$5
 plink_exec=$6

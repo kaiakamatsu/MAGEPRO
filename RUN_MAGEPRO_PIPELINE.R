@@ -128,15 +128,21 @@ arg = paste("Rscript MAGEPRO_PIPELINE/4_AssignBatches.R", opt$intermed_dir, opt$
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 if ( opt$verbose >= 1 ) cat("### WROTE GENE BATCH FILE IN ", opt$intermed_dir, "/Genes_Assigned.txt\n", sep = "")
 
+
+# --- CREATE DIRECTORY FOR STANDARD OUT AND ERROR FILES FROM BATCH JOBS
+if ( opt$verbose >= 1 ) cat("### CREATING DIRECTORY ../working_err FOR BATCH JOB OUT/ERROR FILES \n")
+system( "mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+
 # --- RUN SLURM JOBS PER BATCH 
 # read batch file and split genes per batch number 
 if ( opt$verbose >= 1 ) cat("### RUNNING JOBS \n")
 batches <- c(1:opt$num_batches)
 for (batch in 1){
-arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$cell_meta, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, sep = " ") #FIX THIS HSQ_SET PASSES NA AS A STRING
+arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$cell_meta, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 }
 
-#5_RunJobs.sh
+# --- PROCESS RESULTS WHEN JOBS FINISH RUNNING
+if ( opt$verbose >= 1 ) cat("### WHEN JOBS FINISH RUNNING, USE THE SCRIPTS IN PROCESS_RESULTS DIRECTORY TO SUMMARIZE GENE MODELS \n")
 
 

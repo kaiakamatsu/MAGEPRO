@@ -27,7 +27,8 @@ nrow(stats)#19602 genes
     #not present in any external datasets
 
 #w <- which((stats$datasets != "pred.wgt") & (stats$hsq_afr.pv < 0.01))
-w <- which((stats$datasets != "pred.wgt"))
+#w <- which((stats$datasets != "pred.wgt"))
+w <- which((stats$datasets != "pred.wgt") & (stats$hsq_afr > 0) & (stats$hsq_afr != 0.064251))
 stats <- stats[w, ]
 nrow(stats) #19567 genes in this comparison 
 mean_h2 = mean(stats$hsq_afr) #0.06321698
@@ -70,6 +71,15 @@ ggsave(filename = "C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/final_plots/MAGEP
 
 #--------------------------------------------------------------------------------------------------------------------
 
+#--- how many genes have a raw r2 increase of > 0.05? 
+nrow(stats) #10745
+delta <- stats$lasso.top1_magepro - stats$lasso.top1_afr
+length(which(delta > 0.05)) #4956
+#--------------------------------------------------
+
+#---num genes increase
+length(which(stats$lasso.top1_magepro > stats$lasso.top1_afr))
+#---
 
 #---if we subset to significantly heritable & present in at least 1 dataset (h2p < 0.05 and positive)
 stats <- read.table(file='C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/MAGEPRO_fullsumstats_r2_h2.txt', as.is = T, header = T)
@@ -147,8 +157,7 @@ ggsave(filename = "C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/final_plots/bench
 #--------------------------------------------------------------------------------------------------------------------
 
 #r2 vs h2 line plot -------------------------------------------------------------------------------------------------
-#IMPORTANT NOTE: I used EUR h2 as the threshold of accuracy 
-    #our preliminary analysis shows that AFR h2 is underestimated due to small sample size
+#IMPORTANT NOTE: I used AFR h2 
 r2h2 <- stats #continue working with dataframe created above
 
 r2h2$lasso.top1_afr[r2h2$lasso.top1_afr < 0] <- 0
@@ -160,38 +169,6 @@ groups <- rep(c("META", "AFRonly", "MAGEPRO"), each=nrow(r2h2))
 combined <- c(r2h2$lasso.top1_meta, r2h2$lasso.top1_afr, r2h2$lasso.top1_magepro)
 h2combined <- c(r2h2$hsq_afr, r2h2$hsq_afr, r2h2$hsq_afr)
 df <- data.frame(groups, combined, h2combined)
-
-#load in dataframe of European h2 values 
-#eurh2 <- read.table(file='C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/eurh2.txt', as.is=T, header = T)
-#nrow(eurh2)
-
-#some genes from the r2 analysis above do not have EUR h2 values, so filter those out
-#m1 <- match(r2h2$gene, eurh2$gene)
-#eurh2 <- eurh2[m1, ]
-#eurh2 <- na.omit(eurh2)
-#m2 <- match(eurh2$gene, r2h2$gene)
-#r2h2 <- r2h2[m2, ]
-#nrow(r2h2) #19122
-#nrow(eurh2) #19122
-#all(r2h2$gene == eurh2$gene) #true 
-
-#split into r2 dataframe and h2 dataframe
-#r2 <- as.matrix(r2h2[,2:4])
-#h2 <- r2h2[,8:10]
-#h2 <- data.frame(h2, eurh2[,2:3]) #append EUR h2 to h2 dataframe
-#colnames(h2) <- c("hsq_afr", "hsq_afr_se", "hsq_afr.pv", "hsq_eur", "hsq_eur.pv")
-#r2[r2 < 0] <- 0 #if r2 is negative, set to 0 (for cleaner plot)
-#h2$hsq_eur[h2$hsq_eur < 0] <- 0 #if h2 is negative, set to 0 (for cleaner plot)
-
-#populate dataframe
-#vafr <- r2[,1]
-#vmeta <- r2[,2]
-#vmagepro <- r2[,3]
-#groups <- rep(c("META", "AFRonly", "MAGEPRO"), each=length(vafr))
-#h2_vec <- h2$hsq_eur
-#h2combined <- c(h2_vec, h2_vec, h2_vec) #append 3 vectors of h2 values
-#combined <- c(vmeta, vafr, vmagepro) #append vectors 
-#df <- data.frame(groups, combined, h2combined)
 
 cc <- c("#F5E453","#808080","#0666A1")
 df$groups <- factor(df$groups,levels=unique(as.character(df$groups)))
@@ -234,24 +211,6 @@ PRSCSx = PRSCSx[, -c(6:9)]
 merged <- merge(stats, PRSCSx, by = 'gene')
 nrow(merged)#9767
 colnames(merged)
-
-
-
-#IMPORTANT NOTE: I used EUR h2 as the threshold of accuracy 
-#our preliminary analysis shows that AFR h2 is underestimated due to small sample size
-#r2h2 <- merged #continue working with dataframe created above
-#load in dataframe of European h2 values 
-#eurh2 <- read.table(file='C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/eurh2.txt', as.is=T, header = T)
-
-#some genes from the r2 analysis above do not have EUR h2 values, so filter those out
-#m1 <- match(r2h2$gene, eurh2$gene)
-#eurh2 <- eurh2[m1, ]
-#eurh2 <- na.omit(eurh2)
-#m2 <- match(eurh2$gene, r2h2$gene)
-#r2h2 <- r2h2[m2, ]
-#nrow(r2h2) #9594
-#nrow(eurh2) #9594
-#all(r2h2$gene == eurh2$gene) #true 
 
 #split into r2 dataframe and h2 dataframe
 r2 <- as.matrix(merged[,c(2,3,4,16,17)])
@@ -314,8 +273,6 @@ models=c("EURONLY", "META","MAGEPRO")
 df <- data.frame(average_r2,sem_r2, models)
 write.table(df, file = "C:/Users/kaiak/OneDrive/Desktop/AMARIUTALAB/final_plots/magepro_EUR_r2.txt", quote = F, row.names = F, col.names = T)
 
-
-#---
 
 #check percent increase
 (df$average_r2[3] - df$average_r2[1])/df$average_r2[1] #53%
@@ -708,7 +665,7 @@ mean(ratios) #1257.41
 #--------------------------------------------------------------------------------------------------------------------
 
 #number of genes and percent increase buckets ----------------------------------------------------------------------
-nrow(stats) #10745 -> genes h2 > 0, present in atleast one external dataset 
+nrow(stats)
 colnames(stats)
 stats_percents <- stats # copy to new dataframe
 #zero out negative r2 to prevent sign changes

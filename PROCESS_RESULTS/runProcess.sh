@@ -22,5 +22,6 @@ conda activate r_env
 
 output=$1 #/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO_gtexEUR/weights
 genes=$2 #/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO_gtexEUR/intermediate/genes_assign_Whole_Blood.txt
+models=$3 #SINGLE,META,MAGEPRO
 
-Rscript processWeights.R $output $genes
+Rscript processWeights.R $output $genes $models

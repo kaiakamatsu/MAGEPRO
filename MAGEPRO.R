@@ -58,6 +58,9 @@ option_list = list(
 
 # --- PARSE COMMAND LINE ARGS
 opt = parse_args(OptionParser(option_list=option_list))
+na <- which(opt == "NA") 
+opt[na] <- NA
+
 if ( opt$verbose >= 1 ) print(opt)
 
 if ( opt$verbose == 2 ) {

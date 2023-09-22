@@ -6,11 +6,14 @@ tissues <- "Whole_Blood"
 args <- commandArgs(trailingOnly = TRUE)
 output <- args[1] #path to output directory
 genes_assign <- args[2] #path to genes assigned file
+models <- strsplit(args[3], split = ",")[[1]] #comma-separated list of models used (SINGLE,META,MAGEPRO)
+
+num_models <- length(models)
 
 for (i in 1:length(tissues)){
 genes <- read.table(file = genes_assign, header = F)$V1 #all genes in analysis
 
-r2_h2 <- matrix(0, length(genes), 15)
+r2_h2 <- matrix(0, length(genes), 2*num_models+6)
 
 for (j in 1:length(genes)){
 
@@ -22,53 +25,27 @@ if(file.exists(file)){
 if(file.info(file)$size > 0){
 load(file)
 r2_h2[j,1] <- genes[j]
-r2_h2[j,2:(ncol(cv.performance)+1)] <- cv.performance[1,]
-r2_h2[j,((ncol(cv.performance)+2): 7)] <- cv.performance[2,]
-r2_h2[j, 8] <- hsq_afr[1]
-r2_h2[j, 9] <- hsq_afr[2]
-r2_h2[j, 10] <- hsq_afr.pv
-if (length(wgt2) > 0){
-	print(paste(wgt2, collapse = ","))
-	r2_h2[j, 11] <- paste(wgt2, collapse = ",")
+r2_h2[j,2:(num_models+1)] <- cv.performance[1,]
+r2_h2[j,((num_models+2): (2*num_models+1) )] <- cv.performance[2,]
+r2_h2[j, 2*num_models+2] <- hsq[1]
+r2_h2[j, 2*num_models+3] <- hsq[2]
+r2_h2[j, 2*num_models+4] <- hsq.pv
+if (sum(is.na(wgtmagepro)) == 0){
+	r2_h2[j, 2*num_models+5] <- paste(wgtmagepro, collapse = ",")
 }else{
-	r2_h2[j, 11] <- NA
+	r2_h2[j, 2*num_models+5] <- NA
 }
 
-nonzeroAFR <- length(which(wgt.matrix[, 1] != 0))
-nonzeroMAGEPRO <- length(which(wgt.matrix[, 3] != 0))
-
-r2_h2[j, 12] <- nonzeroAFR
-r2_h2[j, 13] <- nonzeroMAGEPRO
-
-ab <- c()
-
-if (is.matrix(alpha_beta)){
-	for (c in 1:ncol(alpha_beta)){
-		ab <- append(ab, sum(alpha_beta[,c]^2))
-	}
-	ab <- paste(ab, collapse = ",")
-}else{
-	ab <- NA
-}
-
-print(ab)
-
-r2_h2[j, 14] <- ab
-
-r2_h2[j, 15] <- paste(total_coeff, collapse = ",")
+r2_h2[j, 2*num_models+6] <- paste(cf_total, collapse = ",")
 
 }
 }
 }
 
 
-newcolnamesr2h2 <- c("gene", "lasso.top1_eur", "lasso.top1_meta","lasso.top1_magepro", "lasso.top1_eur_pv", "lasso.top1_meta_pv","lasso.top1_magepro_pv", "hsq_eur", "hsq_eur_se", "hsq_eur.pv", "datasets", "nonzeroEUR", "nonzeroMAGEPRO", "alpha_beta", "alphas")
+newcolnamesr2h2 <- c("gene", paste0(models, "_r2"), paste0(models, "_pv"), "hsq", "hsq_se", "hsq.pv", "datasets", "alphas")
 colnames(r2_h2) <- newcolnamesr2h2
 
-h <- which(r2_h2[,2] == 0)
-if(length(h) > 0){r2_h2 <- r2_h2[-h,]}
-
-
-write.table(r2_h2, file = "MAGEPRO_results.txt", row.names = F, col.names = T, sep = "\t", quote = F)
+write.table(r2_h2, file = paste0(output, "/MAGEPRO_results.txt"), row.names = F, col.names = T, sep = "\t", quote = F)
 }
 
