@@ -1,5 +1,5 @@
 # MAGEPRO (Multi-Ancestry Gene Expression Prediction Regularized Optimization) <img src = IMAGES/veigar.png width="50" height="50"> <img src = IMAGES/wand.png width="50" height="50">
-MAGEPRO is a predictive genetics method to create powerful gene expression prediction models for populations that are underrepresented in genetic studies. We leverage eQTL summary statistics from diverse ancestries to optimize our gene models and enable the identification of novel gene-trait associations through transcriptome-wide association studies. 
+MAGEPRO is a predictive genetics method to create powerful gene expression prediction models. We leverage eQTL summary statistics from diverse ancestries to optimize our gene models and enable the identification of novel gene-trait associations through transcriptome-wide association studies. 
 
 # USING MAGEPRO 
 
@@ -18,11 +18,14 @@ Download gcta from either ...
 - https://yanglab.westlake.edu.cn/software/gcta/#Overview
 
 
-## Command-line options for the full pipeline
+## Command-line options for the full pipeline (RUN_MAGEPRO_PIPELINE.R)
+
 
 ## Output format
 
+
 ## Input data format
+
 
 ## Typical application of MAGEPRO on GTEx Tissues
 
