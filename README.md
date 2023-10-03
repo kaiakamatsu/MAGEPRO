@@ -17,6 +17,9 @@ Download gcta from either ...
 - https://github.com/gusevlab/fusion_twas.git
 - https://yanglab.westlake.edu.cn/software/gcta/#Overview
 
+Plink 1.9 
+Download from ...
+- https://www.cog-genomics.org/plink/1.9/
 
 ## Command-line options for the full pipeline (RUN_MAGEPRO_PIPELINE.R)
 
