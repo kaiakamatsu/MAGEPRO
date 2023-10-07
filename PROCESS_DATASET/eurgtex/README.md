@@ -1,3 +1,5 @@
+# Extracting and preparing data from gtex
+
 see eurgtex_main.sh for full pipeline
 
 loop_download.sh
