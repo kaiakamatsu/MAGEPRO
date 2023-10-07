@@ -19,7 +19,7 @@ module load slurm
 source ~/.bashrc
 conda activate r_env
 
-basedir=$1 #directory where tje parquet files and snp reference files are stored
+basedir=$1 #directory where the parquet files and snp reference files are stored
 outputgene=$2
 
 # Rscript split_merge.R <eqtl full sumstats parquet file> <snps reference file> <output>  
