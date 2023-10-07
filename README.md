@@ -21,6 +21,10 @@ Plink 1.9
 Download from ...
 - https://www.cog-genomics.org/plink/1.9/
 
+## Preparing datasets
+
+MAGEPRO utilizes external eQTL summary statistics to improve gene models trained on a specific population. See PROCESS_DATASET directory for more information on how to prepare summary statistics used in our analysis.
+
 ## Command-line options for the full pipeline (RUN_MAGEPRO_PIPELINE.R)
 
 **required flags are bolded**
