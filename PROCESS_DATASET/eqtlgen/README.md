@@ -7,5 +7,5 @@ Acquire smr software tool executable from ...
 - https://yanglab.westlake.edu.cn/software/smr/#Download
 
 We have prepared a script to extract the eqtl summary statistics and create gene-specific files
-> bash eqtlgen_main.sh <path to smr software executable> <path to directory containing eqtl sumstat file> <path to output intermediate file (eqtl data split by chromosome)> <path to snp reference file (SNPs to keep in analysis)> <path to output gene specific files>
+> bash eqtlgen_main.sh <path to smr software executable> <path to directory containing eqtl sumstat file> <path to output intermediate file {eqtl data split by chromosome}> <path to snp reference file {SNPs to keep in analysis}> <path to output gene specific files>
 
