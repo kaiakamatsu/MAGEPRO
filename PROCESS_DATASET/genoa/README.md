@@ -3,4 +3,5 @@
 download genoa sumstats from ...
 - http://www.xzlab.org/data/AA_summary_statistics.txt.gz 
 
-
+see script ... 
+- run_splitFilter.sh
