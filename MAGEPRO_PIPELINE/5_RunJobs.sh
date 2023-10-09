@@ -50,12 +50,13 @@ plinkdir=$scratch/plink_gene
 batchfile=$intermed/Genes_Assigned.txt 
 geneids=$intermed/All_Genes_Expressed.txt 
 ind=$intermed/All_Individuals.txt #all individuals with both genotype and ge data 
+samples=$intermed/Sample_IDs.txt 
 
 #--- get column numbers (in ge data) of individuals we are interested in
 genes=$(awk '$2 == '${batch}' {print $1}' $batchfile) #all genes with the batch number passed in to the script 
 #grabbing just the individuals we want
 alldonors=$(zcat $gefile | head -n 1)
-colind=$(echo $alldonors | sed 's| |\n|g' | nl | grep -f $ind | awk 'BEGIN {ORS=","} {print $1}') 
+colind=$(echo $alldonors | sed 's| |\n|g' | nl | grep -f $samples | awk 'BEGIN {ORS=","} {print $1}') 
 colind2=${colind%,} #remove last comma - at this point we have a comma delimited list of column numbers of individuals we want to extract from the ge data 
 
 for gene in $genes
@@ -63,11 +64,11 @@ do
 filecheck=$plinkdir/$gene.bed
 if test -f "$filecheck"
 then
-    $plink_exec --bfile $plinkdir/$gene --make-bed --keep $ind --out $wd/$gene
+    $plink_exec --bfile $plinkdir/$gene --allow-no-sex --make-bed --keep $ind --out $wd/$gene
     rm $wd/$gene.log 
     rowid=$(cat $geneids | nl | grep $gene | awk '{print $1 + 1}') #+1 for col header in ge file - row number of the gene in the ge file 
     ge_donors=$(zcat $gefile | head -n $rowid | tail -n 1 | cut -f $colind2)  #gene expression from the individuals of interest
-    paste --delimiters='\t' <(cut -f1-5 $wd/$gene.fam) <(echo $ge_donors | sed 's/ /\n/g') > $wd/$gene.mod.fam #modifying fam file with ge data 
+    paste --delimiters=' ' <(cut -d' ' -f1-5 $wd/$gene.fam) <(echo $ge_donors | sed 's/ /\n/g') > $wd/$gene.mod.fam #modifying fam file with ge data 
     mv $wd/$gene.mod.fam $wd/$gene.fam 
     TMP=$tmpdir/${gene}
     OUT=$weights/${gene}

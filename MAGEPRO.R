@@ -261,7 +261,7 @@ if (opt$sumstats != ""){
 				datasets <- append(datasets, paste0("file.", s))
 			}else{
 				if ( opt$verbose == 2 ) {
-					cat("skipping sumstat", s, "for this gene")
+					cat("skipping sumstat", s, "for this gene\n")
 				}
 			}
 		}else{ #if there is no directory of eqtl sumstats in the --sumstats_dir path
@@ -333,7 +333,7 @@ if ( opt$verbose == 2 ) cat("I/O checks complete \n")
 # --- PREPARE PHENO, LOAD COVAR (FUSION FRAMEWORK)
 
 #fam file read - the modified fam file version (added ge data)  
-fam = read.table(paste(opt$bfile,".fam",sep=''),as.is=T)
+fam = read.table(paste(opt$bfile,".fam",sep=''),as.is=T, sep = " ")
 
 # Make/fetch the phenotype file
 if ( !is.na(opt$pheno) ) {
@@ -347,6 +347,7 @@ if ( !is.na(opt$pheno) ) {
 	pheno = pheno[m,]
 } else { #creating pheno file from fam files
 	pheno.file = paste(opt$tmp,".pheno",sep='')
+	print(head(fam))
 	pheno = fam[,c(1,2,6)]
 	write.table(pheno,quote=F,row.names=F,col.names=F,file=pheno.file)
 }
@@ -402,12 +403,8 @@ if ( is.na(opt$hsq_set) ) {
 	#LRT - likelihood ratio test - compare goodness of fit 
 	if ( !file.exists( paste(opt$tmp,".hsq",sep='') ) ) {
 		if ( opt$verbose >= 1 ) cat(opt$tmp,"does not exist, GCTA could not converge, forcing h2 to fixed value\n",file=stderr()) 
-			#change to lowest h2 that is considered significant 
-			#hsq_afr = 0.064251
-			#hsq_eur = 0.008909
 		hsq = NA
 		hsq.pv = NA
-		#if heritability estimate does not converge, push through with a preset heritability value = 0.064251 - smallest h2 that has p < 0.05
 	}else{
 		hsq.file = read.table(file=paste(opt$tmp,".hsq",sep=''),as.is=T,fill=T)
 		hsq = as.numeric(unlist(hsq.file[hsq.file[,1] == "V(G)/Vp",2:3]))
@@ -466,6 +463,9 @@ lasso_h2 <- hsq[1]
 if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){
 	if ( opt$verbose >= 1 ) cat("forcing lasso heritability to ", opt$lassohsq, " \n")
 	lasso_h2 <- opt$lassohsq
+		#change to lowest h2 that is considered significant 
+			#hsq_afr = 0.064251
+			#hsq_eur = 0.008909
 }  #when gcta does not converge or yield wild estimates
 
 if ("MAGEPRO" %in% model | "META" %in% model){

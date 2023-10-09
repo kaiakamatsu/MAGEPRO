@@ -7,20 +7,21 @@ option_list = list(
   make_option("--bfile", action="store", default=NA, type='character',
               help="Path to PLINK binary input file prefix (minus bed/bim/fam) [required] \n
 	      MAGEPRO will take samples with both GE and GENOTYPE data"),
-  make_option("--ge", action="store", default=NA, type='character',
-              help="Path to individual-level, normalized gene expression data in matrix format"),
-  make_option("--covar", action="store", default=NA, type='character',
-              help="Path to quantitative covariates (PLINK format) [optional]"),
-  make_option("--num_covar", action="store", default=NA, type='double',
-              help="Number of covariate to use (number of rows to extract from --covar file). Default ALL rows below sample ids [optional]"),
-  make_option("--num_batches", action="store", default=20, type='double',
-              help="Number of batch jobs to split the genes into. Default 20 [optional]"),
-  make_option("--rerun", action="store_true", default=FALSE,
-              help="Are you rerunning the pipeline? TRUE = skip recreating plink files per gene"),
   make_option("--out", action="store", default=NA, type='character',
               help="Path to output files [required]"),
   make_option("--scratch", action="store", default=NA, type='character',
               help="Path to scratch directory [required]"),
+  make_option("--ge", action="store", default=NA, type='character',
+              help="Path to individual-level, normalized gene expression data in matrix format [required]"),
+  make_option("--covar", action="store", default=NA, type='character',
+              help="Path to quantitative covariates (PLINK format) [optional]"),
+  make_option("--num_covar", action="store", default=NA, type='double',
+              help="Number of covariate to use (number of rows to extract from --covar file). 
+	      Default assumes gtex covariate file (first 5 PC, first 5 inferredcov, pcr, platform, sex) [optional]"),
+  make_option("--num_batches", action="store", default=20, type='double',
+              help="Number of batch jobs to split the genes into. Default 20 [optional]"),
+  make_option("--rerun", action="store_true", default=FALSE,
+              help="Are you rerunning the pipeline? TRUE = skip recreating plink files per gene"),
   make_option("--intermed_dir", action="store", default="", type='character',
               help="Directory to store intermediate files"),
   make_option("--subset_genes", action="store", default=NA, type='character',
@@ -78,6 +79,10 @@ arg = paste("Rscript MAGEPRO_PIPELINE/1_CollectSamples.R", opt$bfile, opt$ge, op
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 if ( opt$verbose >= 1 ) cat("### WROTE RESULTS TO ", opt$intermed_dir,"/All_Individuals.txt\n", sep = "")
 
+# --- WRITE A FILE OF JUST SAMPLE-IDS
+arg = paste0("cut -f2 ", opt$intermed_dir,"/All_Individuals.txt > ", opt$intermed_dir,"/Sample_IDs.txt")
+system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+
 # --- MAKE DIRECTORY FOR GENE BEDS AND PLINK FILES PER GENE 
 gene_beds_dir = paste0(opt$scratch, "/gene_beds")
 plink_gene_dir = paste0(opt$scratch, "/plink_gene")
@@ -104,7 +109,7 @@ for (b in bed_files){
 	start = data$V2[1]
 	end = data$V3[1]
 	plink_file = paste0(opt$bfile, chr)
-	arg = paste(opt$PATH_plink, "--bfile", plink_file, "--chr", chr, "--from-bp", start, "--to-bp", end, "--make-bed", "--allow-no-sex", "--out", paste0(plink_gene_dir, "/", name), sep = " " )
+	arg = paste(opt$PATH_plink, "--bfile", plink_file, "--chr", chr, "--from-bp", start, "--to-bp", end, "--allow-no-sex", "--make-bed", "--out", paste0(plink_gene_dir, "/", name), sep = " " )
 	system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 	system( paste0("rm -rf ", plink_gene_dir, "/", name, ".log"), ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 }
@@ -137,7 +142,7 @@ system( "mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRIN
 # read batch file and split genes per batch number 
 if ( opt$verbose >= 1 ) cat("### RUNNING JOBS \n")
 batches <- c(1:opt$num_batches)
-for (batch in 1){
+for (batch in batches){
 arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$cell_meta, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 }
