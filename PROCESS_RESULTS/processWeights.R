@@ -5,8 +5,9 @@ library(dplyr)
 tissues <- "Whole_Blood"
 args <- commandArgs(trailingOnly = TRUE)
 output <- args[1] #path to output directory
-genes_assign <- args[2] #path to genes assigned file
-models <- strsplit(args[3], split = ",")[[1]] #comma-separated list of models used (SINGLE,META,MAGEPRO)
+weightsdir <- args[2]
+genes_assign <- args[3] #path to genes assigned file
+models <- strsplit(args[4], split = ",")[[1]] #comma-separated list of models used (SINGLE,META,MAGEPRO)
 
 num_models <- length(models)
 
@@ -17,7 +18,7 @@ r2_h2 <- matrix(0, length(genes), 2*num_models+6)
 
 for (j in 1:length(genes)){
 
-file <- paste0(output,"/",genes[j],".wgt.RDat") 
+file <- paste0(weightsdir,"/",genes[j],".wgt.RDat") 
 
 print(genes[j])
 
@@ -42,6 +43,8 @@ r2_h2[j, 2*num_models+6] <- paste(cf_total, collapse = ",")
 }
 }
 
+h <- which(r2_h2[,1] == 0)
+if(length(h) > 0){r2_h2 <- r2_h2[-h,]}
 
 newcolnamesr2h2 <- c("gene", paste0(models, "_r2"), paste0(models, "_pv"), "hsq", "hsq_se", "hsq.pv", "datasets", "alphas")
 colnames(r2_h2) <- newcolnamesr2h2

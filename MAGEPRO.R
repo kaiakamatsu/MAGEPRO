@@ -626,7 +626,7 @@ for ( i in 1:opt$crossval ) {
 	eq <- matrix(0, nrow = nrow(genos$bed[ cv.sample[ -indx ] , ]), ncol = ext2+1)
 	eq[,1] <- genos$bed[ cv.sample[ -indx ] , ] %*% pred.wgt
 	for (c in 1:length(wgt2)){
-		eq[,(c+1)] <- genos$bed[ cv.sample[ -indx ] , ] %*%  eval(parse(text = wgt2[c]))
+		eq[,(c+1)] <- genos$bed[ cv.sample[ -indx ] , ] %*%  eval(parse(text = wgt2[c])) #DEBUG HERE
 	}	
 	
 	#1b. when geno %*% wgt -> all 0 (snps at nonzero wgt have no variaion among people) -> remove sumstat

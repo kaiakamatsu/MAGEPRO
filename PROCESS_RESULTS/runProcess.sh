@@ -6,8 +6,8 @@
 #SBATCH -t 01:00:00
 #SBATCH -J MAGEPRO_process
 #SBATCH -A ddp412
-#SBATCH -o ../../workingerr/MAGEPRO_process.%j.%N.out
-#SBATCH -e ../../workingerr/MAGEPRO_process.%j.%N.err
+#SBATCH -o ../../working_err/MAGEPRO_process.%j.%N.out
+#SBATCH -e ../../working_err/MAGEPRO_process.%j.%N.err
 #SBATCH --export=ALL
 #SBATCH --constraint="lustre"
 
@@ -20,8 +20,9 @@ module load slurm
 source ~/.bashrc
 conda activate r_env
 
-output=$1 #/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO_gtexEUR/weights
-genes=$2 #/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/MAGEPRO_gtexEUR/intermediate/genes_assign_Whole_Blood.txt
-models=$3 #SINGLE,META,MAGEPRO
+output=$1 #output dir
+weightsdir=$2 #weights dir
+genes=$3 #file with genes
+models=$4 #models used SINGLE,META,MAGEPRO
 
-Rscript processWeights.R $output $genes $models
+Rscript processWeights.R $output $weightsdir $genes $models

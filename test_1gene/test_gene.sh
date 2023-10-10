@@ -1,21 +1,28 @@
+scratch=/expanse/lustre/projects/ddp412/kakamatsu/testingdir/gene_subset/scratch
+tmpdir=$scratch/tmp
+wd=$scratch/wd
+plinkdir=$scratch/plink_gene
+plink_exec=../../plink
+intermed=/expanse/lustre/projects/ddp412/kakamatsu/testingdir/gene_subset/intermediate
+batchfile=$intermed/Genes_Assigned.txt 
+geneids=$intermed/All_Genes_Expressed.txt 
+ind=$intermed/All_Individuals.txt #all individuals with both genotype and ge data 
+samples=$intermed/Sample_IDs.txt 
+
+#--- get column numbers (in ge data) of individuals we are interested in
 gene=$1
+#grabbing just the individuals we want
+alldonors=$(zcat /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/GTEX_ge_covar/Whole_Blood/Whole_Blood.v8.normalized_expression.bed.gz | head -n 1)
+colind=$(echo $alldonors | sed 's| |\n|g' | nl | grep -f $samples | awk 'BEGIN {ORS=","} {print $1}') 
+colind2=${colind%,} #remove last comma - at this point we have a comma delimited list of column numbers of individuals we want to extract from the ge data 
 
-row=$(cat /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/Genes_Expressed_in_Whole_Blood.txt | nl | grep $gene | awk '{print $1 + 1}')
-
-zcat /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/Whole_Blood.v8.normalized_expression.bed.gz | head -n $row | tail -n 1 | cut -f 8,15,16,28,32,35,41,50,57,71,74,77,102,104,108,118,120,130,146,159,194,197,203,231,246,262,276,283,285,293,306,320,322,323,327,336,337,344,364,376,377,383,397,400,426,431,441,452,461,466,475,503,511,520,521,523,529,531,541,542,549,551,553,554,575,583,589,592,593,612,615,617,619,625,630,655,657,662,665,667 > gedonors.txt
-
-/expanse/lustre/projects/ddp412/kakamatsu/plink2 --bfile /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/plink_cissnps_AFR/$gene --make-bed --keep /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/intermedfiles/All_Individuals_Whole_Blood.txt --out /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_Whole_Blood/$gene
-
-rm /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_Whole_Blood/$gene.log
-
-paste --delimiters='\t' <(cut -f1-5 /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_Whole_Blood/$gene.fam) <(cat gedonors.txt | sed 's/\t/\n/g') > /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_Whole_Blood/$gene.mod.fam
-
-mv /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_Whole_Blood/$gene.mod.fam /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_Whole_Blood/$gene.fam
-
-Rscript ../MAGEPRO.R --gene $gene --bfile /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_Whole_Blood/$gene --covar /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/intermedfiles/Covar_All_Whole_Blood.txt --hsq_p 1 --tmp /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/tmp_Whole_Blood/"$gene"_Whole_Blood --out /expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_trials/Whole_Blood/Whole_Blood.$gene --PATH_gcta /expanse/lustre/projects/ddp412/kakamatsu/fusion_twas-master/gcta_nr_robust --verbose 1 --PATH_plink ../../plink --sumstats_dir /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_datasets --sumstats eqtlgen,genoa,mesahis,eurgtex,mesaafr,ota_CD16p_Mono,ota_CL_Mono,ota_LDG,ota_mDC,ota_Mem_CD4,ota_Mem_CD8,ota_Naive_B,ota_Naive_CD4,ota_Naive_CD8,ota_Neu,ota_NK,ota_pDC,ota_Plasmablast --models SINGLE,META,MAGEPRO --cell_meta ota --ss 31684,1031,352,574,233,416,416,416,416,416,416,416,416,416,416,416,416,416
-
-
-#--crossval 1
-#--cell_type_meta ota 
-#--ss 31684,1031,352,574,233,416,416,416,416,416,416,416,416,416,416,416,416,416
-
+$plink_exec --bfile $plinkdir/$gene --allow-no-sex --make-bed --keep $ind --out $wd/$gene
+rm $wd/$gene.log 
+rowid=$(cat $geneids | nl | grep $gene | awk '{print $1 + 1}') #+1 for col header in ge file - row number of the gene in the ge file 
+ge_donors=$(zcat /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/GTEX_ge_covar/Whole_Blood/Whole_Blood.v8.normalized_expression.bed.gz | head -n $rowid | tail -n 1 | cut -f $colind2)  #gene expression from the individuals of interest
+paste --delimiters=' ' <(cut -d' ' -f1-5 $wd/$gene.fam) <(echo $ge_donors | sed 's/ /\n/g') > $wd/$gene.mod.fam #modifying fam file with ge data 
+mv $wd/$gene.mod.fam $wd/$gene.fam 
+TMP=$tmpdir/${gene}
+OUT=$weights/${gene}
+Rscript ../MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta /expanse/lustre/projects/ddp412/kakamatsu/fusion_twas-master/gcta_nr_robust --PATH_plink ${plink_exec} --sumstats_dir /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_datasets --sumstats eqtlgen,genoa,mesahis,eurgtex,mesaafr,ota_CD16p_Mono,ota_CL_Mono,ota_LDG,ota_mDC,ota_Mem_CD4,ota_Mem_CD8,ota_Naive_B,ota_Naive_CD4,ota_Naive_CD8,ota_Neu,ota_NK,ota_pDC,ota_Plasmablast --models SINGLE,META,MAGEPRO --ss 31684,1031,352,574,233,416,416,416,416,416,416,416,416,416,416,416,416,416 --cell_meta ota --hsq_p 1 --verbose 2
+rm $wd/$gene.* 
