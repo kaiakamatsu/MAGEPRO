@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=2G
-#SBATCH -t 04:00:00
+#SBATCH -t 02:00:00
 #SBATCH -J MAGEPRO
 #SBATCH -A ddp412
 #SBATCH -o ../working_err/MAGEPRO.%j.%N.out
@@ -27,19 +27,13 @@ intermed=$4
 weights=$5
 plink_exec=$6
 gcta=$7
-sumstats_dir=$8
-sumstats=$9
-models=${10}
-ss=${11}
-cell_meta=${12}
-resid=${13}
-hsq_p=${14}
-lassohsq=${15}
-hsq_set=${16}
-crossval=${17}
-verbose=${18}
-noclean=${19}
-save_hsq=${20}
+resid=${8}
+hsq_p=${9}
+hsq_set=${10}
+verbose=${11}
+noclean=${12}
+save_hsq=${13}
+genemodel=${14}
 
 #--- create paths
 tmpdir=$scratch/tmp
@@ -72,7 +66,7 @@ then
     mv $wd/$gene.mod.fam $wd/$gene.fam 
     TMP=$tmpdir/${gene}
     OUT=$weights/${gene}
-    Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --cell_meta $cell_meta --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq
+    Rscript TEST_GENE_MODELS.R --gene $gene --bfile $wd/$gene --genemodel $genemodel --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --resid $resid --hsq_p $hsq_p --hsq_set $hsq_set --verbose $verbose --noclean $noclean --save_hsq $save_hsq
     rm $wd/$gene.* 
 fi
 
