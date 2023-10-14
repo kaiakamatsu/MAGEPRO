@@ -347,7 +347,6 @@ if ( !is.na(opt$pheno) ) {
 	pheno = pheno[m,]
 } else { #creating pheno file from fam files
 	pheno.file = paste(opt$tmp,".pheno",sep='')
-	print(head(fam))
 	pheno = fam[,c(1,2,6)]
 	write.table(pheno,quote=F,row.names=F,col.names=F,file=pheno.file)
 }

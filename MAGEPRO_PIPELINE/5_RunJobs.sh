@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=2G
-#SBATCH -t 04:00:00
+#SBATCH -t 07:00:00
 #SBATCH -J MAGEPRO
 #SBATCH -A ddp412
 #SBATCH -o ../working_err/MAGEPRO.%j.%N.out

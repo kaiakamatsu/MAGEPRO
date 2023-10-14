@@ -64,8 +64,6 @@ cleanup = function() {
 	if ( ! opt$noclean ) {
 		arg = paste("rm -f " , opt$tmp , "*", sep='')
 		system(arg)
-                arg = paste("rm -f " , opt$gemmaout , "*", sep='')  
-		system(arg)
 	}
 }
 

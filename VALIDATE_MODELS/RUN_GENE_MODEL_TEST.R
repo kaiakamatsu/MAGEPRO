@@ -118,7 +118,7 @@ if ( opt$verbose >= 1 ) cat("### WROTE GENE BATCH FILE IN ", opt$intermed_dir, "
 
 # --- CREATE DIRECTORY FOR STANDARD OUT AND ERROR FILES FROM BATCH JOBS
 if ( opt$verbose >= 1 ) cat("### CREATING DIRECTORY ../working_err FOR BATCH JOB OUT/ERROR FILES \n")
-system( "mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+system( "mkdir ../../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 
 # --- RUN SLURM JOBS PER BATCH 
 # read batch file and split genes per batch number 

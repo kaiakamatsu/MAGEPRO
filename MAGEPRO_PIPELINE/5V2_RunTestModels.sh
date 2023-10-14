@@ -4,10 +4,10 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=2G
 #SBATCH -t 02:00:00
-#SBATCH -J MAGEPRO
+#SBATCH -J MAGEPROvalidate
 #SBATCH -A ddp412
-#SBATCH -o ../working_err/MAGEPRO.%j.%N.out
-#SBATCH -e ../working_err/MAGEPRO.%j.%N.err
+#SBATCH -o ../working_err/MAGEPROvalidate.%j.%N.out
+#SBATCH -e ../working_err/MAGEPROvalidate.%j.%N.err
 #SBATCH --export=ALL
 #SBATCH --constraint="lustre"
 
