@@ -12,5 +12,6 @@ ge <- fread(ge_file, header = T, nrows=1) #first row has all people ids
 all_people_with_geneexp <- colnames(ge)[-c(1:4)] #a vector of column names EXCEPT 1-4 (exclude #chr, start, end, gene_id columns) 
 pop_people_with_geneexp <- intersect(all_people_with_geneexp,pop_people) #finds people common in both ge and geno data 
 print(paste0( "number of individuals with both genotype and ge data: " , length(pop_people_with_geneexp)) )
-pop_people_with_geneexp <- cbind(rep(0, length(pop_people_with_geneexp)), pop_people_with_geneexp)
+#pop_people_with_geneexp <- cbind(rep(0, length(pop_people_with_geneexp)), pop_people_with_geneexp)
+pop_people_with_geneexp <- cbind(pop_people_with_geneexp, pop_people_with_geneexp) #THIS DEPENDS ON IF FIRST COLUMN OF FAM FILE HAS 0 or ID
 write.table(pop_people_with_geneexp,file=paste0(intermed_dir, "/All_Individuals.txt"), row.names = F, col.names = F, quote = F, sep = "\t")

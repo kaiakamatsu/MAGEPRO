@@ -3,11 +3,11 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=2G
-#SBATCH -t 02:00:00
+#SBATCH -t 05:00:00
 #SBATCH -J MAGEPROvalidate
 #SBATCH -A ddp412
-#SBATCH -o ../working_err/MAGEPROvalidate.%j.%N.out
-#SBATCH -e ../working_err/MAGEPROvalidate.%j.%N.err
+#SBATCH -o ../../working_err/MAGEPROvalidate.%j.%N.out
+#SBATCH -e ../../working_err/MAGEPROvalidate.%j.%N.err
 #SBATCH --export=ALL
 #SBATCH --constraint="lustre"
 

@@ -48,8 +48,8 @@ print(opt)
 # find gene name without version number
 name <- strsplit(opt$gene, ".", fixed = TRUE)[[1]][1]
 
-# path to european weights  
-file.wgts <- paste0(opt$genemodel,"/", opt$gene, ".wgt.RDat")
+# path to weights  
+file.wgts <- paste0(opt$genemodel,"/", name, ".wgt.RDat")
 
 
 if ( opt$verbose == 2 ) {
@@ -118,7 +118,7 @@ if ( !is.na(opt$covar) ) {
 	covar = ( read.table(opt$covar,as.is=T,head=T) )
 	if ( opt$verbose >= 1 ) cat( "Loaded",ncol(covar)-2,"covariates\n")
 	# Match up data
-	m = match( paste(fam[,1],fam[,2]) , paste(covar[,1],covar[,2]) )  
+	m = match( fam[,2] , covar[,2] ) # THIS ONLY MATCHES THE SECOND COLUMN OF FAM TO SAMPLE IDS, leaves out family IDs
 	m.keep = !is.na(m)
 	fam = fam[m.keep,]
 	pheno = pheno[m.keep,]
@@ -199,7 +199,7 @@ datasets_process <- function(wgt, snp_ref){
 	return (wgt)
 }
 
-#load in eur only and eurmagepro gene model
+#load in gene models
 if (file.exists(file.wgts)){
 	load(file.wgts)
 	weights <- c()
@@ -208,7 +208,7 @@ if (file.exists(file.wgts)){
 		weights <- append(weights, paste0("pred.wgt.", colnames(wgt.matrix)[c]))
 	}		
 }else{
-	cat("eur gene model does not exist. skipping...")
+	cat("gene model does not exist. skipping...\n", file.wgts, "\n")
 	cleanup()
 	q()	
 }

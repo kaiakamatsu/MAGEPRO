@@ -468,18 +468,18 @@ flip_signs_ota <- function(dataset, file, snp, A1, A0, B, P){
 						table[k,2] <- table[k,3]
 						table[k,3] <- temp
 					}else{
-						table[k, 4] <- 0
+						table[k, 4] <- NA
 					}
 				}
 			} else {
-				table[k, 4] <- 0
+				table[k, 4] <- NA
 			}
 		}
 	}
 	SE <- table$B/table$Z
 	w <- is.na(SE)
 	if (sum(w) > 0){
-		SE[w] = 0
+		SE[w] = NA
 	}
 	results_return <- list(table$snp, table$A1, table$A0, table$B, SE)
 	return (results_return)
@@ -492,7 +492,7 @@ add_missing_snps <- function(df, unique) {
   if (length(missing_snps) == 0){
 	  return (df)
   }else{
-  	  missing_rows <- data.frame(snp = missing_snps, A1 = 'X', A0 = 'X', weights = 0, se = 0)  # Create missing rows - separate allele info used so 'X' is just a filler 
+  	  missing_rows <- data.frame(snp = missing_snps, A1 = 'X', A0 = 'X', weights = NA, se = NA)  # Create missing rows - separate allele info used so 'X' is just a filler 
   	  updated_df <- rbind(df, missing_rows)  # Combine original and missing rows
   	  return(updated_df)
   }
@@ -531,22 +531,21 @@ if (file.eur %in% datasets){
 
 
 #OTA  - have to meta-analyze cell types before shrinking 
-
 ota_use = F
-ota_dfs <- c()
-ota_cells <- c()
+ota_dfs <- c() # cell-type specific dataframe
+ota_cells <- c() # cell types
 
 all_ota <- c(file.ota.CD16p_Mono, file.ota.CL_Mono, file.ota.LDG, file.ota.Mem_CD4, file.ota.Mem_CD8, file.ota.NK, file.ota.Naive_B, file.ota.Naive_CD4, file.ota.Naive_CD8, file.ota.Neu, file.ota.Plasmablast, file.ota.mDC, file.ota.pDC)
 
 for (o in all_ota){
 	if(o %in% datasets){
 		cell <- strsplit(o, split = "/")[[1]][10]
-		ota_cells <- append(ota_cells, cell)
-		results_list <- flip_signs_ota("ota", o, 6, 8, 7, 13, 12)
-		df <- data.frame(results_list[1], results_list[2], results_list[3], results_list[4], results_list[5])
-		colnames(df) <- c("snp", "A1", "A0", "weights", "se")
-		ota_dfs <- append(ota_dfs, list(df))
-		ota_use = T
+                ota_cells <- append(ota_cells, cell)
+                results_list <- flip_signs_ota("ota", o, 6, 8, 7, 13, 12)
+                df <- data.frame(results_list[1], results_list[2], results_list[3], results_list[4], results_list[5])
+                colnames(df) <- c("snp", "A1", "A0", "weights", "se")
+                ota_dfs <- append(ota_dfs, list(df))
+                ota_use = T
 	}
 }
 
@@ -557,10 +556,10 @@ all_snps <- c()
 all_A1 <- c()
 all_A0 <- c()
 for (c in 1:length(ota_cells)){
-	df <- ota_dfs[[c]]
-	all_snps <- append(all_snps, df$snp)
-	all_A1 <- append(all_A1, df$A1)
-	all_A0 <- append(all_A0, df$A0)
+        df <- ota_dfs[[c]]
+        all_snps <- append(all_snps, df$snp)
+        all_A1 <- append(all_A1, df$A1)
+        all_A0 <- append(all_A0, df$A0)
 }
 snp_info <- data.frame(all_snps, all_A1, all_A0)
 snp_info <- snp_info[!duplicated(snp_info$all_snps), ]
@@ -568,77 +567,45 @@ rownames(snp_info) <- NULL
 unique_snps <- snp_info$all_snps
 snp_info <- snp_info[order(snp_info$all_snps), ]
 
-# modify each dataframe individually to add missing snps and change order 
+# modify each dataframe individually to add missing snps and change order
 sorted_order <- snp_info$all_snps
 for (c in 1:length(ota_cells)){
-	modified <- add_missing_snps(ota_dfs[[c]], unique_snps)   #need to meta-analyze these cell-types together, so we need snps in common in each vector
-	modified <- modified[order(match(modified$snp, sorted_order)), ]
-	rownames(modified) <- NULL
-	ota_dfs[[c]] <- modified
+        modified <- add_missing_snps(ota_dfs[[c]], unique_snps)
+        modified <- modified[order(match(modified$snp, sorted_order)), ]
+        rownames(modified) <- NULL
+        ota_dfs[[c]] <- modified
 }
 
-
-#do meta-analysis - extract B and P 
+#do meta-analysis - extract B and P
 #iterate per snp
 B_ota <- c()
 P_ota <- c()
-results <- NULL
-
 for (s in 1:length(unique_snps)){
-	status = FALSE
 	effect_sizes <- c()
-	standard_errors <- c()
-	sample_sizes <- c()
+        standard_errors <- c()
+        sample_sizes <- c()
 
-	for (c in 1:length(ota_cells)){
-		effect_sizes <- append(effect_sizes, ota_dfs[[c]][[4]][s])
-		standard_errors <- append(standard_errors, ota_dfs[[c]][[5]][s])
-		sample_sizes <- append(sample_sizes, h[["ota"]])
-	}
+        for (c in 1:length(ota_cells)){
+                effect_sizes <- append(effect_sizes, ota_dfs[[c]][[4]][s])
+                standard_errors <- append(standard_errors, ota_dfs[[c]][[5]][s])
+        }
 
+	n <- sum(which(!is.na(effect_sizes)))
 
-	if (all(effect_sizes == 0) & all(standard_errors == 0)){
-		B_ota <- append(B_ota, 0)
-		P_ota <- append(P_ota, 1)
+	if (n == 0){
+		B_ota <- append(B_ota, NA)
+                P_ota <- append(P_ota, NA)
 	}else{
-		
-		keep <- !(effect_sizes == 0 & standard_errors == 0)
-		effect_sizes <- effect_sizes[keep]
-		standard_errors <- standard_errors[keep]
-		sample_sizes <- sample_sizes[keep]
-
-		tryCatch(
-  			{
-  			results <<- rma.uni(yi = effect_sizes, sei = standard_errors, weights = (sample_sizes/sum(sample_sizes)), method = 'REML')
-			},
-  			error = function(e) {
-    				print("Fisher scoring did not converge. Running with more iterations")	
-				tryCatch(
-					{
-					 results <<- rma.uni(yi = effect_sizes, sei = standard_errors, weights = (sample_sizes/sum(sample_sizes)), method = 'REML', control=list(maxiter=1000)) #random effects
-					}, 
-					error = function(e){
-						print("Fisher scoring did not converge with more iterations, reducing steps")
-						
-						tryCatch(
-                                        	{
-						results <<- rma.uni(yi = effect_sizes, sei = standard_errors, weights = (sample_sizes/sum(sample_sizes)), method = 'REML', control=list(stepadj=0.5))	
-						},
-						error = function(e){
-							print("Meta-analysis failed, assigning 0 weight, p val 1")
-							B_ota <<- append(B_ota, 0)
-                					P_ota <<- append(P_ota, 1)
-							status <<- TRUE
-						}
-						)
-					}
-				)
-			}
-		)
-		if (! status){
-			B_ota <- append(B_ota, coef(results)[1])
-			P_ota <- append(P_ota, results$pval)
-		}
+		# calculate B 
+		w <- which(!is.na(effect_sizes))
+		B_meta <- mean(effect_sizes[w]) #ota sample sizes are some for cell types
+		B_ota <- append(B_ota, B_meta)
+		# calculate P from Var of linear combination of random variables 
+		variances = standard_errors[w]**2
+		var_meta = sum(variances)/(n**2)
+		se_meta = sqrt(var_meta)
+		Z = B_meta/se_meta
+		P_ota <- append(P_ota, 2*pnorm(q = abs(Z), lower.tail=FALSE))
 	}
 }
 
@@ -648,9 +615,9 @@ f_name <- paste0(PRS_CSx_working_dir, "ota.txt")
 input <<- append(input, f_name)
 ss <<- append(ss, h[["ota"]])
 pp <<- append(pp, pops[["ota"]])
-ota_df <- na.omit(ota_df) #ensure no rows with NA (shouldn't be any, but PRS-CSx will not run through if there are)
+ota_df <- na.omit(ota_df)
 write.table(ota_df, file = f_name, sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
-#------------------
+
 }
 
 #GENOA
@@ -698,11 +665,9 @@ print(arg)
 system(arg)
 
 #retrieve posterior snp effect sizes, reassign weights
-
-dataset_names <- file_path_sans_ext(basename(as.character(input)))
-print(dataset_names)
-for (n in 1:length(dataset_names)){
-	wgts <- weights_process(dataset_names[n], paste0(PRS_CSx_working_dir,"results_", dataset_names[n], "_", pp[n], "_pst_eff_a1_b0.5_phi1e-04_chr", genos$bim[1,1], ".txt"), wgts)
+unique_pp <- unique(pp)
+for (n in unique_pp){
+	wgts <- weights_process(n, paste0(PRS_CSx_working_dir,"results_", n, "_pst_eff_a1_b0.5_phi1e-04_chr", genos$bim[1,1], ".txt"), wgts)
 }
 
 

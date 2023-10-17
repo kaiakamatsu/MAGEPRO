@@ -13,7 +13,7 @@ ensg <- data.frame()
 ge <- fread(ge_file, header = T)
 chrs <- sapply(1:nrow(ge), function(x) strsplit(ge$`#chr`[x], split = "chr")[[1]][2]) #modify the #chr column: "1" instead of "chr1" 
 ge$`#chr` <- chrs
-wremove <- which(chrs == "X") #remove X chr genes, Y is not included  
+wremove <- which(chrs == "X" | chrs == "Y") 
 if(length(wremove)>0){ge <- ge[-wremove,]}
 dump <- ge[,1:4] #grabbing just the first 4 columns (#chr, start, end, gene_id)
 ensg <- rbind(ensg,dump) #add it to the ensg

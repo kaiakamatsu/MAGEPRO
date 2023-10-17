@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=2G
-#SBATCH -t 05:00:00
+#SBATCH -t 06:00:00
 #SBATCH -J benchmark
 #SBATCH -A ddp412
 #SBATCH -o ../../working_err/benchmark.%j.%N.out
@@ -30,9 +30,9 @@ weights=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_benchmar
 mkdir -p $weights
 wd=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_$tissue
 mkdir $wd
-plinkdir=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/plink_cissnps_AFR #stays the same for all tissues, just the cis SNPs 
+plinkdir=/expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/GTExAFR_WHOLEBLOOD_MAGEPRO/scratch/plink_gene #stays the same for all tissues, just the cis SNPs 
 home_dir=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/intermedfiles
-batchfile=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/intermedfiles/genes_assign_Whole_Blood2.txt #change this before redoing. 
+batchfile=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/intermedfiles/gene_subset.txt #change this before redoing. 
 genes=$(awk '$2 == '${batch}' {print $1}' $batchfile) #all genes with the batch number passed in to the script 
 geneids=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/Genes_Expressed_in_${tissue}.txt #chrX gone, not gone in gefile. but it's at the end so ok. 
 gefile=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/${tissue}.v8.normalized_expression.bed.gz
