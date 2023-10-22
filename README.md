@@ -36,7 +36,7 @@ MAGEPRO utilizes external eQTL summary statistics to improve gene models trained
 | **--scratch** | Path to scratch directory (temporary files will be stored here) |
 | **--ge** | Path to individual-level, normalized gene expression data in matrix format (see input formats below for more details) |
 | --covar | Optional path to quantitative covariates (PLINK format) |
-| --num_covar | Number of covariate to use (number of rows to extract from --covar file). "ALL" to use all covariates available. Default assumes gtex covariate file (first 5 PC, first 5 inferredcov, pcr, platform, sex). |
+| --num_covar | Number of covariate to use (number of rows to extract from --covar file). "ALL" to use all covariates available. Default assumes gtex covariate file (first 5 PC, first 15 inferredcov, pcr, platform, sex: ideal for N < 150, see GTEx pipeline for more information). |
 | --num_batches | Number of batch jobs to split the genes into. Default 20. |
 | --rerun | Boolean to indicate if the pipeline is being reran (TRUE = skip creation of plink files per gene) |
 | --intermed_dir | Directory to store intermediate files |
