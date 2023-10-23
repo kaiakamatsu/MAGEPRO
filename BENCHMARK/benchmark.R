@@ -827,9 +827,7 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 cv.performance = matrix(NA,nrow=2,ncol=2)  
 rownames(cv.performance) = c("rsq","pval") 
 types <- c("PRS-CSx", "PT_sumstats") 
-x <- c() 
-for (i in models){for (j in types){x <- c(x,paste0(i,",",j))}} #model,type 
-colnames(cv.performance) = x  
+colnames(cv.performance) = types 
 
 for ( mod in 1:ncol(cv.calls) ) { 
 	if ( !is.na(sd(cv.calls[,mod])) && sd(cv.calls[,mod]) != 0 ) { #length 1 or 0 vector -> sd = NA, all values are identical -> sd = 0  

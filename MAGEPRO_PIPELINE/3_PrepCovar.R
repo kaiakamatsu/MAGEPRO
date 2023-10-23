@@ -19,11 +19,15 @@ covar_ind <- covar_t[,2] #column 2 has people IDS #colnames(covar)[-1]
 w <- which(covar_ind %in% ind) #get indices where people ID match
 covar_DS <- covar_t[w,] #extract the indices where people ID match  #cbind(covar[,1],covar_mat[,w])
 if(nums_covar != 'NA'){
-	endcol <- 2 + as.numeric(nums_covar)   # 0, ID, PC1, ... ENDCOL
-	# if I want 2 covars, nums_covar = 2, we take columns 3:4, 4 = 2+2
-	covar_DS <- covar_DS[, c(1:endcol)]
+	if (nums_covar == "ALL"){
+		covar_DS <- covar_DS[, c(1:ncol(covar_DS))]
+	}else{
+		endcol <- 2 + as.numeric(nums_covar)   # 0, ID, PC1, ... ENDCOL
+		# if I want 2 covars, nums_covar = 2, we take columns 3:4, 4 = 2+2
+		covar_DS <- covar_DS[, c(1:endcol)]
+	}
 }else{
-	covar_DS <- covar_DS[,-grep("InferredCov",colnames(covar_DS))[-c(1:5)]]
+	covar_DS <- covar_DS[,-grep("InferredCov",colnames(covar_DS))[-c(1:15)]]
 }
 
 

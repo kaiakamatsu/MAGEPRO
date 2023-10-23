@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=2G
-#SBATCH -t 06:00:00
+#SBATCH -t 10:00:00
 #SBATCH -J benchmark
 #SBATCH -A ddp412
 #SBATCH -o ../../working_err/benchmark.%j.%N.out
@@ -26,13 +26,14 @@ batch=$2
 
 tmpdir=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/tmp_${tissue}
 mkdir $tmpdir
-weights=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_benchmark_confirm/$tissue
+weights=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/weights_benchmark_confirm_15PEER/$tissue
 mkdir -p $weights
 wd=/expanse/lustre/scratch/kakamatsu/temp_project/GTExTEMP/AFR_$tissue
 mkdir $wd
 plinkdir=/expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/GTExAFR_WHOLEBLOOD_MAGEPRO/scratch/plink_gene #stays the same for all tissues, just the cis SNPs 
 home_dir=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/intermedfiles
-batchfile=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/intermedfiles/gene_subset.txt #change this before redoing. 
+#batchfile=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/intermedfiles/genes_assign_Whole_Blood3.txt #change this before redoing. 
+batchfile=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/rerun_some/genes_assign_Whole_Blood.redo.txt
 genes=$(awk '$2 == '${batch}' {print $1}' $batchfile) #all genes with the batch number passed in to the script 
 geneids=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/Genes_Expressed_in_${tissue}.txt #chrX gone, not gone in gefile. but it's at the end so ok. 
 gefile=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/${tissue}.v8.normalized_expression.bed.gz
@@ -55,7 +56,7 @@ then
     mv $wd/$gene.mod.fam $wd/$gene.fam #confirm that gene expression matches correct individual. Confirmed. Even though list of individuals are out of order. Need to make sure covariates are properly handled below in fusion. 
     TMP=$tmpdir/${gene}_${tissue} 
     OUT=$weights/${tissue}.$gene #CHANGE OUT TO MY DIRECTORY AFTER TESTING
-    Rscript benchmark.R --gene $gene --tissue $tissue --bfile $wd/$gene --covar $home_dir/Covar_All_${tissue}.txt --hsq_p 1 --tmp $TMP --out $OUT --models lasso --PATH_gcta /expanse/lustre/projects/ddp412/kakamatsu/fusion_twas-master/gcta_nr_robust --gemmaout ${gene}_${tissue} --PATH_gemma /expanse/lustre/projects/ddp412/kakamatsu/gemma-0.98.5-linux-static-AMD64 --verbose 2 --PATH_plink /expanse/lustre/projects/ddp412/kakamatsu/plink --datasets $dataset --crossval 5 --ldref /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/GTEx_plink
+    Rscript benchmark.R --gene $gene --tissue $tissue --bfile $wd/$gene --covar $home_dir/Covar_All.txt --hsq_p 1 --tmp $TMP --out $OUT --models lasso --PATH_gcta /expanse/lustre/projects/ddp412/kakamatsu/fusion_twas-master/gcta_nr_robust --gemmaout ${gene}_${tissue} --PATH_gemma /expanse/lustre/projects/ddp412/kakamatsu/gemma-0.98.5-linux-static-AMD64 --verbose 2 --PATH_plink /expanse/lustre/projects/ddp412/kakamatsu/plink --datasets $dataset --crossval 5 --ldref /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/GTEx_plink
     rm $wd/$gene.* 
 
 fi

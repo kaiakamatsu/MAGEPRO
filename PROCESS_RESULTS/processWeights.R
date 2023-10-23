@@ -33,6 +33,7 @@ r2_h2[j, 2*num_models+3] <- hsq[2]
 r2_h2[j, 2*num_models+4] <- hsq.pv
 if (sum(is.na(wgtmagepro)) == 0){
 	r2_h2[j, 2*num_models+5] <- paste(wgtmagepro, collapse = ",")
+	print(paste(wgtmagepro, collapse = ","))
 }else{
 	r2_h2[j, 2*num_models+5] <- NA
 }

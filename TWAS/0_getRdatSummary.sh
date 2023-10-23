@@ -2,4 +2,4 @@
 Rscript list_wgt.R
 
 #submit job to create summary
-bash runProfileWgt.sh #OPTIONAL (NOT REQUIRED FOR TWAS)
+#bash runProfileWgt.sh #OPTIONAL (NOT REQUIRED FOR TWAS)

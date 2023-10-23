@@ -16,8 +16,8 @@ option_list = list(
   make_option("--covar", action="store", default=NA, type='character',
               help="Path to quantitative covariates (PLINK format) [optional]"),
   make_option("--num_covar", action="store", default=NA, type='double',
-              help="Number of covariate to use (number of rows to extract from --covar file). 
-	      Default assumes gtex covariate file (first 5 PC, first 5 inferredcov, pcr, platform, sex) [optional]"),
+              help="Number of covariate to use (number of rows to extract from --covar file). 'ALL' for all covariates in the file. 
+	      Default assumes gtex covariate file (first 5 PC, first 15 inferredcov, pcr, platform, sex: ideal for N < 150) [optional]"),
   make_option("--num_batches", action="store", default=20, type='double',
               help="Number of batch jobs to split the genes into. Default 20 [optional]"),
   make_option("--rerun", action="store_true", default=FALSE,

@@ -300,6 +300,9 @@ if ( ("META" %in% model) | ( !is.na(opt$cell_meta) )){
 if ( opt$verbose == 2 ) {
 	cat("Datasets available for this gene: \n")
 	print(datasets)
+	if (length(datasets) == 0){
+		cat("WARNING: no datasets available for this gene, MAGEPRO and META will be have NA weights \n")
+	}
 }
 
 
@@ -586,7 +589,7 @@ for ( i in 1:opt$crossval ) {
 	}
 	
 	if ("SINGLE" %in% model){
-
+	
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt
 	pred_train_single = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt)))
 	r2_training_single = append(r2_training_single, pred_train_single$adj.r.sq)
@@ -598,7 +601,7 @@ for ( i in 1:opt$crossval ) {
 
 	# SS-WEIGHTED META-ANALYSIS-------------------------------------------------------------
 	if ("META" %in% model){
-
+	if (ext > 0){
 	pred.wgt.meta <- pred.wgt * (training_ss/total_ss_cv)
 	for (w in wgts){
 		dataset <- strsplit(w, split="[.]")[[1]][3]
@@ -611,6 +614,10 @@ for ( i in 1:opt$crossval ) {
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.meta 
 	pred_train_meta = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.meta))) 
         r2_training_meta = append(r2_training_meta, pred_train_meta$adj.r.sq)
+	}else{
+	cv.calls[ indx , colcount ] = NA
+	r2_training_meta = append(r2_training_meta, NA)
+	}
 
 	colcount = colcount + 1
 	
@@ -620,7 +627,8 @@ for ( i in 1:opt$crossval ) {
 	# MAGEPRO----------------------------------------------------------------------
 	
 	if ("MAGEPRO" %in% model){
-
+	
+	if (ext2 > 0){	
 	#1a. format glmnet input
 	eq <- matrix(0, nrow = nrow(genos$bed[ cv.sample[ -indx ] , ]), ncol = ext2+1)
 	eq[,1] <- genos$bed[ cv.sample[ -indx ] , ] %*% pred.wgt
@@ -653,6 +661,10 @@ for ( i in 1:opt$crossval ) {
 	#store the r2 on training set
 	pred_train = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.magepro))) #r^2 between predicted and actual 
 	r2_training_magepro = append(r2_training_magepro, pred_train$adj.r.sq)	
+	}else{
+	cv.calls[ indx , colcount ] = NA
+	r2_training_magepro = append(r2_training_magepro, NA)
+	}
 
 	}
 	#-------------------------------------------------------------------------------
@@ -714,6 +726,7 @@ colcount = colcount + 1
 }
 # --- SS-WEIGHTED META-ANALYSIS
 if ("META" %in% model){
+if (ext > 0){
 total_ss_full <- total_ss_sumstats + N.tot
 pred.wgt.metafull <- pred.wgtfull * (N.tot/total_ss_full)
 for (w in wgts){
@@ -725,11 +738,16 @@ if(length(pred.wgt.metafull) == 1){
         pred.wgt.metafull <- t(pred.wgt.metafull)
 }
 wgt.matrix[, colcount] = pred.wgt.metafull
+}
+else{
+wgt.matrix[, colcount] = NA
+}
 colcount = colcount + 1
 }
 # --- MAGEPRO
 cf_total = NA
 if ("MAGEPRO" %in% model){
+if (ext2 > 0){
 w1 <- genos$bed %*% pred.wgtfull
 eqfull <- matrix(0, nrow = length (w1), ncol = ext2 + 1)
 eqfull[, 1] <- w1
@@ -750,6 +768,9 @@ if(length(pred.wgt.mageprofull) == 1){
                 pred.wgt.mageprofull <- t(pred.wgt.mageprofull)
 }
 wgt.matrix[, colcount] = pred.wgt.mageprofull
+}else{
+wgt.matrix[, colcount] = NA
+}
 }
 
 #--- SAVE RESULTS
