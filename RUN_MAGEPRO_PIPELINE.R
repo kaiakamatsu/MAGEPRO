@@ -129,7 +129,7 @@ if ( opt$verbose >= 1 ) cat("### SKIPPING COVAR FILE PROCESSING \n")
 
 # --- SPLIT UP GENES INTO BATCHES, SUBSET TO GENES OF INTEREST
 if ( opt$verbose >= 1 ) cat("### ASSIGNING GENE BATCHES \n")
-arg = paste("Rscript MAGEPRO_PIPELINE/4_AssignBatches.R", opt$intermed_dir, opt$num_batches, sep = " ")
+arg = paste("Rscript MAGEPRO_PIPELINE/4_AssignBatches.R", opt$intermed_dir, opt$num_batches, opt$subset_genes, sep = " ")
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 if ( opt$verbose >= 1 ) cat("### WROTE GENE BATCH FILE IN ", opt$intermed_dir, "/Genes_Assigned.txt\n", sep = "")
 

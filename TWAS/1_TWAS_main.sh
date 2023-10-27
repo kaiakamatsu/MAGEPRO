@@ -1,5 +1,9 @@
-#create .pos files for twas input 
-Rscript makePOS.R
+#Rscript makePOS.R
 
-#submit TWAS
-bash submitTWAS.sh
+phenos="HGB MCHC MPV RBC EOS LYM MCV NEU RDW HCT MCH MON PLT WBC"
+#phenos="BAS"
+
+for pheno in $phenos; do
+	echo $pheno
+	sbatch runTWAS.sh $pheno
+done
