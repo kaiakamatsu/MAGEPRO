@@ -346,8 +346,8 @@ for ( w in 1:nrow(wgtlist) ) {
 	out.tbl$P0[w] = wgtlist$P0[w]
 	out.tbl$P1[w] = wgtlist$P1[w]
 	out.tbl$ID[w] = wgtlist$ID[w]
-	if ( exists("hsq_afr") ) {
-		out.tbl$HSQ[w] = hsq_afr[1]
+	if ( exists("hsq") ) {
+		out.tbl$HSQ[w] = hsq[1]
 	}
 	out.tbl$MODEL[w] = colnames( cv.performance )[ mod.best ]
 	out.tbl$MODELCV.R2[w] = paste(format(cv.performance[row.rsq,mod.best],digits=2,trim=T),collapse=',')
