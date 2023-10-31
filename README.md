@@ -12,7 +12,9 @@ Packages:
 - optparse_1.7.3
 - plink2R_1.1
   > install.packages("devtools")
+  
   > library(devtools)
+  
   > devtools::install_github("carbocation/plink2R/plink2R", ref="carbocation-permit-r361")
 
 GCTA 
