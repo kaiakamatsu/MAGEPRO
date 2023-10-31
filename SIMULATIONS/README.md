@@ -18,7 +18,7 @@ Sim_SumStats.py
 
 Sim_Model.py
 - simulate MAGEPRO 
-- uses simualted gene expression, simulated genotypes, simulated summary statistics
+- uses simulated gene expression, genotypes, summary statistics
 
 diff_LD 
 - directory for similar files, but to simulate a situation where the causal snp is different in two populations 
