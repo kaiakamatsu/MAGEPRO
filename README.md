@@ -74,15 +74,19 @@ MAGEPRO utilizes external eQTL summary statistics to improve gene models trained
 - Tab-delimited matrix (gzipped) with the following columns:
 
 | #chr | start | end | gene_id | (the rest of the columns are sample IDs) | 
+| ---- | ----- | ---- | ----- | ---- |
+| 1 | 3465 | 4650 | ENSGXXXX | ID123 | 
 
 Example: 
+
+<img src = IMAGES/GTEx_GE.png>
 
 ### Covariates data format 
 - Tab-delimited matrix (.txt) with the first row containing sample IDs and all other rows for covariates
 
 Example: 
 
-
+<img src = IMAGES/GTEx_cov.png>
 
 ## Typical application of MAGEPRO on GTEx Tissues
 
