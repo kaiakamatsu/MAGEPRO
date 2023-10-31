@@ -90,6 +90,10 @@ Example:
 
 <img src = IMAGES/GTEx_cov.png>
 
+### Genotype data format
+- plink bed/bim/fam files
+- described here: https://www.cog-genomics.org/plink/1.9/formats
+
 ## Typical application of MAGEPRO on GTEx Tissues
 
 ## Command-line options for the computing gene-models one gene at a time
