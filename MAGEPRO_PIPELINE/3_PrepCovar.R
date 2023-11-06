@@ -1,4 +1,4 @@
-library(data.table)
+suppressMessages(library(data.table))
 
 #--- read in command-line args
 args <- commandArgs(trailingOnly = TRUE)

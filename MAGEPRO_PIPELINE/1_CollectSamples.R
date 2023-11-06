@@ -1,4 +1,5 @@
-library(data.table)
+suppressMessages(library(data.table))
+suppressMessages(library(dplyr))
 
 #--- read in command line arguments 
 args <- commandArgs(trailingOnly = TRUE)
@@ -7,11 +8,12 @@ ge_file <- args[2] #path to normalized gene expression file with people ids on f
 intermed_dir <- args[3] #directory to store intermediate files - will store all people ids 
 
 #--- extract all people with both ge and genotype data
-pop_people <- fread(fam_file, header = F)$V2 #read in just the second column of the fam file (people id) 
+fam <- fread(fam_file, header = F) #read in just the second column of the fam file (people id) 
+pop_people <- fam$V2
 ge <- fread(ge_file, header = T, nrows=1) #first row has all people ids 
 all_people_with_geneexp <- colnames(ge)[-c(1:4)] #a vector of column names EXCEPT 1-4 (exclude #chr, start, end, gene_id columns) 
 pop_people_with_geneexp <- intersect(all_people_with_geneexp,pop_people) #finds people common in both ge and geno data 
 print(paste0( "number of individuals with both genotype and ge data: " , length(pop_people_with_geneexp)) )
-pop_people_with_geneexp <- cbind(rep(0, length(pop_people_with_geneexp)), pop_people_with_geneexp)
-#pop_people_with_geneexp <- cbind(pop_people_with_geneexp, pop_people_with_geneexp) #THIS DEPENDS ON IF FIRST COLUMN OF FAM FILE HAS 0 or ID
+people_interest <- filter(fam, V2 %in% pop_people_with_geneexp)
+pop_people_with_geneexp <- people_interest[,c(1,2)]
 write.table(pop_people_with_geneexp,file=paste0(intermed_dir, "/All_Individuals.txt"), row.names = F, col.names = F, quote = F, sep = "\t")

@@ -83,6 +83,8 @@ if ( opt$verbose >= 1 ) cat("### WROTE RESULTS TO ", opt$intermed_dir,"/All_Indi
 arg = paste0("cut -f2 ", opt$intermed_dir,"/All_Individuals.txt > ", opt$intermed_dir,"/Sample_IDs.txt")
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 
+exit 0
+
 # --- MAKE DIRECTORY FOR GENE BEDS AND PLINK FILES PER GENE 
 gene_beds_dir = paste0(opt$scratch, "/gene_beds")
 plink_gene_dir = paste0(opt$scratch, "/plink_gene")

@@ -1,5 +1,5 @@
-library(data.table)
-library(dplyr)
+suppressMessages(library(data.table))
+suppressMessages(library(dplyr))
 
 #--- read in command-line args
 args <- commandArgs(trailingOnly = TRUE)
