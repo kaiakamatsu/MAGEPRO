@@ -9,8 +9,13 @@ R version 4.2.3
 Packages:
 - data.table_1.14.8
 - glmnet_4.1-7
-- plink2R_1.1
 - optparse_1.7.3
+- plink2R_1.1
+  > install.packages("devtools")
+  
+  > library(devtools)
+  
+  > devtools::install_github("carbocation/plink2R/plink2R", ref="carbocation-permit-r361")
 
 GCTA 
 Download gcta from either ...
@@ -61,7 +66,33 @@ MAGEPRO utilizes external eQTL summary statistics to improve gene models trained
 
 
 ## Input data format
+> the MAGEPRO pipeline is designed to handle files that are formatted like the gene expression and covariate files made available by GTEx.
 
+- GTEx portal: https://www.gtexportal.org/home/downloads/adult-gtex#qtl
+- gene expression data from GTEx: https://storage.cloud.google.com/adult-gtex/bulk-qtl/v8/single-tissue-cis-qtl/GTEx_Analysis_v8_eQTL_expression_matrices.tar
+- covariates file from GTEx: https://storage.cloud.google.com/adult-gtex/bulk-qtl/v8/single-tissue-cis-qtl/GTEx_Analysis_v8_eQTL_covariates.tar.gz 
+
+### Gene Expression data format 
+- Tab-delimited matrix (gzipped) with the following columns:
+
+| #chr | start | end | gene_id | (the rest of the columns are sample IDs) | 
+| ---- | ----- | ---- | ----- | ---- |
+| 1 | 3465 | 4650 | ENSGXXXX | ID123 | 
+
+Example: 
+
+<img src = IMAGES/GTEx_GE.png>
+
+### Covariates data format 
+- Tab-delimited matrix (.txt) with the first row containing sample IDs and all other rows for covariates
+
+Example: 
+
+<img src = IMAGES/GTEx_cov.png>
+
+### Genotype data format
+- plink bed/bim/fam files
+- described here: https://www.cog-genomics.org/plink/1.9/formats
 
 ## Typical application of MAGEPRO on GTEx Tissues
 
