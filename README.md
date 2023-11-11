@@ -85,7 +85,6 @@ Example:
 
 ### Covariates data format 
 - Tab-delimited matrix (.txt) with the first row containing sample IDs and all other rows for covariates
-- NOTE: matching of samples and covariates happen with "Within-family ID" only
 
 Example: 
 
