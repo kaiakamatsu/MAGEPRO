@@ -63,7 +63,24 @@ MAGEPRO utilizes external eQTL summary statistics to improve gene models trained
 | --save_hsq | Save heritability results even if weights are not computed (default FALSE) |
 
 ## Output format
+MAGEPRO saves the output as a RData file which can be loaded into another R script with...
+> load("<file path>")
 
+The following variables are saved in this output file: 
+
+| name | description | 
+| ---- | ----- | 
+| wgt.matrix | final gene model weights, one column for each model type used (SINGLE, META, MAGEPRO) | 
+| snps | information about snps used in the gene model, in plink .bim format | 
+| cv.performance | matrix with a column for each model type used and a row for each of r-squared and p-value. these are the results of cross-validation | 
+| hsq | gcta-estimated heritability. set to NA if gcta fails to converge | 
+| hsq.pv | gcta-estimated heritability p-value. set to NA if gcta fails to converge | 
+| N.tot | sample size | 
+| wgtmagepro | datasets used in the MAGEPRO model | 
+| cf_total | mixing weights (alphas from regression) used to combine the datasets from wgtmagepro | 
+| avg_training_r2_single | average r-squared of SINGLE model on training cohort | 
+| avg_training_r2_meta | average r-squared of META model on training cohort | 
+| avg_training_r2_magepro | average r-squared of MAGEPRO model on training cohort | 
 
 ## Input data format
 > the MAGEPRO pipeline is designed to handle files that are formatted like the gene expression and covariate files made available by GTEx.
