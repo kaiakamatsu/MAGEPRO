@@ -75,9 +75,9 @@ MAGEPRO utilizes external eQTL summary statistics to improve gene models trained
 ### Gene Expression data format 
 - Tab-delimited matrix (gzipped) with the following columns:
 
-| #chr | start | end | gene_id | (the rest of the columns are sample IDs) | 
+| #chr | start | end | gene_id | SAMPLE1 | (the rest of the columns are sample IDs) | 
 | ---- | ----- | ---- | ----- | ---- |
-| 1 | 3465 | 4650 | ENSGXXXX | ID123 | 
+| 1 | 3465 | 4650 | ENSGXXXX | 0.20120726288521493 | (gene expression level of this gene for the other samples) |
 
 Example: 
 
