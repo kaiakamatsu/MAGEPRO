@@ -64,7 +64,7 @@ MAGEPRO utilizes external eQTL summary statistics to improve gene models trained
 
 ## Output format
 MAGEPRO saves the output as a RData file which can be loaded into another R script with...
-> load("<file path>")
+> load("file path")
 
 The following variables are saved in this output file: 
 
