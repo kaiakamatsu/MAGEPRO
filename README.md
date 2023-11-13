@@ -82,6 +82,8 @@ The following variables are saved in this output file:
 | avg_training_r2_meta | average r-squared of META model on training cohort | 
 | avg_training_r2_magepro | average r-squared of MAGEPRO model on training cohort | 
 
+> see "PROCESS_RESULTS" directory on how to format the results from cv.performance across all genes into a tab-delimited dataframe. 
+
 ## Input data format
 > the MAGEPRO pipeline is designed to handle files that are formatted like the gene expression and covariate files made available by GTEx.
 
