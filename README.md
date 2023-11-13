@@ -86,6 +86,11 @@ Example:
 ### Covariates data format 
 - Tab-delimited matrix (.txt) with the first row containing sample IDs and all other rows for covariates
 
+| ID | SAMPLE1 | SAMPLE2 | SAMPLE3 | (the rest of the columns are sample IDs) | 
+| ---- | ----- | ---- | ----- | ---- |
+| PC1 | XXXX | XXXX | XXXX | XXXX | 
+| PC2 | XXXX | XXXX | XXXX | XXXX | 
+
 Example: 
 
 <img src = IMAGES/GTEx_cov.png>
