@@ -73,6 +73,7 @@ MAGEPRO utilizes external eQTL summary statistics to improve gene models trained
 - covariates file from GTEx: https://storage.cloud.google.com/adult-gtex/bulk-qtl/v8/single-tissue-cis-qtl/GTEx_Analysis_v8_eQTL_covariates.tar.gz 
 
 ### Gene Expression data format 
+- Normalized gene expression measurements, inverse-normal-transformed across samples
 - Tab-delimited matrix (gzipped) with the following columns:
 
 | #chr | start | end | gene_id | SAMPLE1 | (the rest of the columns are sample IDs) | 
