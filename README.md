@@ -88,8 +88,8 @@ Example:
 
 | ID | SAMPLE1 | SAMPLE2 | SAMPLE3 | (the rest of the columns are sample IDs) | 
 | ---- | ----- | ---- | ----- | ---- |
-| PC1 | XXXX | XXXX | XXXX | XXXX | 
-| PC2 | XXXX | XXXX | XXXX | XXXX | 
+| PC1 | XXXX | XXXX | XXXX | (PC1 for rest of samples) | 
+| PC2 | XXXX | XXXX | XXXX | (PC2 for rest of samples) | 
 
 Example: 
 
