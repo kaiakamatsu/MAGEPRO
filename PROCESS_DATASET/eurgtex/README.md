@@ -1,6 +1,6 @@
 # Extracting and preparing data from gtex
 
-see eurgtex_main.sh for full pipeline
+see **eurgtex_main.sh** for full pipeline
 
 loop_download.sh
 - download raw sumstats file (data posted on google cloud by gtex)
