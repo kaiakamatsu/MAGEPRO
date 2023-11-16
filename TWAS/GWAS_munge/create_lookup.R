@@ -19,9 +19,7 @@ filtered_lookup <- filtered_lookup %>%
 
 filtered_lookup <- filtered_lookup %>%
   separate(alleles, into = c("allele1", "allele2", "b"), sep = "_") %>%
-  rowwise() %>%
-  mutate(sorted_alleles = paste0(min(allele1, allele2), "_", max(allele1, allele2))) %>%
-  ungroup() %>%
+  mutate(sorted_alleles = paste0(pmin(allele1, allele2), "_", pmax(allele1, allele2))) %>%
   mutate(variant_id_format = paste0(chromosome_position, "_", sorted_alleles))
 
 filtered_lookup <- as.data.frame(filtered_lookup)

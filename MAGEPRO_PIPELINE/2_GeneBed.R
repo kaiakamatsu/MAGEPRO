@@ -11,7 +11,11 @@ subset <- args[4]
 #--- parsing through ge file to grab TSS information for each gene
 ensg <- data.frame() 
 ge <- fread(ge_file, header = T)
-chrs <- sapply(1:nrow(ge), function(x) strsplit(ge$`#chr`[x], split = "chr")[[1]][2]) #modify the #chr column: "1" instead of "chr1" 
+if (! identical( grep("chr", ge$`#chr`[1]) , integer(0)) ){ #if chr is formated "chr1" instead of "1"
+	chrs <- sapply(1:nrow(ge), function(x) strsplit(ge$`#chr`[x], split = "chr")[[1]][2]) #modify the #chr column: "1" instead of "chr1" 
+}else{
+	chrs <- ge$`#chr`
+}
 ge$`#chr` <- chrs
 wremove <- which(chrs == "X" | chrs == "Y") 
 if(length(wremove)>0){ge <- ge[-wremove,]}

@@ -18,8 +18,12 @@ r2_h2 <- matrix(0, length(genes), 2*num_models+6)
 
 for (j in 1:length(genes)){
 
-file <- paste0(weightsdir,"/",genes[j],".wgt.RDat") 
+#for renamed weights 
+#gene <- strsplit(genes[j], split = "[.]")[[1]][1]
+#file <- paste0(weightsdir,"/",gene,".wgt.RDat")
+#print(gene)
 
+file <- paste0(weightsdir,"/",genes[j],".wgt.RDat") 
 print(genes[j])
 
 if(file.exists(file)){

@@ -361,7 +361,7 @@ if ( !is.na(opt$covar) ) {
 	covar = ( read.table(opt$covar,as.is=T,head=T) )
 	if ( opt$verbose >= 1 ) cat( "### Loaded",ncol(covar)-2,"covariates\n")
 	# Match up data
-	m = match( paste(fam[,1],fam[,2]) , paste(covar[,1],covar[,2]) )  
+	m = match( paste(fam[,1],fam[,2]) , paste(covar[,1],covar[,2]) )	
 	m.keep = !is.na(m)
 	fam = fam[m.keep,]
 	pheno = pheno[m.keep,]
@@ -531,6 +531,10 @@ for (w in wgts){
 }	
 
 ext2 <- length(wgt2)
+
+#TRY NO SPLIT 
+#wgt2 <- wgts
+#ext2 <- length(wgts)
 
 }
 
