@@ -1,3 +1,1 @@
-a folder of images and logos 
-
-veigar.png = logo
+# folder of images and logos 
