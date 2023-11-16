@@ -7,7 +7,7 @@ https://github.com/getian107/PRScsx.git
 - phi = 1e-4 (for less polygenic traits)
 - download LD reference panels and SNP information files as outlined in the PRS-CSx github
 
-> Y Ruan, YF Lin, YCA Feng, CY Chen, M Lam, Z Guo, Stanley Global Asia Initiatives, L He, A Sawa, AR Martin, S Qin, H Huang, T Ge. Improving polygenic prediction in ancestrally diverse populations. Nature Genetics, 54:573-580, 2022.
+Y Ruan, YF Lin, YCA Feng, CY Chen, M Lam, Z Guo, Stanley Global Asia Initiatives, L He, A Sawa, AR Martin, S Qin, H Huang, T Ge. Improving polygenic prediction in ancestrally diverse populations. Nature Genetics, 54:573-580, 2022.
 
 ## Prune and Threshold Summary Stats
 - use 80% of individuals to train summary stats (linear regression per snp)
