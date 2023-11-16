@@ -156,8 +156,6 @@ If you would like to run MAGEPRO on one gene, it is possible to run MAGEPRO.R se
 | Directory | Description |
 | -------- | -------- |
 | BENCHMARK | Scripts to benchmark MAGEPRO against other models |
-| GALA_SAGE | Scripts used to apply MAGEPRO to GALA II and SAGE data |
-| GTEx_v8_pipeline | Example of applying MAGEPRO to GTEx v8 data |
 | IMAGES | Images used in github |
 | MAGEPRO_PIPELINE | Intermediate scripts that are a part of the main MAGEPRO pipeline |
 | PLOTS | R scripts used to visualize data |
