@@ -81,6 +81,7 @@ The following variables are saved in this output file:
 | avg_training_r2_single | average r-squared of SINGLE model on training cohort | 
 | avg_training_r2_meta | average r-squared of META model on training cohort | 
 | avg_training_r2_magepro | average r-squared of MAGEPRO model on training cohort | 
+| var_cov | variance explained in gene expression by covariates | 
 
 > see "PROCESS_RESULTS" directory on how to format the results from cv.performance across all genes into a tab-delimited dataframe. 
 
