@@ -122,7 +122,17 @@ Example:
 
 ## QUICKSTART: Typical application of MAGEPRO on GTEx Tissues
 
-- IN PROGRESS
+1. clone this repository
+> git clone https://github.com/kaiakamatsu/MAGEPRO.git
+
+2. create directories where intermediate files and eQTL summary statistics will be stored
+> mkdir GE_PREDICTION
+> cd GE_PREDICTION
+> mkdir DATASETS
+> mkdir GTEX
+> mkdir MODELS
+
+
 
 ## Command-line options for the computing gene-models one gene at a time
 
