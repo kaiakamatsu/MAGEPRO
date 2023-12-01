@@ -127,12 +127,17 @@ Example:
 
 2. create directories where intermediate files and eQTL summary statistics will be stored
 > mkdir GE_PREDICTION
+> 
 > cd GE_PREDICTION
+> 
 > mkdir DATASETS
+> 
 > mkdir GTEX
+> 
 > mkdir MODELS
 
-
+3. download and process eQTL summary statistics
+> 
 
 ## Command-line options for the computing gene-models one gene at a time
 
