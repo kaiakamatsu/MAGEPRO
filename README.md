@@ -136,7 +136,21 @@ Example:
 > 
 > mkdir MODELS
 
-3. download and process eQTL summary statistics
+3. download and process eQTL summary statistics (**we will only use MESA eQTL summary statistics for this tutorial.** see PROCESS_DATASET directory)
+> cd DATASETS
+> 
+> wget -O HIS_cis_eqtl_summary_statistics.txt.gz https://www.dropbox.com/sh/f6un5evevyvvyl9/AAA3sfa1DgqY67tx4q36P341a?dl=1=HIS_cis_eqtl_summary_statistics.txt.gz
+>
+> wget -O AFA_cis_eqtl_summary_statistics.txt.gz https://www.dropbox.com/sh/f6un5evevyvvyl9/AAA3sfa1DgqY67tx4q36P341a?dl=1=AFA_cis_eqtl_summary_statistics.txt.gz
+>
+> mkdir mesahis
+>
+> mkdir mesaafr
+> 
+> pwd #copy this path
+>
+> cd ../../MAGEPRO/PROCESS_DATASET/mesa
+>
 > 
 
 ## Command-line options for the computing gene-models one gene at a time
