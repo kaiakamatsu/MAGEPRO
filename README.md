@@ -135,23 +135,63 @@ Example:
 > mkdir GTEX
 > 
 > mkdir MODELS
+>
+> mkdir SCRATCH
 
 3. download and process eQTL summary statistics (**we will only use MESA eQTL summary statistics for this tutorial.** see PROCESS_DATASET directory)
 > cd DATASETS
 > 
-> wget -O HIS_cis_eqtl_summary_statistics.txt.gz https://www.dropbox.com/sh/f6un5evevyvvyl9/AAA3sfa1DgqY67tx4q36P341a?dl=1=HIS_cis_eqtl_summary_statistics.txt.gz
->
-> wget -O AFA_cis_eqtl_summary_statistics.txt.gz https://www.dropbox.com/sh/f6un5evevyvvyl9/AAA3sfa1DgqY67tx4q36P341a?dl=1=AFA_cis_eqtl_summary_statistics.txt.gz
+> wget "https://www.dropbox.com/sh/f6un5evevyvvyl9/AAA3sfa1DgqY67tx4q36P341a?dl=1"
 >
 > mkdir mesahis
 >
 > mkdir mesaafr
+>
+> unzip MESA_cis-eQTLs.zip
 > 
 > pwd #copy this path
 >
 > cd ../../MAGEPRO/PROCESS_DATASET/mesa
 >
+> vim run_splitFilter.sh
+>
+> - paste path copied above to replace '<PASTE PATH HERE>'
+> - replace '<PATH TO SNPS HERE>' with the path to a bim file containing all SNPs of interest (we used HM3 SNPs in GTEx)
+>
+> vim submitSplit.sh #edit this file to prepare for job submission on your HPC cluster
+>
+> sbatch submitSplit.sh
+> - 'bash run_splitFilter.sh' #if not on cluster 
+>
+> cd ../../../GE_PREDICTION/DATASETS/
 > 
+> ls
+> - after this job runs, 'mesaafr' and 'mesahis' directories will contain gene-specific eQTL summary statistics data files
+
+4. download GTEx Gene Expression and Covariates data
+> cd ../GTEX
+>
+> wget "https://storage.googleapis.com/adult-gtex/bulk-qtl/v8/single-tissue-cis-qtl/GTEx_Analysis_v8_eQTL_expression_matrices.tar" # gene expression
+>
+> tar -xvf GTEx_Analysis_v8_eQTL_expression_matrices.tar
+> 
+> wget "https://storage.googleapis.com/adult-gtex/bulk-qtl/v8/single-tissue-cis-qtl/GTEx_Analysis_v8_eQTL_covariates.tar.gz" # covariates
+>
+> tar -xzf GTEx_Analysis_v8_eQTL_covariates.tar.gz
+>
+> - individual-level GTEx genotypes are protected access. this should be in this same directory, plink format (bed/bim/fam) and split by chromosome
+> - genotype files should contain individuals from the ancestry of interest (ex. only AFR individuals)
+
+5. run MAGEPRO
+> cd ../../MAGEPRO
+>
+> vim MAGEPRO_PIPELINE/5_RunJobs.sh # edit to prepare for job submission on your HPC cluster
+> 
+> #example with whole blood below, computing models for only significantly heritable
+> 
+> Rscript RUN_MAGEPRO_PIPELINE.R --bfile ../GE_PREDICTION/GTEX/'<prefix of genotype files, preceeding chromosome number and .bed>' --ge ../GE_PREDICTION/GTEX/GTEx_Analysis_v8_eQTL_expression_matrices/Whole_Blood.v8.normalized_expression.bed.gz --covar ../GE_PREDICTION/GTEX/GTEx_Analysis_v8_eQTL_covariates/Whole_Blood.v8.covariates.txt --out ../GE_PREDICTION/MODELS --scratch ../GE_PREDICTION/SCRATCH --intermed_dir ../GE_PREDICTION --PATH_plink '<path to plink>' --PATH_gcta '<path to gcta>' --sumstats_dir ../GE_PREDICTION/DATASETS --sumstats mesahis,mesaafr --models SINGLE,META,MAGEPRO --ss 352,233 --verbose 2 --num_covar ALL
+>
+> cd ../GE_PREDICTION/MODELS #this directory will contain all output files after the job finishes running
 
 ## Command-line options for the computing gene-models one gene at a time
 
