@@ -155,8 +155,8 @@ Example:
 >
 > vim run_splitFilter.sh
 >
-> - paste path copied above to replace '<PASTE PATH HERE>'
-> - replace '<PATH TO SNPS HERE>' with the path to a bim file containing all SNPs of interest (we used HM3 SNPs in GTEx)
+> - paste path copied above to replace "PASTE PATH HERE"
+> - replace "PATH TO SNPS HERE" with the path to a bim file containing all SNPs of interest (we used HM3 SNPs in GTEx)
 >
 > vim submitSplit.sh #edit this file to prepare for job submission on your HPC cluster
 >
@@ -189,7 +189,7 @@ Example:
 > 
 > #example with whole blood below, computing models for only significantly heritable
 > 
-> Rscript RUN_MAGEPRO_PIPELINE.R --bfile ../GE_PREDICTION/GTEX/'<prefix of genotype files, preceeding chromosome number and .bed>' --ge ../GE_PREDICTION/GTEX/GTEx_Analysis_v8_eQTL_expression_matrices/Whole_Blood.v8.normalized_expression.bed.gz --covar ../GE_PREDICTION/GTEX/GTEx_Analysis_v8_eQTL_covariates/Whole_Blood.v8.covariates.txt --out ../GE_PREDICTION/MODELS --scratch ../GE_PREDICTION/SCRATCH --intermed_dir ../GE_PREDICTION --PATH_plink '<path to plink>' --PATH_gcta '<path to gcta>' --sumstats_dir ../GE_PREDICTION/DATASETS --sumstats mesahis,mesaafr --models SINGLE,META,MAGEPRO --ss 352,233 --verbose 2 --num_covar ALL
+> Rscript RUN_MAGEPRO_PIPELINE.R --bfile ../GE_PREDICTION/GTEX/"prefix of genotype files, preceeding chromosome number and .bed" --ge ../GE_PREDICTION/GTEX/GTEx_Analysis_v8_eQTL_expression_matrices/Whole_Blood.v8.normalized_expression.bed.gz --covar ../GE_PREDICTION/GTEX/GTEx_Analysis_v8_eQTL_covariates/Whole_Blood.v8.covariates.txt --out ../GE_PREDICTION/MODELS --scratch ../GE_PREDICTION/SCRATCH --intermed_dir ../GE_PREDICTION --PATH_plink "path to plink" --PATH_gcta "path to gcta" --sumstats_dir ../GE_PREDICTION/DATASETS --sumstats mesahis,mesaafr --models SINGLE,META,MAGEPRO --ss 352,233 --verbose 2 --num_covar ALL
 >
 > cd ../GE_PREDICTION/MODELS #this directory will contain all output files after the job finishes running
 
