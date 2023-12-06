@@ -560,6 +560,10 @@ cv.all = cv.all[ cv.sample , ]
 folds = cut(seq(1,n),breaks=opt$crossval,labels=FALSE) #5 fold split - split into 5 groups 
 cv.calls = matrix(NA,nrow=n,ncol=length(model)) 
 
+# --- for checking cor() of weights in CV 
+wgt.cv = matrix(0, nrow=nrow(genos$bim), ncol=opt$crossval)
+# ---
+
 r2_training_magepro <- c()
 r2_training_meta <- c()
 r2_training_single <- c()
@@ -570,10 +574,10 @@ total_ss_cv <- total_ss_sumstats + training_ss # total sample size in cross vali
 }
 
 # --- Cross-Validation
-for ( i in 1:opt$crossval ) { 		
+for ( cv in 1:opt$crossval ) { 		
 	colcount = 1
 	if ( opt$verbose >= 1 ) cat("- Crossval fold",i,"\n")
-	indx = which(folds==i,arr.ind=TRUE)
+	indx = which(folds==cv,arr.ind=TRUE)
 	cv.train = cv.all[-indx,] #training set is the other 4 groups 
 	intercept = mean( cv.train[,3] ) 
 	cv.train[,3] = scale(cv.train[,3]) 
@@ -664,6 +668,10 @@ for ( i in 1:opt$crossval ) {
 
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.magepro
 
+	# --- for checking cor() of weights in CV
+	wgt.cv[,cv] = pred.wgt.magepro
+	# --- 
+
 	#store the r2 on training set
 	pred_train = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.magepro))) #r^2 between predicted and actual 
 	r2_training_magepro = append(r2_training_magepro, pred_train$adj.r.sq)	
@@ -671,7 +679,7 @@ for ( i in 1:opt$crossval ) {
 	cv.calls[ indx , colcount ] = NA
 	r2_training_magepro = append(r2_training_magepro, NA)
 	}
-
+	
 	}
 	#-------------------------------------------------------------------------------
 
@@ -792,8 +800,15 @@ cf_total <- cf_total[-w]
 wgtmagepro = NA
 }
 
+# --- for checking cor() of weights in CV
+cors_weights <- c()
+for (i in 1:(opt$crossval-1)){
+	cors_weights <- append(cors_weights, cor(wgt.cv[,i], wgt.cv[,(i+1)]) )
+}
+avg_cor <- mean(cors_weights)
+# ---
 
-save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_magepro, var_cov, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_magepro, var_cov, avg_cor, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("### CLEANING UP\n")

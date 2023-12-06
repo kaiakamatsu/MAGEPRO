@@ -132,11 +132,14 @@ def sim_eqtl(Z_qtl, nqtl, b_qtls, eqtl_h2, temp):
 # -- SIMULATE CAUSAL EFFECT SIZES
 def sim_effect_sizes(h2g, num_causal, num_snps, causal_index):
     mean = 0
-    variance = h2g/np.sqrt(num_causal)
+    variance = h2g/num_causal
     effect_sizes = np.zeros(num_snps)
-    effect_sizes[causal_index] = np.random.normal(mean, np.sqrt(variance))
+    if isinstance(causal_index, list):
+        for index in causal_index:
+            effect_sizes[index] = np.random.normal(mean, np.sqrt(variance))
+    else:
+        effect_sizes[causal_index] = np.random.normal(mean, np.sqrt(variance))
     return effect_sizes
-
 
 def get_hsq(geno, gene_expr, out, gcta):
     nindv, nsnp = geno.shape
@@ -398,21 +401,21 @@ if coef[CAUSAL] != 0:
 magepro_causal_nonzero = 0 # 0 for causal has 0 weight in magepro gene model. 1 for nonzero
 if magepro_coef[CAUSAL] != 0:
     magepro_causal_nonzero = 1
-#beta squared of causal snp from afr lasso
-afr_B2_causal = (coef[CAUSAL])**2
-#beta squared of causal snp from magepro
-magepro_B2_causal = (magepro_coef[CAUSAL])**2
-#diff between actual and estimated effect size of causal
-diff_effect_size_causal_magepro = (magepro_coef[CAUSAL] - beta_causal)**2
-diff_effect_size_causal_afr = (coef[CAUSAL] - beta_causal)**2
+#beta of causal snp from afr lasso
+afr_B_causal = (coef[CAUSAL])
+#beta of causal snp from magepro
+magepro_B_causal = (magepro_coef[CAUSAL])
+#actual beta
+true_B_causal = beta_causal
 
 #h2g = afr h2
 #magepro_r2 = magepro cv r2 
 #r2all = afronly magepro cv r2
 
-filename = "results/magepro_results_" + str(samplesizes) + "_h" + str(set_h2) + ".csv"
+#filename = "results/magepro_results_" + str(samplesizes) + "_h" + str(set_h2) + ".csv"
+filename = "results_try/magepro_results_" + str(samplesizes) + "_h" + str(set_h2) + ".csv"
 
-output = pd.DataFrame({'sim': sim, 'afr_h2': h2g, 'lasso_causal': lasso_causal_nonzero, 'magepro_causal': magepro_causal_nonzero, 'afr_beta^2_causal': afr_B2_causal, 'magepro_beta^2_causal': magepro_B2_causal, 'diff_beta_causal_magepro': diff_effect_size_causal_magepro, 'diff_beta_causal_afr': diff_effect_size_causal_afr, 'afr_r2': r2all, 'magepro_r2': magepro_r2}, index=[0])
+output = pd.DataFrame({'sim': sim, 'afr_h2': h2g, 'lasso_causal': lasso_causal_nonzero, 'magepro_causal': magepro_causal_nonzero, 'afr_beta_causal': afr_B_causal, 'magepro_beta_causal': magepro_B_causal, 'true_B_causal': true_B_causal, 'afr_r2': r2all, 'magepro_r2': magepro_r2}, index=[0])
 if sim == 1:
     output.to_csv(filename, sep="\t", index=False, header = True)
 else:

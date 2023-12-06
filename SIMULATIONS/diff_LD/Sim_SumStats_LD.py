@@ -132,9 +132,12 @@ def sim_effect_sizes(h2g, num_causal, num_snps, causal_index):
     mean = 0
     variance = h2g/np.sqrt(num_causal)
     effect_sizes = np.zeros(num_snps)
-    effect_sizes[causal_index] = np.random.normal(mean, np.sqrt(variance))
+    if isinstance(causal_index, list):
+        for index in causal_index:
+            effect_sizes[index] = np.random.normal(mean, np.sqrt(variance))
+    else:
+        effect_sizes[causal_index] = np.random.normal(mean, np.sqrt(variance))
     return effect_sizes
-
 
 def get_hsq(geno, gene_expr, out, gcta):
     nindv, nsnp = geno.shape

@@ -198,7 +198,7 @@ samplesizes = int(args[2]) # number of people to simulated genotypes for
 pop = args[3] #population
 genotype_file = args[4] #path to simulated genotypes
 set_num_causal = int(args[5]) #how many causal variants?
-CAUSAL = int(args[6]) #index of causal variant
+CAUSAL = [ int(index) for index in args[6].split(',') ]#indices of causal variants
 sim = int(args[7]) #iteration of simulation
 set_h2 = float(args[8]) #predetermined h2g
 samplesize_target = int(args[9]) #sample size
@@ -243,21 +243,13 @@ for i in range(z_eqtl.shape[1]):
 
 sumstats = pd.DataFrame({'snp':bim[:,1], 'beta':betas, 'p':pvals, 'effect_A': bim[:,4], 'alt_A': bim[:,5]})
 
-#filter for significant eqtl (fdr < 0.05)
-#fdr = multipletests(sumstats['p'], method='fdr_bh')[1]
-#sumstats['fdr'] = fdr
-#sumstats = sumstats[sumstats['fdr'] < 0.05]
-
 filename = out_sumstat + "/sumstats_" + pop + ".csv"
 sumstats.to_csv(filename, sep="\t", index=False, header = True)
 
-lasso_causal_nonzero = 0 # 0 = causal variant has 0 weight in lasso gene model. 1 for nonzero
-if coef[CAUSAL] != 0:
-    lasso_causal_nonzero = 1
-
+lasso_causal_nonzero = len([index for index in CAUSAL if coef[index] != 0]) #number of nonzero causal variants 
 
 #write results
-filename = "results/eur_h2_causal_" + str(samplesize_target) + "_h" + str(set_h2) + ".csv"
+filename = "results_multicausal/eur_h2_causal_" + str(samplesize_target) + "_h" + str(set_h2) + ".csv"
 eur_h2_causal = pd.DataFrame({'sim': sim, 'eur_h2': h2g, 'eur_lasso_casual': lasso_causal_nonzero, 'eur_r2': r2all}, index=[0])
 if sim == 1:
     eur_h2_causal.to_csv(filename, sep="\t", index=False, header = True)

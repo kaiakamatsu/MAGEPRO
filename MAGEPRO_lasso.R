@@ -651,7 +651,7 @@ for ( i in 1:opt$crossval ) {
 	}
 
 	#2. run ridge regression to find optimal coefficients for each dataset
-	y <- cv.glmnet(x = eq , y = cv.train[,3], alpha = 0, nfold = 5, intercept = T, standardize = T)
+	y <- cv.glmnet(x = eq , y = cv.train[,3], alpha = 1, nfold = 5, intercept = T, standardize = T)
 	cf = coef(y, s = "lambda.min")[2:(ext2+2)]
 	predtext <- "cf[1]*pred.wgt"
 	for (i in 2:(length(cf))){
@@ -763,7 +763,7 @@ for (w in wgt2){
 	num = num+1
 }	
 #run ridge regression to find optimal coefficients and compute multipop weight
-yfull <- cv.glmnet(x = eqfull , y = pheno[,3], alpha = 0, nfold = 5, intercept = T, standardize = T)
+yfull <- cv.glmnet(x = eqfull , y = pheno[,3], alpha = 1, nfold = 5, intercept = T, standardize = T)
 cf_total = coef(yfull, s = "lambda.min")[2:(ext2+2)]	
 predtextfull <- "cf_total[1]*pred.wgtfull"
 for (i in 2:(length(cf_total))){

@@ -14,7 +14,7 @@ num_models <- length(models)
 for (i in 1:length(tissues)){
 genes <- read.table(file = genes_assign, header = F)$V1 #all genes in analysis
 
-r2_h2 <- matrix(0, length(genes), 2*num_models+6)
+r2_h2 <- matrix(0, length(genes), 2*num_models+7)
 
 for (j in 1:length(genes)){
 
@@ -44,6 +44,8 @@ if (sum(is.na(wgtmagepro)) == 0){
 
 r2_h2[j, 2*num_models+6] <- paste(cf_total, collapse = ",")
 
+r2_h2[j, 2*num_models+7] <- var_cov
+
 }
 }
 }
@@ -51,7 +53,7 @@ r2_h2[j, 2*num_models+6] <- paste(cf_total, collapse = ",")
 h <- which(r2_h2[,1] == 0)
 if(length(h) > 0){r2_h2 <- r2_h2[-h,]}
 
-newcolnamesr2h2 <- c("gene", paste0(models, "_r2"), paste0(models, "_pv"), "hsq", "hsq_se", "hsq.pv", "datasets", "alphas")
+newcolnamesr2h2 <- c("gene", paste0(models, "_r2"), paste0(models, "_pv"), "hsq", "hsq_se", "hsq.pv", "datasets", "alphas", "var_covariates")
 colnames(r2_h2) <- newcolnamesr2h2
 
 write.table(r2_h2, file = paste0(output, "/MAGEPRO_results.txt"), row.names = F, col.names = T, sep = "\t", quote = F)
