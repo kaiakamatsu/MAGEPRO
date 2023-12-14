@@ -22,12 +22,12 @@ if(length(wremove)>0){ge <- ge[-wremove,]}
 dump <- ge[,1:4] #grabbing just the first 4 columns (#chr, start, end, gene_id)
 ensg <- rbind(ensg,dump) #add it to the ensg
 ensg <- unique(ensg) #delete duplicates 
+write.table(ensg[,4], paste0(intermed, "/All_Genes_Expressed.txt"), row.names = F, col.names = F, sep ="\t", quote = F)
 if (subset != 'NA'){
 subset_genes <- fread(subset, header = F)
 ensg <- filter(ensg, gene_id %in% subset_genes$V1)
 }
 print( paste0( "number of genes with ge data in analysis: ", nrow(ensg))) #19696 for whole_blood 
-write.table(ensg[,4], paste0(intermed, "/All_Genes_Expressed.txt"), row.names = F, col.names = F, sep ="\t", quote = F)
 
 #--- write files detailing the cis-region bp of every gene
 for (i in 1:nrow(ensg)){  
