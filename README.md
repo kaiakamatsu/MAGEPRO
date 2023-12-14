@@ -95,6 +95,7 @@ The following variables are saved in this output file:
 ### Gene Expression data format 
 - Normalized gene expression measurements, inverse-normal-transformed across samples
 - Tab-delimited matrix (gzipped) with the following columns:
+- Sorted. First by increasing chromosome number. Then by increasing start position. 
 
 | #chr | start | end | gene_id | SAMPLE1 | (the rest of the columns are sample IDs) | 
 | ---- | ----- | ---- | ----- | ---- | ---- |
