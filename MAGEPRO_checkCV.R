@@ -14,9 +14,9 @@ option_list = list(
               help="Path to output files [required]"),
   make_option("--tmp", action="store", default=NA, type='character',
               help="Path to temporary files [required]"),
-  make_option("--sumstats_dir", action="store", default="", type='character',
+  make_option("--sumstats_dir", action="store", default=NA, type='character',
               help="Path to external sumstats"),
-  make_option("--sumstats", action="store", default="", type='character',
+  make_option("--sumstats", action="store", default=NA, type='character',
               help="Comma-separated list of external datasets to include"),
   make_option("--models", action="store", default="SINGLE,META,MAGEPRO",
               help="Comma-separated list of models to use \n 
@@ -250,7 +250,12 @@ types <- unique(types[!is.na(types)])
 datasets <- list()
 
 # sumstats to use
-if (opt$sumstats != ""){
+if ( ! is.na(opt$sumstats)){
+	if ( is.na(opt$sumstats_dir) ){
+		cat( "ERROR: --sumstats supplied, but not --sumstats_dir, cannot compute META and MAGEPRO models \n" , sep='', file=stderr() )
+                cleanup()
+                q()
+	}
 	sumstats <- strsplit(opt$sumstats, ",", fixed = TRUE)[[1]]
 	for (s in sumstats){
 		file_dir = paste0(opt$sumstats_dir, "/", s)
@@ -534,10 +539,6 @@ for (w in wgts){
 
 ext2 <- length(wgt2)
 
-#TRY NO SPLIT 
-#wgt2 <- wgts
-#ext2 <- length(wgts)
-
 }
 
 
@@ -563,6 +564,9 @@ cv.calls = matrix(NA,nrow=n,ncol=length(model))
 # --- for checking cor() of weights in CV 
 wgt.cv = matrix(0, nrow=nrow(genos$bim), ncol=opt$crossval)
 # ---
+# --- keep track of SINGLE_model
+SINGLE_top1 <- 0
+# ---
 
 r2_training_magepro <- c()
 r2_training_meta <- c()
@@ -576,7 +580,7 @@ total_ss_cv <- total_ss_sumstats + training_ss # total sample size in cross vali
 # --- Cross-Validation
 for ( cv in 1:opt$crossval ) { 		
 	colcount = 1
-	if ( opt$verbose >= 1 ) cat("- Crossval fold",i,"\n")
+	if ( opt$verbose >= 1 ) cat("- Crossval fold",cv,"\n")
 	indx = which(folds==cv,arr.ind=TRUE)
 	cv.train = cv.all[-indx,] #training set is the other 4 groups 
 	intercept = mean( cv.train[,3] ) 
@@ -591,6 +595,7 @@ for ( cv in 1:opt$crossval ) {
 	pred.wgt = weights.lasso( cv.file , lasso_h2 , snp=genos$bim[,2] )	
 	if ( sum(is.na(pred.wgt)) == length(pred.wgt)) {
 		if ( opt$verbose >= 1 ) cat("LASSO pushed all weights to 0, using top1 as backup \n")
+		SINGLE_top1 <- SINGLE_top1 + 1
 		pred.wgt = weights.marginal( genos$bed[ cv.sample[ -indx ],] , as.matrix(cv.train[,3,drop=F]) , beta=T )
 		pred.wgt[ - which.max( pred.wgt^2 ) ] = 0
 	}
@@ -808,7 +813,7 @@ for (i in 1:(opt$crossval-1)){
 avg_cor <- mean(cors_weights)
 # ---
 
-save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_magepro, var_cov, avg_cor, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_magepro, var_cov, avg_cor, SINGLE_top1, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("### CLEANING UP\n")

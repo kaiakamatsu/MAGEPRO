@@ -601,7 +601,9 @@ for (s in 1:length(unique_snps)){
 		B_meta <- mean(effect_sizes[w]) #ota sample sizes are some for cell types
 		B_ota <- append(B_ota, B_meta)
 		# calculate P from Var of linear combination of random variables 
+		#https://stats.stackexchange.com/questions/495215/standard-error-standard-deviation-and-variance-confusion
 		variances = standard_errors[w]**2
+		#https://stats.libretexts.org/Bookshelves/Introductory_Statistics/OpenIntro_Statistics_(Diez_et_al)./02%3A_Probability/2.05%3A_Random_Variables#:~:text=The%20standard%20deviation%20of%20the,square%20root%20of%20the%20variance.
 		var_meta = sum(variances)/(n**2)
 		se_meta = sqrt(var_meta)
 		Z = B_meta/se_meta

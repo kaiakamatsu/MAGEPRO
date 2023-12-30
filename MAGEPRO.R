@@ -14,9 +14,9 @@ option_list = list(
               help="Path to output files [required]"),
   make_option("--tmp", action="store", default=NA, type='character',
               help="Path to temporary files [required]"),
-  make_option("--sumstats_dir", action="store", default="", type='character',
+  make_option("--sumstats_dir", action="store", default=NA, type='character',
               help="Path to external sumstats"),
-  make_option("--sumstats", action="store", default="", type='character',
+  make_option("--sumstats", action="store", default=NA, type='character',
               help="Comma-separated list of external datasets to include"),
   make_option("--models", action="store", default="SINGLE,META,MAGEPRO",
               help="Comma-separated list of models to use \n 
@@ -250,7 +250,12 @@ types <- unique(types[!is.na(types)])
 datasets <- list()
 
 # sumstats to use
-if (opt$sumstats != ""){
+if ( ! is.na(opt$sumstats)){
+	if ( is.na(opt$sumstats_dir) ){
+		cat( "ERROR: --sumstats supplied, but not --sumstats_dir, cannot compute META and MAGEPRO models \n" , sep='', file=stderr() )
+                cleanup()
+                q()
+	}
 	sumstats <- strsplit(opt$sumstats, ",", fixed = TRUE)[[1]]
 	for (s in sumstats){
 		file_dir = paste0(opt$sumstats_dir, "/", s)
@@ -570,10 +575,10 @@ total_ss_cv <- total_ss_sumstats + training_ss # total sample size in cross vali
 }
 
 # --- Cross-Validation
-for ( i in 1:opt$crossval ) { 		
+for ( cv in 1:opt$crossval ) { 		
 	colcount = 1
-	if ( opt$verbose >= 1 ) cat("- Crossval fold",i,"\n")
-	indx = which(folds==i,arr.ind=TRUE)
+	if ( opt$verbose >= 1 ) cat("- Crossval fold",cv,"\n")
+	indx = which(folds==cv,arr.ind=TRUE)
 	cv.train = cv.all[-indx,] #training set is the other 4 groups 
 	intercept = mean( cv.train[,3] ) 
 	cv.train[,3] = scale(cv.train[,3]) 
