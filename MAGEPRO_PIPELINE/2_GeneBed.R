@@ -39,4 +39,3 @@ bed <- matrix(bed, nrow = 1, ncol = 6) #make a 1 row x 6 column matrix
 #make bed file 
 write.table(bed, paste0(gene_beds, "/",ensg$gene_id[i],".bed"), row.names = F, col.names = F, sep ="\t", quote = F)
 }
-#note: some genes do not have variants. 
