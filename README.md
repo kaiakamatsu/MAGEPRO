@@ -38,7 +38,7 @@ MAGEPRO utilizes external eQTL summary statistics to improve gene models trained
 | -------- | -------- |
 | **--bfile** | Path to PLINK binary input file prefix (this pipeline will only use sample IDs with both GE and GENOTYPE data) |
 | **--out** | Path to save output files |
-| **--scratch** | Path to scratch directory (temporary files will be stored here) |
+| **--scratch** | Path to scratch directory (gene-specific files will be stored here) |
 | **--ge** | Path to individual-level, normalized gene expression data in matrix format (see input formats below for more details) |
 | --covar | Optional path to quantitative covariates (PLINK format) |
 | --num_covar | Number of covariate to use (number of rows to extract from --covar file). "ALL" to use all covariates available. Default assumes gtex covariate file (first 5 genotype PC, first 15 gene expression inferredcov, pcr, platform, sex: ideal for N < 150, see GTEx pipeline for more information). |
