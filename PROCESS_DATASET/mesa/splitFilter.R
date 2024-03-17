@@ -14,7 +14,7 @@ print("getsnp function created")
 
 #split PER GENE and write a new txt file for each in the OUT directory, change the column name depending on the eQTL file 
 splitGene = function( eQTL ) {
-	genes <- split(eQTL, eQTL$gene)
+	genes <- split(eQTL, eQTL$GENE)
 	return (genes)
 }
 print("splitGene function created")
@@ -56,7 +56,12 @@ if (file.exists(SNPS)){ #check if SNPS file exists
 extracted <- getSNPs(eQTL, SNPs)
 print("extraction completed")
 
-extracted <- extracted[, c(2 ,1, 14, 13, 6)]
+#missing SE
+se <- rep(NA, nrow(extracted))
+
+extracted <- extracted[, c(2 ,1, 14, 13, 6, 5, 4)]
+colnames(extracted) <- c("GENE", "SNP", "ALT", "REF", "BETA", "SE", "PVAL")
+extracted$SE <- se
 
 print(head(extracted))
 

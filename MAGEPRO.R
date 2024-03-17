@@ -306,7 +306,7 @@ if ( opt$verbose == 2 ) {
 	cat("Datasets available for this gene: \n")
 	print(datasets)
 	if (length(datasets) == 0){
-		cat("WARNING: no datasets available for this gene, MAGEPRO and META will be have NA weights \n")
+		cat("WARNING: no datasets available for this gene, MAGEPRO and META will have NA weights \n")
 	}
 }
 

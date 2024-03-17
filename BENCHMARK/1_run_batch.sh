@@ -1,12 +1,12 @@
-#compute multipop weights in batches 
-dataset=eqtlgen,ota,his,eur,mesa,genoa
-#batchfile=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/intermedfiles/genes_assign_Whole_Blood3.txt
-batchfile=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/rerun_some/genes_assign_Whole_Blood.redo.txt
+home=$1 #path to home dir
+ldref=$2
+gefile=$3
+dataset=eqtlgen,his,mesa
+batchfile=${home}/intermediate/Genes_Assigned.txt
 batches=$(awk '{ a[$2]++ } END { for (b in a) { print b } }' $batchfile) 
 for batch in $batches
 do
-	if [ $batch -ne 1 ]; then
-		echo $batch
-		sbatch 2_job_benchmark.sh Whole_Blood $batch $dataset
-	fi
+	sbatch 2_job_benchmark.sh $batch $dataset $home $ldref $gefile
 done
+
+#sbatch 2_job_benchmark.sh 1 $dataset $home $ldref $gefile

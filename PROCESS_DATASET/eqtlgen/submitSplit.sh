@@ -20,4 +20,4 @@ module load slurm
 source ~/.bashrc
 conda activate r_env
 
-bash eqtlgen_main.sh /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/smr-1.3.1-linux-x86_64 /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/ /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/GTEx_plink/GTEx_v8_genotype_AFR_HM3_exclude_dups.allchr.bim /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/genes_format
+bash eqtlgen_main.sh /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/smr-1.3.1-linux-x86_64 /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/ /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/eQTLGEN/chr /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/data/GTEx_plink/GTEx_v8_genotype_AFR_HM3_exclude_dups.allchr.bim /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_datasets_allinfo/eqtlgen

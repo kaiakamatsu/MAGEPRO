@@ -57,7 +57,7 @@ if (file.exists(SNPS)){ #check if SNPS file exists
 extracted <- getSNPs(eQTL, SNPs)
 print("extraction completed")
 
-extracted <- extracted[, c(2, 3, 5, 6, 8)]
+extracted <- extracted[, c(2, 3, 5, 6, 8, 9, 10)]
 print(head(extracted))
 
 #--- split the eQTL file by gene into multiple data frames using the splitGene function 

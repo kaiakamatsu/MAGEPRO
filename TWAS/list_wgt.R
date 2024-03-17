@@ -2,7 +2,7 @@ library(data.table)
 library(stringr)
 library(dplyr)
 
-base <- "/expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/GTExAFR_WHOLEBLOOD_MAGEPRO/weights_15PEER/"
+base <- "/expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/GTExAFR_WHOLEBLOOD_MAGEPRO/weights_MAGEPRO_IMPACT/"
 files <- list.files(base)
 len <- length(files)
 print(paste0("number of wgt files: ", len))
@@ -11,7 +11,7 @@ output <- matrix(0, nrow = len, ncol = 1)
 
 for (f in 1:len){
 	path <- paste0(base, files[f])
-	print(path)
+	#print(path)
 	output[f,1] <- path 
 }
 

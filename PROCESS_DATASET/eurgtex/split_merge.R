@@ -37,7 +37,7 @@ if (file.exists(EQTL)){
 df_sumstats <- merge(df_sumstats, SNPS, by = 'variant_id')
 # only variants present in both are kept
 
-df_sumstats <- df_sumstats[, c(2, 11, 13, 14, 8)]
+df_sumstats <- df_sumstats[, c(2, 11, 13, 14, 8, 9, 7)]
 
 print(head(df_sumstats))
 

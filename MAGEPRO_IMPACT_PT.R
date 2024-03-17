@@ -306,7 +306,7 @@ if ( opt$verbose == 2 ) {
 	cat("Datasets available for this gene: \n")
 	print(datasets)
 	if (length(datasets) == 0){
-		cat("WARNING: no datasets available for this gene, MAGEPRO and META will be have NA weights \n")
+		cat("WARNING: no datasets available for this gene, MAGEPRO and META will have NA weights \n")
 	}
 }
 
@@ -488,6 +488,7 @@ wgts <- c() #sumstats weights before splitting (used for meta-analysis)
 for (d in datasets){
 	name <- strsplit(d, split="[.]")[[1]][2]
 	wgts <- datasets_process(genos$bim, name, eval(parse(text = d)), wgts) # Run process dataset function on all datasets
+	# SUMSTATS ARE ALREADY IMPACT PT PROCESSED, META = META-ANALYSIS OF THESE SUMSTATS
 }
 
 if (!is.na(opt$cell_meta)){
@@ -523,21 +524,25 @@ for (w in wgts){
 
 if ("MAGEPRO" %in% model){
 
-wgt2 <- c() #magepro weights
+#wgt2 <- c() #magepro weights
 
 # SPLIT DATASETS 
-groups <- magepro_split(geno.file, lasso_h2, as.matrix(pheno[,3]) )
+#groups <- magepro_split(geno.file, lasso_h2, as.matrix(pheno[,3]) )
 
-for (w in wgts){
-	for (g in groups){
-		vec <- eval(parse(text = w))
-		vec[-eval(parse(text = g))] <- 0
-		assign(paste0(w, ".", g), vec, envir = parent.frame())
-		wgt2 <- append(wgt2, paste0(w, ".", g))
-	}	
-}	
+#for (w in wgts){
+#	for (g in groups){
+#		vec <- eval(parse(text = w))
+#		vec[-eval(parse(text = g))] <- 0
+#		assign(paste0(w, ".", g), vec, envir = parent.frame())
+#		wgt2 <- append(wgt2, paste0(w, ".", g))
+#	}	
+#}	
 
-ext2 <- length(wgt2)
+#ext2 <- length(wgt2)
+
+#WHEN SUMSTATS ARE ALREADY IMPACT PT processed
+wgt2 <- wgts
+ext2 <- ext
 
 }
 
@@ -560,13 +565,6 @@ cv.sample = sample(n) #sample randomly
 cv.all = cv.all[ cv.sample , ]
 folds = cut(seq(1,n),breaks=opt$crossval,labels=FALSE) #5 fold split - split into 5 groups 
 cv.calls = matrix(NA,nrow=n,ncol=length(model)) 
-
-# --- for checking cor() of weights in CV 
-wgt.cv = matrix(0, nrow=nrow(genos$bim), ncol=opt$crossval)
-# ---
-# --- keep track of SINGLE_model
-SINGLE_top1 <- 0
-# ---
 
 r2_training_magepro <- c()
 r2_training_meta <- c()
@@ -595,7 +593,6 @@ for ( cv in 1:opt$crossval ) {
 	pred.wgt = weights.lasso( cv.file , lasso_h2 , snp=genos$bim[,2] )	
 	if ( sum(is.na(pred.wgt)) == length(pred.wgt)) {
 		if ( opt$verbose >= 1 ) cat("LASSO pushed all weights to 0, using top1 as backup \n")
-		SINGLE_top1 <- SINGLE_top1 + 1
 		pred.wgt = weights.marginal( genos$bed[ cv.sample[ -indx ],] , as.matrix(cv.train[,3,drop=F]) , beta=T )
 		pred.wgt[ - which.max( pred.wgt^2 ) ] = 0
 	}
@@ -648,7 +645,7 @@ for ( cv in 1:opt$crossval ) {
 	eq <- matrix(0, nrow = nrow(genos$bed[ cv.sample[ -indx ] , ]), ncol = ext2+1)
 	eq[,1] <- genos$bed[ cv.sample[ -indx ] , ] %*% pred.wgt
 	for (c in 1:length(wgt2)){
-		eq[,(c+1)] <- genos$bed[ cv.sample[ -indx ] , ] %*%  eval(parse(text = wgt2[c])) #DEBUG HERE
+		eq[,(c+1)] <- genos$bed[ cv.sample[ -indx ] , ] %*%  eval(parse(text = wgt2[c])) 
 	}	
 	
 	#1b. when geno %*% wgt -> all 0 (snps at nonzero wgt have no variaion among people) -> remove sumstat
@@ -673,10 +670,6 @@ for ( cv in 1:opt$crossval ) {
 
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.magepro
 
-	# --- for checking cor() of weights in CV
-	wgt.cv[,cv] = pred.wgt.magepro
-	# --- 
-
 	#store the r2 on training set
 	pred_train = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.magepro))) #r^2 between predicted and actual 
 	r2_training_magepro = append(r2_training_magepro, pred_train$adj.r.sq)	
@@ -684,7 +677,7 @@ for ( cv in 1:opt$crossval ) {
 	cv.calls[ indx , colcount ] = NA
 	r2_training_magepro = append(r2_training_magepro, NA)
 	}
-	
+
 	}
 	#-------------------------------------------------------------------------------
 
@@ -805,15 +798,8 @@ cf_total <- cf_total[-w]
 wgtmagepro = NA
 }
 
-# --- for checking cor() of weights in CV
-cors_weights <- c()
-for (i in 1:(opt$crossval-1)){
-	cors_weights <- append(cors_weights, cor(wgt.cv[,i], wgt.cv[,(i+1)]) )
-}
-avg_cor <- mean(cors_weights)
-# ---
 
-save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_magepro, var_cov, avg_cor, SINGLE_top1, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_magepro, var_cov, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("### CLEANING UP\n")

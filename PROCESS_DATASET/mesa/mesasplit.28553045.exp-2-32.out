@@ -1,0 +1,32 @@
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+              GENE        SNP ALT REF       BETA SE          PVAL
+1: ENSG00000184292 rs17117873   T   C  3.6570074 NA 1.361413e-106
+2: ENSG00000184292 rs17117877   A   G  3.6570074 NA 1.361413e-106
+3: ENSG00000184292  rs6690139   G   A  3.7408835 NA 4.766978e-106
+4: ENSG00000184292  rs6664314   C   T  3.6957936 NA  5.178463e-76
+5: ENSG00000116874  rs1325933   T   C -1.0897590 NA  4.601458e-72
+6: ENSG00000198715  rs7522860   A   G -0.4341993 NA  8.944273e-69
+[1] "file split by gene"
+[1] "packages is ready"
+[1] "getsnp function created"
+[1] "splitGene function created"
+[1] "arguments read"
+[1] "arguments assigned to variables"
+[1] "eQTL table read"
+[1] "SNP table read"
+[1] "extraction completed"
+              GENE        SNP ALT REF       BETA SE          PVAL
+1: ENSG00000184292 rs17117873   T   C  3.6035463 NA 9.708907e-173
+2: ENSG00000184292 rs17117877   A   G  3.6035463 NA 9.708907e-173
+3: ENSG00000184292  rs6690139   G   A  3.6036871 NA 9.976128e-173
+4: ENSG00000198715  rs2296374   C   T -0.5803738 NA 6.055728e-119
+5: ENSG00000198715   rs949464   T   C -0.5808049 NA 1.769114e-118
+6: ENSG00000198715  rs7522860   A   G -0.5796192 NA 4.791989e-118
+[1] "file split by gene"

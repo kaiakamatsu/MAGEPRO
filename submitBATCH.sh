@@ -2,8 +2,8 @@
 #SBATCH -p shared
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --mem=4G
-#SBATCH -t 05:00:00
+#SBATCH --mem=2G
+#SBATCH -t 04:00:00
 #SBATCH -J MAGEPROsubmit
 #SBATCH -A ddp412
 #SBATCH -o ../working_err/MAGEPROsubmit.%j.%N.out
@@ -11,13 +11,7 @@
 #SBATCH --export=ALL
 #SBATCH --constraint="lustre"
 
-module purge
-module load cpu/0.15.4
-module load gcc/9.2.0
-module load mvapich2/2.3.6
-module load slurm
 source ~/.bashrc
 conda activate r_env
 
-
-Rscript RUN_MAGEPRO_PIPELINE.R --bfile /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/GEUVADIS/1KG_geno/plink_HM3_variants_EUR/GEUVADIS_EUR_chr --ge /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/GEUVADIS/GE/GEUVADIS_normalized_processed_ge_EUR.bed.gz --covar /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/GEUVADIS/covar/GEUVADIS_EUR_covariates.txt --out /expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/CHECK_R2_VARIABILITY/weights1 --scratch /expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/CHECK_R2_VARIABILITY/scratch --intermed_dir /expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/CHECK_R2_VARIABILITY/intermediate --PATH_plink /expanse/lustre/projects/ddp412/kakamatsu/plink --PATH_gcta /expanse/lustre/projects/ddp412/kakamatsu/fusion_twas-master/gcta_nr_robust --rerun FALSE --sumstats_dir /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_datasets --sumstats eqtlgen,genoa,mesahis,eurgtex,mesaafr,ota_CD16p_Mono,ota_CL_Mono,ota_LDG,ota_mDC,ota_Mem_CD4,ota_Mem_CD8,ota_Naive_B,ota_Naive_CD4,ota_Naive_CD8,ota_Neu,ota_NK,ota_pDC,ota_Plasmablast --models SINGLE,META,MAGEPRO --cell_meta ota --ss 31684,1031,352,574,233,416,416,416,416,416,416,416,416,416,416,416,416,416 --hsq_p 1 --verbose 2 --num_covar 36 --subset_genes /expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/CHECK_R2_VARIABILITY/intermediate/subset.txt
+Rscript RUN_MAGEPRO_PIPELINE_IMPACT.R --bfile /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/GENOA/GENOTYPES/phg000927.v1.NHLBI_GENOA_GWAS_EA.genotype-calls-matrixfmt.c1/EA_genotypes_combined_affymetrix_Illumina660K/maf_hwe_rate_relatedness_HM3_filtered_people_with_GE_inGEU_EUR/GENOA_EA_chr --ge /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/GENOA/GE/GENOA_EA_ge_normalized.bed.gz --covar /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/GENOA/COVARS/EA_GENOA_covariates_ready.txt --out /expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/GENOA_EA_LCL/weights_IMPACT_enet --scratch /expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/GENOA_EA_LCL/scratch --intermed_dir /expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/GENOA_EA_LCL/intermediate --PATH_plink /expanse/lustre/projects/ddp412/kakamatsu/plink --PATH_gcta /expanse/lustre/projects/ddp412/kakamatsu/fusion_twas-master/gcta_nr_robust --rerun FALSE --sumstats_dir /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_datasets_allinfo --sumstats eqtlgen,mesahis,mesaafr --models SINGLE,META,MAGEPRO --ss 31684,352,233 --hsq_p 1 --verbose 2 --num_covar 38 --IMPACT /expanse/lustre/projects/ddp412/kakamatsu/IMPACT_TRACKS/EUR_processed/means_LCL/IMPACT_707_LCL_HM3_EUR_chr --crossval 5

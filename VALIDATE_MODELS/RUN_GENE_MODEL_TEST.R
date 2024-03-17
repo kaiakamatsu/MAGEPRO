@@ -43,7 +43,9 @@ option_list = list(
   make_option("--noclean", action="store_true", default=FALSE,
               help="Do not delete any temporary files (for debugging) [default: %default]"),
   make_option("--save_hsq", action="store_true", default=FALSE,
-              help="Save heritability results even if weights are not computed [default: %default]") 
+              help="Save heritability results even if weights are not computed [default: %default]"), 
+  make_option("--insample_bim", action="store", default=NA, type = 'character',
+              help="Path to gene-specific bim files of in-sample cohort. These files will be used to define cis window snps in this out-of-sample cohort.")
 )
 
 opt = parse_args(OptionParser(option_list=option_list))
@@ -57,7 +59,7 @@ if ( opt$verbose == 2 ) {
 
 # --- COLLECT PEOPLE WITH BOTH GE AND GENOTYPE DATA
 if ( opt$verbose >= 1 ) cat("### EXTRACTING SAMPLES WITH BOTH GE AND GENOTYPE DATA\n")
-arg = paste("Rscript ../MAGEPRO_PIPELINE/1_CollectSamples.R", opt$bfile, opt$ge, opt$intermed_dir, sep=" ")
+arg = paste("Rscript ../MAGEPRO_VALIDATE_PIPELINE/1_CollectSamples.R", opt$bfile, opt$ge, opt$intermed_dir, sep=" ")
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 if ( opt$verbose >= 1 ) cat("### WROTE RESULTS TO ", opt$intermed_dir,"/All_Individuals.txt\n", sep = "")
 
@@ -75,7 +77,7 @@ system( paste("mkdir", plink_gene_dir, sep = " "), ignore.stdout=SYS_PRINT, igno
 
 # --- CREATE GENE BEDS (skip if --rerun)
 if ( opt$verbose >= 1 ) cat("### CREATING GENE BEDS FOR GENES OF INTEREST\n")
-arg = paste("Rscript ../MAGEPRO_PIPELINE/2_GeneBed.R", opt$ge, gene_beds_dir, opt$intermed_dir, opt$subset_genes, sep = " ")
+arg = paste("Rscript ../MAGEPRO_VALIDATE_PIPELINE/2_GeneBed.R", opt$ge, gene_beds_dir, opt$intermed_dir, opt$subset_genes, sep = " ")
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 if ( opt$verbose >= 1 ) cat("### WROTE GENE BEDS IN ", gene_beds_dir, "\n", sep = "")
 if ( opt$verbose >= 1 ) cat("### WROTE FILE OF ALL GENES IN ANALYSIS IN ", opt$intermed_dir, "/All_Genes_Expressed.txt\n", sep = "")
@@ -87,11 +89,10 @@ bed_files = list.files(path = gene_beds_dir)
 for (b in bed_files){
 	data = fread( paste0(gene_beds_dir, "/", b), header = F, sep = "\t" )
 	name = data$V4[1]
-	chr = data$V1[1]
-	start = data$V2[1]
-	end = data$V3[1]
+	chr = data$V1[1]	
+	base_name = strsplit(name, split = "[.]")[[1]][1]
 	plink_file = paste0(opt$bfile, chr)
-	arg = paste(opt$PATH_plink, "--bfile", plink_file, "--chr", chr, "--from-bp", start, "--to-bp", end, "--allow-no-sex", "--make-bed", "--out", paste0(plink_gene_dir, "/", name), sep = " " )
+	arg = paste(opt$PATH_plink, "--bfile", plink_file, "--extract", paste0(opt$insample_bim, "/", base_name, ".bim"), "--allow-no-sex", "--make-bed", "--out", paste0(plink_gene_dir, "/", name), sep = " " )
 	system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 	system( paste0("rm -rf ", plink_gene_dir, "/", name, ".log"), ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 }
@@ -102,7 +103,7 @@ if ( opt$verbose >= 1 ) cat("### SKIPPING CREATION OF PLINK FILES PER GENE. MAKE
 # --- PREPARING COVARIATE FILE, DICTATE NUMBER OF COVARIATES TO EXTRACT 
 if (!is.na(opt$covar)){
 if ( opt$verbose >= 1 ) cat("### PREPARING COVARIATE FILE\n")
-arg = paste("Rscript ../MAGEPRO_PIPELINE/3_PrepCovar.R", opt$covar, opt$intermed_dir, opt$num_covar, sep = " ")
+arg = paste("Rscript ../MAGEPRO_VALIDATE_PIPELINE/3_PrepCovar.R", opt$covar, opt$intermed_dir, opt$num_covar, sep = " ")
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 if ( opt$verbose >= 1 ) cat("### WROTE COVARIATE FILE IN ", opt$intermed_dir, "/Covar_All.txt\n", sep = "")
 }else{
@@ -111,7 +112,7 @@ if ( opt$verbose >= 1 ) cat("### SKIPPING COVAR FILE PROCESSING \n")
 
 # --- SPLIT UP GENES INTO BATCHES, SUBSET TO GENES OF INTEREST
 if ( opt$verbose >= 1 ) cat("### ASSIGNING GENE BATCHES \n")
-arg = paste("Rscript ../MAGEPRO_PIPELINE/4_AssignBatches.R", opt$intermed_dir, opt$num_batches, opt$subset_genes, sep = " ")
+arg = paste("Rscript ../MAGEPRO_VALIDATE_PIPELINE/4_AssignBatches.R", opt$intermed_dir, opt$num_batches, opt$subset_genes, sep = " ")
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 if ( opt$verbose >= 1 ) cat("### WROTE GENE BATCH FILE IN ", opt$intermed_dir, "/Genes_Assigned.txt\n", sep = "")
 
@@ -125,7 +126,7 @@ system( "mkdir ../../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_P
 if ( opt$verbose >= 1 ) cat("### RUNNING JOBS \n")
 batches <- c(1:opt$num_batches)
 for (batch in batches){
-arg = paste("sbatch ../MAGEPRO_PIPELINE/5V2_RunTestModels.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$resid, opt$hsq_p, opt$hsq_set , opt$verbose, opt$noclean, opt$save_hsq, opt$genemodel, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
+arg = paste("sbatch ../MAGEPRO_VALIDATE_PIPELINE/5V2_RunTestModels.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$resid, opt$hsq_p, opt$hsq_set , opt$verbose, opt$noclean, opt$save_hsq, opt$genemodel, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 }
 

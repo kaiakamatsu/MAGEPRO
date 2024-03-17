@@ -13,8 +13,6 @@ suppressMessages(library('dplyr'))
 option_list = list(
   make_option("--gene", action="store", default=NA, type='character',
               help="ENSG ID, for ex ENSG00000013503.9"),
-  make_option("--tissue", action="store", default=NA, type='character',
-              help="Tissue name, for ex Whole_Blood"),
   make_option("--bfile", action="store", default=NA, type='character',
               help="Path to PLINK binary input file prefix (minus bed/bim/fam) [required]"),
   make_option("--out", action="store", default=NA, type='character',
@@ -77,8 +75,7 @@ print(name)
 datas <- strsplit(opt$datasets, ",", fixed = TRUE)[[1]]
 
 #PRS-CSx working dir 
-
-PRS_CSx_working_dir = paste0("/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/working_data/", name, "/")
+PRS_CSx_working_dir = paste0(opt$tmp, "PRSCSX/")
 system(paste0("mkdir ", PRS_CSx_working_dir))
 
 # assign all external dataset file names
@@ -116,7 +113,6 @@ datasets <- list("file.eur","file.ota.CD16p_Mono", "file.ota.CL_Mono", "file.ota
 
 # remove datasets not being used
 datasets <- datasets[grepl(paste(datas, collapse = "|"), datasets)]
-print(datasets)
 
 datasets <- lapply(datasets, function(x) eval(parse(text=x)))
 
@@ -202,7 +198,7 @@ cleanup = function() {
 		system(arg)
                 arg = paste("rm -f " , opt$gemmaout , "*", sep='')  
 		system(arg)
-		arg = paste("rm -f " , PRS_CSx_working_dir , "*", sep='')  
+		arg = paste("rm -rf " , PRS_CSx_working_dir , "*", sep='')  
 		system(arg)
 	}
 }
@@ -322,21 +318,21 @@ system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
 #LRT - likelihood ratio test - compare goodness of fit 
 if ( !file.exists( paste(opt$tmp,".hsq",sep='') ) ) {
 	cat(opt$tmp,"does not exist, likely GCTA could not converge, forcing h2 = 0.064251\n",file=stderr())
-	hsq_afr = 0.064251
-	hsq_afr.pv = NA
+	hsq = 0.064251
+	hsq.pv = NA
 	#if heritability estimate does not converge, push through with a preset heritability value = 0.064251 - smallest h2 that has p < 0.05
 }else{
 	hsq.file = read.table(file=paste(opt$tmp,".hsq",sep=''),as.is=T,fill=T)
-	hsq_afr = as.numeric(unlist(hsq.file[hsq.file[,1] == "V(G)/Vp",2:3]))
-	hsq_afr.pv = as.numeric(unlist(hsq.file[hsq.file[,1] == "Pval",2]))
-if ( opt$verbose >= 1 ) cat("Heritability (se):",hsq_afr,"LRT P-value:",hsq_afr.pv,'\n')
-if ( opt$save_hsq ) cat( opt$out , hsq_afr , hsq_afr.pv , '\n' , file=paste(opt$out,".hsq",sep='') )
+	hsq = as.numeric(unlist(hsq.file[hsq.file[,1] == "V(G)/Vp",2:3]))
+	hsq.pv = as.numeric(unlist(hsq.file[hsq.file[,1] == "Pval",2]))
+if ( opt$verbose >= 1 ) cat("Heritability (se):",hsq,"LRT P-value:",hsq.pv,'\n')
+if ( opt$save_hsq ) cat( opt$out , hsq , hsq.pv , '\n' , file=paste(opt$out,".hsq",sep='') )
 
 # 4. stop if insufficient
 # hsq_p set to 1, compute weights for all genes, regardless of hsq p value
-if (!is.na(hsq_afr.pv)){
-	if ( hsq_afr.pv > opt$hsq_p ) { 
-		cat(opt$tmp," : heritability ",hsq_afr[1],"; LRT P-value ",hsq_afr.pv," : skipping gene\n",sep='',file=stderr())
+if (!is.na(hsq.pv)){
+	if ( hsq.pv > opt$hsq_p ) { 
+		cat(opt$tmp," : heritability ",hsq[1],"; LRT P-value ",hsq.pv," : skipping gene\n",sep='',file=stderr())
 		cleanup()
 		q()
 	}
@@ -344,8 +340,8 @@ if (!is.na(hsq_afr.pv)){
 }
 }else {
 if ( opt$verbose >= 1 ) cat("### Skipping heritability estimate\n")
-hsq_afr = opt$hsq_set
-hsq_afr.pv = NA
+hsq = opt$hsq_set
+hsq.pv = NA
 }
 
 # read in genotypes
@@ -662,14 +658,14 @@ input_prs <- paste(input, collapse=',')
 ss_prs <- paste(ss, collapse=',')
 pp_prs <- paste(pp, collapse=',')
 
-arg = paste0("python PRScsx/PRScsx.py --ref_dir=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref --bim_prefix=", PRS_CSx_working_dir, "snps", " --sst_file=", input_prs," --n_gwas=", ss_prs, " --pop=", pp_prs, " --chrom=", genos$bim[1,1]," --phi=1e-4 --out_dir=", PRS_CSx_working_dir, " --out_name=results")  
+arg = paste0("python PRScsx/PRScsx.py --ref_dir=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref --bim_prefix=", PRS_CSx_working_dir, "snps", " --sst_file=", input_prs," --n_gwas=", ss_prs, " --pop=", pp_prs, " --chrom=", genos$bim[1,1]," --phi=1e-6 --out_dir=", PRS_CSx_working_dir, " --out_name=results")  
 print(arg)
 system(arg)
 
 #retrieve posterior snp effect sizes, reassign weights
 unique_pp <- unique(pp)
 for (n in unique_pp){
-	wgts <- weights_process(n, paste0(PRS_CSx_working_dir,"results_", n, "_pst_eff_a1_b0.5_phi1e-04_chr", genos$bim[1,1], ".txt"), wgts)
+	wgts <- weights_process(n, paste0(PRS_CSx_working_dir,"results_", n, "_pst_eff_a1_b0.5_phi1e-06_chr", genos$bim[1,1], ".txt"), wgts)
 }
 
 
@@ -731,7 +727,7 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 		sumstats_file = paste(opt$tmp,"_sumstats.txt",sep='')
 		write.table(sumstats, file = sumstats_file, quote = F, row.names = F, col.names = T, sep = '\t')
 
-		arg = paste( opt$PATH_plink ," --allow-no-sex --bfile ",opt$ldref, "/GTEx_v8_genotype_AFR_HM3_exclude_dups.", genos$bim[1,1] ," --clump-p1 0.5 --clump-r2 0.2 --clump-snp-field SNPs --clump-field Pvals --clump ", opt$tmp, "_sumstats.txt"," --out ", sumstats_file,sep='')
+		arg = paste( opt$PATH_plink ," --allow-no-sex --bfile ",opt$ldref, genos$bim[1,1] ," --clump-p1 0.5 --clump-r2 0.2 --clump-snp-field SNPs --clump-field Pvals --clump ", opt$tmp, "_sumstats.txt"," --out ", sumstats_file,sep='')
         	system(arg)
 
 		#read in result file, create wgt matrix and predict 
@@ -756,7 +752,7 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 			pred.wgt.PT_sumstats <- t(pred.wgt.PT_sumstats)
 		}
 
-		cv.calls[ indx , mod*2 ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.PT_sumstats
+		cv.calls[ indx , 1 ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.PT_sumstats
 		
 		system(paste0("rm -rf ", sumstats_file, ".clumped"))
 
@@ -767,8 +763,8 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 
 		#compute afr gene model weights with 4 fold 
 		
-		lasso_h2 <- hsq_afr[1]
-		if(lasso_h2 < 0){lasso_h2 <- 0.064251}
+		lasso_h2 <- hsq[1]
+		if(lasso_h2 < 0){lasso_h2 <- 0.05}
 		pred.wgt = weights.lasso( cv.file , lasso_h2 , snp=genos$bim[,2] )
 		
 		if ( sum(is.na(pred.wgt)) == length(pred.wgt)) {
@@ -805,16 +801,14 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 		}
 		w_eq <- paste(w_eq, collapse="+")
 
-		print(w_eq)
-
 		pred.wgt.prs_csx <- eval(parse(text=w_eq))
 	
-		#if (length(pred.wgt.prs_csx) == 1){
-		#	pred.wgt.prs_csx <- t(pred.wgt.prs_csx)
-		#}
+		if (length(pred.wgt.prs_csx) == 1){
+			pred.wgt.prs_csx <- t(pred.wgt.prs_csx)
+		}
 
 		#predict on testing set
-		cv.calls[ indx , (mod*2 - 1) ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.prs_csx
+		cv.calls[ indx , 2 ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.prs_csx
 	
 		#-------------------------------------------------------------------------------
 
@@ -828,7 +822,7 @@ for ( i in 1:opt$crossval ) { #for every chunk in crossval
 #compute rsq + P-value for each model
 cv.performance = matrix(NA,nrow=2,ncol=2)  
 rownames(cv.performance) = c("rsq","pval") 
-types <- c("PRS-CSx", "PT_sumstats") 
+types <- c("PT", "PRSCSX") 
 colnames(cv.performance) = types 
 
 for ( mod in 1:ncol(cv.calls) ) { 
@@ -844,9 +838,110 @@ for ( mod in 1:ncol(cv.calls) ) {
 if ( opt$verbose >= 1 ) write.table(cv.performance,quote=F,sep='\t')
 
 
+# FULL MODEL
+wgt.matrix = matrix(0, nrow=nrow(genos$bim), ncol=length(types)) 
+colnames(wgt.matrix) = c("PT", "PRSCSX")
+rownames(wgt.matrix) = genos$bim[,2]
+
+#PT
+Betas <- c()
+Pvals <- c()
+SNPs <- c()
+for (col in 1:ncol(genos$bed)){
+	SNPs <- append(SNPs, colnames(genos$bed)[col])
+	snp <- genos$bed[ ,col]
+	model <- lm(pheno[,3] ~ snp)
+	b <- coef(model)[2]
+	if (is.na(b)){
+		b = 0
+	}
+	Betas <- append(Betas, b)
+	if ( nrow(summary(model)$coefficients) > 1 ){
+		Pvals <- append(Pvals, summary(model)$coefficients[2, "Pr(>|t|)"])
+	}else{
+		Pvals <- append(Pvals, 1)
+	}
+}	
+sumstats <- data.frame(SNPs, Betas, Pvals)
+
+#write dataframe, run plink --clump to P+T, write output to temp directory
+# p1 = 0.5, r2 = 0.2,   see Tiffany's paper here: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8049522/
+sumstats_file = paste(opt$tmp,"_sumstats.txt",sep='')
+write.table(sumstats, file = sumstats_file, quote = F, row.names = F, col.names = T, sep = '\t')
+
+arg = paste( opt$PATH_plink ," --allow-no-sex --bfile ",opt$ldref, genos$bim[1,1] ," --clump-p1 0.5 --clump-r2 0.2 --clump-snp-field SNPs --clump-field Pvals --clump ", opt$tmp, "_sumstats.txt"," --out ", sumstats_file,sep='')
+system(arg)
+
+#read in result file, create wgt matrix and predict 
+if (file.exists(paste0(sumstats_file, ".clumped"))){
+	clumped <- fread(file = paste0(sumstats_file, ".clumped"), header = T)
+	clumps <- clumped[[3]]
+	sumstats <- filter(sumstats, SNPs %in% clumps)
+
+	m_sumstats <- match(genos$bim[,2], sumstats[[1]])
+        sumstats <- sumstats[m_sumstats,]
+        w_sumstats <- which(is.na(sumstats[[1]]))
+        if(length(w_sumstats) > 0){
+        	sumstats[w_sumstats,2] <- 0
+        }			
+	pred.wgt.PT_sumstats = sumstats[[2]]
+}else{
+	pred.wgt.PT_sumstats = rep(0, times = nrow(genos$bim))
+}
+
+if(length(pred.wgt.PT_sumstats) == 1){
+	pred.wgt.PT_sumstats <- t(pred.wgt.PT_sumstats)
+}
+
+wgt.matrix[,1] <- pred.wgt.PT_sumstats
+
+
+# PRSCSX
+pred.wgtfull = weights.lasso( geno.file , lasso_h2 , snp=genos$bim[,2] )	
+if ( sum(is.na(pred.wgtfull)) == length(pred.wgtfull)) {
+	pred.wgtfull = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T )
+	pred.wgtfull[ - which.max( pred.wgtfull^2 ) ] = 0
+}
+if(length(pred.wgtfull) == 1){
+	pred.wgtfull <- t(pred.wgtfull)
+}
+
+#collect adjusted weights from PRS-CSx
+eq = list("genos$bed %*% pred.wgtfull")
+for (w in wgts){
+			
+	if (length(eval(parse(text = w))) == 1){
+		assign(w, t(eval(parse(text = w))))
+	}
+			
+	eq <- append(eq, paste0("genos$bed %*% ", w))
+}
+eq <- paste(eq, collapse="+")
+eq <- paste0("pheno[,3] ~ ", eq)
+
+#compute optimal linear combination on validation set
+y <- lm(eval(parse(text = eq))) 
+
+coef <- coef(y)
+coef <- ifelse(is.na(coef), 0, coef)
+
+w_eq = list("coef[2]*pred.wgtfull")
+for (nums in 3:(ext+2)){
+	w_eq <- append(w_eq, paste0("coef[", nums,"]*",wgts[nums-2]))
+}
+w_eq <- paste(w_eq, collapse="+")
+
+pred.wgt.prs_csx <- eval(parse(text=w_eq))
+	
+if (length(pred.wgt.prs_csx) == 1){
+	pred.wgt.prs_csx <- t(pred.wgt.prs_csx)
+}
+
+wgt.matrix[,2] <- pred.wgt.prs_csx
+
 snps = genos$bim
 
-save( snps, cv.performance , hsq_afr, hsq_afr.pv, N.tot , wgts, models, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( snps, wgt.matrix, cv.performance , hsq, hsq.pv, N.tot , wgts, models, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("Cleaning up\n")

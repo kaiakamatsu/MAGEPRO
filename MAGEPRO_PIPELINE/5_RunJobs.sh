@@ -10,12 +10,8 @@
 #SBATCH -e ../working_err/MAGEPRO.%j.%N.err
 #SBATCH --export=ALL
 #SBATCH --constraint="lustre"
+#--- EDIT ABOVE TO SUIT YOUR HPC CLUSTER
 
-module purge
-module load cpu/0.15.4
-module load gcc/9.2.0
-module load mvapich2/2.3.6
-module load slurm
 source ~/.bashrc
 conda activate r_env
 
@@ -41,11 +37,16 @@ verbose=${18}
 noclean=${19}
 save_hsq=${20}
 
-#--- create paths
-tmpdir=$scratch/tmp
+#--- create directory for temporary/working files 
+#--- NOTE: create "tmp" and "wd" where your system can write/delete files efficiently (EDIT TO SUIT YOUR HPC CLUSTER)
+#tmpdir=$scratch/tmp
+tmpdir=/scratch/$USER/job_$SLURM_JOBID/tmp
 mkdir $tmpdir
-wd=$scratch/wd
+#wd=$scratch/wd
+wd=/scratch/$USER/job_$SLURM_JOBID/wd
 mkdir $wd
+
+#--- define file paths 
 plinkdir=$scratch/plink_gene
 batchfile=$intermed/Genes_Assigned.txt 
 geneids=$intermed/All_Genes_Expressed.txt 
@@ -64,7 +65,7 @@ do
 filecheck=$plinkdir/$gene.bed
 if test -f "$filecheck"
 then
-    $plink_exec --bfile $plinkdir/$gene --allow-no-sex --make-bed --keep $ind --out $wd/$gene
+    $plink_exec --bfile $plinkdir/$gene --allow-no-sex --make-bed --keep $ind --indiv-sort f $ind --out $wd/$gene
     rm $wd/$gene.log 
     rowid=$(cat $geneids | nl | grep $gene | awk '{print $1 + 1}') #+1 for col header in ge file - row number of the gene in the ge file 
     ge_donors=$(zcat $gefile | head -n $rowid | tail -n 1 | cut -f $colind2)  #gene expression from the individuals of interest
@@ -72,7 +73,8 @@ then
     mv $wd/$gene.mod.fam $wd/$gene.fam 
     TMP=$tmpdir/${gene}
     OUT=$weights/${gene}
-    Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --cell_meta $cell_meta --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq
+    #Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --cell_meta $cell_meta --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq 
+    Rscript MAGEPRO_IMPACT_PT.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --cell_meta $cell_meta --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq
     rm $wd/$gene.* 
 fi
 

@@ -43,6 +43,8 @@ option_list = list(
 # --- PREPARING EXTERNAL DATASET FILES AND PARSING OPTIONS
 # parse command-line arguments
 opt = parse_args(OptionParser(option_list=option_list))
+na <- which(opt == "NA") 
+opt[na] <- NA
 print(opt)
 
 # find gene name without version number
@@ -140,7 +142,6 @@ geno.file = opt$tmp
 arg = paste( opt$PATH_plink ," --allow-no-sex --bfile ",opt$bfile," --pheno ",pheno.file," --keep ",pheno.file," --make-bed --out ",geno.file,sep='')
 system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
 
-
 # --- LOAD AND PREP GENOTYPES 
 genos = read_plink(geno.file,impute="avg")
 mafs = apply(genos$bed,2,mean)/2  
@@ -164,6 +165,7 @@ if ( !is.na(opt$covar) && opt$resid ) {
 		genos$bed[,i] = summary(lm( genos$bed[,i] ~ as.matrix(covar[,3:ncol(covar)]) ))$resid
 	}
 	genos$bed = scale(genos$bed)
+	genos$bed[is.nan(genos$bed)] <- 0 # when there is no variation at a snp, scale() sets genotypes of the snp to NaN. set those to 0
 }
 
 N.tot = nrow(genos$bed)
@@ -180,7 +182,7 @@ datasets_process <- function(wgt, snp_ref){
 		match=which(genos$bim$V2 == snp_ref$V2[k])
 		if (! identical(match, integer(0))){
 			if (!is.na(snp_ref$V5[k]) && !is.na(snp_ref$V6[k])){
-				if (as.character(genos$bim$V5[match]) != as.character(snp_ref$V5[k]) || as.character(genos$bim$V6[match]) != as.character(snp_ref$V6[k])) {  # check if A1 column is effect allele
+				if (as.character(genos$bim$V5[match]) != as.character(snp_ref$V5[k]) || as.character(genos$bim$V6[match]) != as.character(snp_ref$V6[k])) {  
 					if (as.character(genos$bim$V5[match]) == as.character(snp_ref$V6[k]) && as.character(genos$bim$V6[match]) == as.character(snp_ref$V5[k])){
 						wgt[k] <- wgt[k] * -1
 					}else{
@@ -241,10 +243,56 @@ for ( mod in 1:ncol(cv.calls) ) {
 }
 if ( opt$verbose >= 1 ) write.table(cv.performance,quote=F,sep='\t')
 
+# --- HERITABILITY ANALYSIS (this can be used for downstream analysis... ex. should we analyze genes that are significantly heritable in both cohorts?)
+if ( is.na(opt$hsq_set) ) {
+	if ( opt$verbose >= 1 ) cat("### ESTIMATING HERITABILITY\n")
+
+	# 1. generate GRM
+	arg = paste( opt$PATH_plink," --allow-no-sex --bfile ",opt$tmp," --make-grm-bin --out ",opt$tmp,sep='')
+	system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
+
+	# 2. estimate heritability
+	if ( !is.na(opt$covar) ) {
+		arg = paste( opt$PATH_gcta ," --grm ",opt$tmp," --pheno ",raw.pheno.file," --qcovar ",opt$covar," --out ",opt$tmp," --reml --reml-no-constrain --reml-lrt 1",sep='')
+	} else {
+		arg = paste( opt$PATH_gcta ," --grm ",opt$tmp," --pheno ",pheno.file," --out ",opt$tmp," --reml --reml-no-constrain --reml-lrt 1",sep='')
+	}
+	system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
+
+	# 3. evaluate LRT and V(G)/Vp
+	#V(G)/Vp = proportion of genotypic to phenotypic variation
+	#LRT - likelihood ratio test - compare goodness of fit 
+	if ( !file.exists( paste(opt$tmp,".hsq",sep='') ) ) {
+		if ( opt$verbose >= 1 ) cat(opt$tmp,"does not exist, GCTA could not converge, forcing h2 to fixed value\n",file=stderr()) 
+		hsq = NA
+		hsq.pv = NA
+	}else{
+		hsq.file = read.table(file=paste(opt$tmp,".hsq",sep=''),as.is=T,fill=T)
+		hsq = as.numeric(unlist(hsq.file[hsq.file[,1] == "V(G)/Vp",2:3]))
+		hsq.pv = as.numeric(unlist(hsq.file[hsq.file[,1] == "Pval",2]))
+		if ( hsq[1] > 1 ){hsq = 1} #should not happen but gcta may overestimate at very low sample sizes
+		if ( opt$verbose >= 1 ) cat("Heritability (se):",hsq,"LRT P-value:",hsq.pv,'\n')
+		if ( opt$save_hsq ) cat( opt$out , hsq , hsq.pv , '\n' , file=paste(opt$out,".hsq",sep='') )
+
+		# 4. stop if insufficient
+		if (!is.na(hsq.pv)){
+			if ( hsq.pv > opt$hsq_p ) { 
+				cat(opt$tmp," : heritability ",hsq[1],"; LRT P-value ",hsq.pv," : skipping gene\n",sep='',file=stderr())
+				cleanup()
+				q()
+			}
+		}
+	}
+} else {
+	if ( opt$verbose >= 1 ) cat("### SKIPPING HERITABILITY ESTIMATE\n")
+	hsq = opt$hsq_set
+	hsq.pv = NA
+}
+
 
 snps = genos$bim
 
-save( snps, cv.performance, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( snps, cv.performance, hsq, hsq.pv, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("Cleaning up\n")
