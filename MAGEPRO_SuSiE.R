@@ -54,8 +54,8 @@ option_list = list(
               help="Do not delete any temporary files (for debugging) [default: %default]"),
   make_option("--save_hsq", action="store_true", default=FALSE,
               help="Save heritability results even if weights are not computed [default: %default]"), 
-  make_option("--IMPACT", action="store", default=NA, type='character',
-              help="Path to IMPACT txt file")
+  make_option("--susie", action="store", default=NA, type='numeric',
+              help="Use SuSiE pips from this column number in external datasets to create sparse eQTL gene model")
 )
 
 # --- PARSE COMMAND LINE ARGS
@@ -159,6 +159,52 @@ datasets_process <- function(bim, dataset, file, wgts){
 	}
 }
 
+# --- PROCESS-SUMSTATS-USE-SUSIE
+datasets_process_susie <- function(bim, dataset, file, wgts, susie){
+	# PURPOSE: process sumstats by flipping signs according to effect allele and matching snps.
+		# ONLY keep nonzero effect sizes for high PIP SNPs. 
+	# bim = bim file of snps	
+	# dataset = name of sumstat dataset
+	# file = file path to sumstat (make sure it is properly formatted)
+	# wgts = current list of wgts 
+	# susie = column number where SuSiE PIPs are stored in the file
+	# RETURN: updated list of wgts including the one that was processed in this function
+	table <- fread(file, select = c(2, 3, 4, 5, susie)) 
+	for (k in 1:nrow(table)){
+		match=which(bim$V2 == table[k, 1])
+		if (! identical(match, integer(0))){
+			if (!is.na(table[k, 2]) && !is.na(table[k, 3])){
+				if (as.character(bim$V5[match]) != as.character(table[k, 2]) || as.character(bim$V6[match]) != as.character(table[k, 3])) { 
+					if (as.character(bim$V5[match]) == as.character(table[k, 3]) && as.character(bim$V6[match]) == as.character(table[k, 2])){
+						table[k, 4] <- table[k, 4] * -1
+					}else{
+						table[k, 4] <- 0
+					}
+				}
+			} else {
+				table[k, 4] <- 0
+			}
+		}
+	}
+	# --- use SuSiE pips to only keep nonzero effect sizes for high PIP snps
+	indices_high_pip <- which(table[[5]]>=0.95)
+	if (!identical(integer(0), indices_high_pip)){
+		table[-indices_high_pip, 4] <- 0
+	}
+	# ---
+	m <- match(bim[,2], table[[1]])
+	table <- table[m,]
+	w <- which(is.na(table[[1]]))
+	if(length(w) > 0){table[w,4] <- 0}
+	assign(paste0("pred.wgt.", dataset), table[[4]], envir = parent.frame())
+	if(sum(which(eval(parse(text = paste0("pred.wgt.", dataset))) != 0)) > 0){
+		wgts <- append(wgts, paste0("pred.wgt.", dataset))
+		return (wgts)
+	}else {
+		return (wgts)
+	}
+}
+
 # --- SS-WEIGHTED-META-ANALYZE CELL TYPES
 meta_cells <- function(dataset, result_wgts, indices){
 	# PURPOSE: meta-analyze datasets together (use-case: data from different cell types but same people)
@@ -232,16 +278,12 @@ IMPACT_split <- function(IMPACT_file, BIM){
 	# RETURN: groupings: vector of strings, "nonzero" stores indices of important SNPs and "zero" stored indices of unimportant ones 
 	IMPACT_scores <- as.data.frame(fread(IMPACT_file))
 	IMPACT_scores_reordered <- IMPACT_scores[match(BIM[,2], IMPACT_scores$SNP),]
-	IMPACT_threshold <<- quantile(IMPACT_scores_reordered[,5], 0.99) #CHANGE THIS TO TAKE TOP X%
+	IMPACT_threshold <<- quantile(IMPACT_scores_reordered[,5], 0.95) #CHANGE THIS TO TAKE TOP X%
 	nonzero <<- which(IMPACT_scores_reordered[,5] >= IMPACT_threshold)
-        zero <<- which(IMPACT_scores_reordered[,5] < IMPACT_threshold)
 	groupings <- c()
         if (!identical(integer(0), nonzero)){
                 groupings <- append(groupings, "nonzero")
         }
-        #if (!identical(integer(0), zero)){
-        #        groupings <- append(groupings, "zero")
-        #}
         return (groupings)		
 }
 
@@ -333,20 +375,6 @@ if ( opt$verbose == 2 ) {
 	}
 }
 
-#if ( "MAGEPRO" %in% model ){
-#        if (!is.na(opt$IMPACT)){
-#                if ( !file.exists(opt$IMPACT) ){
-#                        cat( "ERROR: --IMPACT file does not exist \n" , sep='', file=stderr() )
-#                        cleanup()
-#                        q()
-#                }
-#        }else{
-#                cat( "ERROR: Cannot perform MAGEPRO without the --IMPACT flag\n" , sep='', file=stderr() )
-#                cleanup()
-#                q()
-#        }
-#}
-
 files = paste(opt$bfile,c(".bed",".bim",".fam"),sep='')
 if ( !is.na(opt$pheno) ) files = c(files,opt$pheno)
 if ( !is.na(opt$covar) ) files = c(files,opt$covar)
@@ -410,14 +438,13 @@ if ( !is.na(opt$covar) ) {
 	m = m[m.keep]
 	covar = covar[m,] #reordering covariates to match fam file
 	reg = summary(lm( pheno[,3] ~ as.matrix(covar[,3:ncol(covar)]) )) 
-        var_cov = reg$r.sq #save to output
+	var_cov = reg$r.sq #save to output
 	if ( opt$verbose == 2 ) cat( var_cov , "variance in phenotype explained by covariates\n" )
 	pheno[,3] = scale(reg$resid) #regressing out covar to single out genetic effect
 	raw.pheno.file = pheno.file
 	pheno.file = paste(pheno.file,".resid",sep='')
 	write.table(pheno,quote=F,row.names=F,col.names=F,file=pheno.file) #newly scaled pheno file 
 }
-
 
 if ( opt$verbose == 2 ) cat("Covariates loaded and regressed out of phenotype \n")
 
@@ -559,34 +586,19 @@ for (w in wgts){
 
 if ("MAGEPRO" %in% model){
 
-#wgt2 <- c() #magepro weights
+wgt2 <- c() #magepro weights
 
-# SPLIT DATASETS 
-#groups <- IMPACT_split( opt$IMPACT, genos$bim ) 
-
-#for (w in wgts){
-#	for (g in groups){
-#		vec <- eval(parse(text = w))
-#		vec[-eval(parse(text = g))] <- 0
-#		assign(paste0(w, ".", g), vec, envir = parent.frame())
-#		wgt2 <- append(wgt2, paste0(w, ".", g))
-#	}	
-#}	
-
-#ext2 <- length(wgt2)
-
-# --- no split
-wgt2 <- wgts
-ext2 <- ext
-# ---
-
-# PREPARE MATRIX FOR MAGEPRO
-magepro_matrix <- diag(ncol(genos$bed))
-# adding a column of betas for each dataset
-for (w in wgt2){
-	magepro_matrix <- cbind(magepro_matrix, eval(parse(text = w)))	
+# SuSiE
+if (!is.na(opt$susie)){
+	for (d in datasets){
+        	name <- strsplit(d, split="[.]")[[1]][2]
+        	wgt2 <- datasets_process_susie(genos$bim, name, eval(parse(text = d)), wgt2, opt$susie) # Run process dataset function on all datasets
+	}
+}else{
+	wgt2 <- wgts
 }
 
+ext2 <- length(wgt2)
 
 }
 
@@ -693,14 +705,29 @@ for ( cv in 1:opt$crossval ) {
 	if ("MAGEPRO" %in% model){
 	
 	if (ext2 > 0){	
+	#1a. format glmnet input
+	eq <- matrix(0, nrow = nrow(genos$bed[ cv.sample[ -indx ] , ]), ncol = ext2+1)
+	eq[,1] <- genos$bed[ cv.sample[ -indx ] , ] %*% pred.wgt
+	for (c in 1:length(wgt2)){
+		eq[,(c+1)] <- genos$bed[ cv.sample[ -indx ] , ] %*%  eval(parse(text = wgt2[c])) #DEBUG HERE
+	}	
+	
+	#1b. when geno %*% wgt -> all 0 (snps at nonzero wgt have no variaion among people) -> remove sumstat
+	zero_cols <- colSums(eq == 0) == nrow(eq) 
+	if (any(zero_cols)) {
+  		eq <- eq[, !zero_cols]
+  		ext2 <- ext2 - sum(zero_cols)
+  		wgt2 <- wgt2[-(which(zero_cols) - 1)]
+	}
 
-	eq <- genos$bed[ cv.sample[ -indx ] , ] %*% magepro_matrix
-
-	#2. run lasso regression to find optimal coefficients
-	y <- cv.glmnet(x = eq , y = cv.train[,3], alpha = 1, nfold = 5, intercept = T, standardize = T)
-
-	cf = coef(y, s = "lambda.min")[2:(ncol(eq)+1)]
-	pred.wgt.magepro <- magepro_matrix %*% cf
+	#2. run ridge regression to find optimal coefficients for each dataset
+	y <- cv.glmnet(x = eq , y = cv.train[,3], alpha = 0, nfold = 5, intercept = T, standardize = T)
+	cf = coef(y, s = "lambda.min")[2:(ext2+2)]
+	predtext <- "cf[1]*pred.wgt"
+	for (i in 2:(length(cf))){
+		predtext <- paste0(predtext, " + cf[", i, "]*", wgt2[(i-1)])
+	}
+	pred.wgt.magepro <- eval(parse(text = predtext))
 	if(length(pred.wgt.magepro) == 1){
 		pred.wgt.magepro <- t(pred.wgt.magepro)
 	}	
@@ -801,13 +828,24 @@ colcount = colcount + 1
 cf_total = NA
 if ("MAGEPRO" %in% model){
 if (ext2 > 0){
-eqfull <- genos$bed %*% magepro_matrix	
+w1 <- genos$bed %*% pred.wgtfull
+eqfull <- matrix(0, nrow = length (w1), ncol = ext2 + 1)
+eqfull[, 1] <- w1
+num = 2
+for (w in wgt2){	
+	eqfull[,num] <- genos$bed %*% eval(parse(text = w))
+	num = num+1
+}	
 #run ridge regression to find optimal coefficients and compute multipop weight
-yfull <- cv.glmnet(x = eqfull , y = pheno[,3], alpha = 1, nfold = 5, intercept = T, standardize = T)
-cf_total = coef(yfull, s = "lambda.min")[2:(ncol(eqfull)+1)]	
-pred.wgt.mageprofull <- magepro_matrix %*% cf_total
+yfull <- cv.glmnet(x = eqfull , y = pheno[,3], alpha = 0, nfold = 5, intercept = T, standardize = T)
+cf_total = coef(yfull, s = "lambda.min")[2:(ext2+2)]	
+predtextfull <- "cf_total[1]*pred.wgtfull"
+for (i in 2:(length(cf_total))){
+	predtextfull <- paste0(predtextfull, " + cf_total[", i, "]*", wgt2[(i-1)])
+}	
+pred.wgt.mageprofull <- eval(parse(text = predtextfull))
 if(length(pred.wgt.mageprofull) == 1){
-	pred.wgt.mageprofull <- t(pred.wgt.mageprofull)
+                pred.wgt.mageprofull <- t(pred.wgt.mageprofull)
 }
 wgt.matrix[, colcount] = pred.wgt.mageprofull
 }else{
@@ -818,11 +856,14 @@ wgt.matrix[, colcount] = NA
 #--- SAVE RESULTS
 snps = genos$bim
 if ("MAGEPRO" %in% model){
-wgtmagepro <- wgt2
-coefs <- cf_total[ (length(cf_total)-ext2+1) : (length(cf_total)) ]
+wgtmagepro <- append("pred.wgt", wgt2)
+w <- which(cf_total == 0)
+if (length(w) > 0 ) {
+wgtmagepro <- wgtmagepro[-w]
+cf_total <- cf_total[-w]
+}
 }else{
 wgtmagepro = NA
-coefs = NA
 }
 
 # --- for checking cor() of weights in CV
@@ -833,7 +874,7 @@ for (i in 1:(opt$crossval-1)){
 avg_cor <- mean(cors_weights)
 # ---
 
-save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, coefs, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_magepro, var_cov, avg_cor, SINGLE_top1, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_magepro, var_cov, avg_cor, SINGLE_top1, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("### CLEANING UP\n")

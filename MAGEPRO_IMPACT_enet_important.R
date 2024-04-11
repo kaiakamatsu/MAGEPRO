@@ -232,16 +232,12 @@ IMPACT_split <- function(IMPACT_file, BIM){
 	# RETURN: groupings: vector of strings, "nonzero" stores indices of important SNPs and "zero" stored indices of unimportant ones 
 	IMPACT_scores <- as.data.frame(fread(IMPACT_file))
 	IMPACT_scores_reordered <- IMPACT_scores[match(BIM[,2], IMPACT_scores$SNP),]
-	IMPACT_threshold <<- quantile(IMPACT_scores_reordered[,5], 0.90) #CHANGE THIS TO TAKE TOP X%
+	IMPACT_threshold <<- quantile(IMPACT_scores_reordered[,5], 0.95) #CHANGE THIS TO TAKE TOP X%
 	nonzero <<- which(IMPACT_scores_reordered[,5] >= IMPACT_threshold)
-        #zero <<- which(IMPACT_scores_reordered[,5] < IMPACT_threshold)
 	groupings <- c()
         if (!identical(integer(0), nonzero)){
                 groupings <- append(groupings, "nonzero")
         }
-        #if (!identical(integer(0), zero)){
-        #        groupings <- append(groupings, "zero")
-        #}
         return (groupings)		
 }
 

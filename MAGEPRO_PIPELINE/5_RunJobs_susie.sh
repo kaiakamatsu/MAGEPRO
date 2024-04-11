@@ -4,10 +4,10 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=2G
 #SBATCH -t 04:00:00
-#SBATCH -J MAGEPROresid
+#SBATCH -J MAGEPRO_susie
 #SBATCH -A csd832
-#SBATCH -o ../working_err/MAGEPROresid.%j.%N.out
-#SBATCH -e ../working_err/MAGEPROresid.%j.%N.err
+#SBATCH -o ../working_err/MAGEPRO_susie.%j.%N.out
+#SBATCH -e ../working_err/MAGEPRO_susie.%j.%N.err
 #SBATCH --export=ALL
 #SBATCH --constraint="lustre"
 #--- EDIT ABOVE TO SUIT YOUR HPC CLUSTER
@@ -36,6 +36,7 @@ crossval=${17}
 verbose=${18}
 noclean=${19}
 save_hsq=${20}
+susie=${21}
 
 #--- create directory for temporary/working files 
 #--- NOTE: create "tmp" and "wd" where your system can write/delete files efficiently (EDIT TO SUIT YOUR HPC CLUSTER)
@@ -67,14 +68,14 @@ if test -f "$filecheck"
 then
     $plink_exec --bfile $plinkdir/$gene --allow-no-sex --make-bed --keep $ind --indiv-sort f $ind --out $wd/$gene
     rm $wd/$gene.log 
+    chr=$(cat ${wd}/${gene}.bim | head -n 1 | awk '{print $1}')
     rowid=$(cat $geneids | nl | grep $gene | awk '{print $1 + 1}') #+1 for col header in ge file - row number of the gene in the ge file 
     ge_donors=$(zcat $gefile | head -n $rowid | tail -n 1 | cut -f $colind2)  #gene expression from the individuals of interest
     paste --delimiters=' ' <(cut -d' ' -f1-5 $wd/$gene.fam) <(echo $ge_donors | sed 's/ /\n/g') > $wd/$gene.mod.fam #modifying fam file with ge data 
     mv $wd/$gene.mod.fam $wd/$gene.fam 
     TMP=$tmpdir/${gene}
     OUT=$weights/${gene}
-    #Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --cell_meta $cell_meta --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq 
-    Rscript MAGEPRO_IMPACT_PT_resid.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --cell_meta $cell_meta --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq
+    Rscript MAGEPRO_SuSiE.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --cell_meta $cell_meta --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq --susie $susie
     rm $wd/$gene.* 
 fi
 

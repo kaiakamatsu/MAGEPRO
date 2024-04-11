@@ -411,6 +411,7 @@ datasets_process <- function(dataset, file, cell, snp, A1, A0, B, P){
 	#A1 = column number of relevant (alt) allele 
 	#A0 = column number of ref allele
 	#B = column number of effect size Beta
+	#P = column number of p values of Beta
 	if (is.na(cell)){
 		cell <- ""
 	}

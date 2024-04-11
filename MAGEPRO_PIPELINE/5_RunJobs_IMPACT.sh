@@ -3,9 +3,9 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=2G
-#SBATCH -t 05:00:00
+#SBATCH -t 04:00:00
 #SBATCH -J MAGEPRO_impact
-#SBATCH -A ddp412
+#SBATCH -A csd832
 #SBATCH -o ../working_err/MAGEPRO_impact.%j.%N.out
 #SBATCH -e ../working_err/MAGEPRO_impact.%j.%N.err
 #SBATCH --export=ALL

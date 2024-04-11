@@ -22,6 +22,7 @@ if ( all(people$V1 == 0)){
 rownames(covar_t) <- NULL
 colnames(covar_t) <- covar_t[1,] #add first row as column names 
 covar_t <- covar_t[-1,] #make sure first row is deleted - it is now the column name
+colnames(covar_t)[1] <- 0 #this makes sure col1 name and col2 name is not the same
 covar_DS <- as.data.frame(covar_t) %>%
   filter(.[[2]] %in% people$V2) %>%
   arrange(match(.[[2]], people$V2))

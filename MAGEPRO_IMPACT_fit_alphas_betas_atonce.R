@@ -333,19 +333,19 @@ if ( opt$verbose == 2 ) {
 	}
 }
 
-#if ( "MAGEPRO" %in% model ){
-#        if (!is.na(opt$IMPACT)){
-#                if ( !file.exists(opt$IMPACT) ){
-#                        cat( "ERROR: --IMPACT file does not exist \n" , sep='', file=stderr() )
-#                        cleanup()
-#                        q()
-#                }
-#        }else{
-#                cat( "ERROR: Cannot perform MAGEPRO without the --IMPACT flag\n" , sep='', file=stderr() )
-#                cleanup()
-#                q()
-#        }
-#}
+if ( "MAGEPRO" %in% model ){
+        if (!is.na(opt$IMPACT)){
+                if ( !file.exists(opt$IMPACT) ){
+                        cat( "ERROR: --IMPACT file does not exist \n" , sep='', file=stderr() )
+                        cleanup()
+                        q()
+                }
+        }else{
+                cat( "ERROR: Cannot perform MAGEPRO without the --IMPACT flag\n" , sep='', file=stderr() )
+                cleanup()
+                q()
+        }
+}
 
 files = paste(opt$bfile,c(".bed",".bim",".fam"),sep='')
 if ( !is.na(opt$pheno) ) files = c(files,opt$pheno)
@@ -559,25 +559,25 @@ for (w in wgts){
 
 if ("MAGEPRO" %in% model){
 
-#wgt2 <- c() #magepro weights
+wgt2 <- c() #magepro weights
 
 # SPLIT DATASETS 
-#groups <- IMPACT_split( opt$IMPACT, genos$bim ) 
+groups <- IMPACT_split( opt$IMPACT, genos$bim ) 
 
-#for (w in wgts){
-#	for (g in groups){
-#		vec <- eval(parse(text = w))
-#		vec[-eval(parse(text = g))] <- 0
-#		assign(paste0(w, ".", g), vec, envir = parent.frame())
-#		wgt2 <- append(wgt2, paste0(w, ".", g))
-#	}	
-#}	
+for (w in wgts){
+	for (g in groups){
+		vec <- eval(parse(text = w))
+		vec[-eval(parse(text = g))] <- 0
+		assign(paste0(w, ".", g), vec, envir = parent.frame())
+		wgt2 <- append(wgt2, paste0(w, ".", g))
+	}	
+}	
 
-#ext2 <- length(wgt2)
+ext2 <- length(wgt2)
 
 # --- no split
-wgt2 <- wgts
-ext2 <- ext
+#wgt2 <- wgts
+#ext2 <- ext
 # ---
 
 # PREPARE MATRIX FOR MAGEPRO

@@ -55,7 +55,7 @@ option_list = list(
   make_option("--save_hsq", action="store_true", default=FALSE,
               help="Save heritability results even if weights are not computed [default: %default]"), 
   make_option("--IMPACT", action="store", default=NA, type='character',
-              help="Path to IMPACT txt file")
+              help="Path to IMPACT txt file [required for MAGEPRO]")
 )
 
 # --- PARSE COMMAND LINE ARGS
@@ -234,7 +234,7 @@ IMPACT_split <- function(IMPACT_file, BIM){
 	IMPACT_scores_reordered <- IMPACT_scores[match(BIM[,2], IMPACT_scores$SNP),]
 	IMPACT_threshold <<- quantile(IMPACT_scores_reordered[,5], 0.99) #CHANGE THIS TO TAKE TOP X%
 	nonzero <<- which(IMPACT_scores_reordered[,5] >= IMPACT_threshold)
-        zero <<- which(IMPACT_scores_reordered[,5] < IMPACT_threshold)
+        #zero <<- which(IMPACT_scores_reordered[,5] < IMPACT_threshold)
 	groupings <- c()
         if (!identical(integer(0), nonzero)){
                 groupings <- append(groupings, "nonzero")
@@ -333,19 +333,19 @@ if ( opt$verbose == 2 ) {
 	}
 }
 
-#if ( "MAGEPRO" %in% model ){
-#        if (!is.na(opt$IMPACT)){
-#                if ( !file.exists(opt$IMPACT) ){
-#                        cat( "ERROR: --IMPACT file does not exist \n" , sep='', file=stderr() )
-#                        cleanup()
-#                        q()
-#                }
-#        }else{
-#                cat( "ERROR: Cannot perform MAGEPRO without the --IMPACT flag\n" , sep='', file=stderr() )
-#                cleanup()
-#                q()
-#        }
-#}
+if ( "MAGEPRO" %in% model ){
+        if (!is.na(opt$IMPACT)){
+                if ( !file.exists(opt$IMPACT) ){
+                        cat( "ERROR: --IMPACT file does not exist \n" , sep='', file=stderr() )
+                        cleanup()
+                        q()
+                }
+        }else{
+                cat( "ERROR: Cannot perform MAGEPRO without the --IMPACT flag\n" , sep='', file=stderr() )
+                cleanup()
+                q()
+        }
+}
 
 files = paste(opt$bfile,c(".bed",".bim",".fam"),sep='')
 if ( !is.na(opt$pheno) ) files = c(files,opt$pheno)
@@ -410,14 +410,13 @@ if ( !is.na(opt$covar) ) {
 	m = m[m.keep]
 	covar = covar[m,] #reordering covariates to match fam file
 	reg = summary(lm( pheno[,3] ~ as.matrix(covar[,3:ncol(covar)]) )) 
-        var_cov = reg$r.sq #save to output
+	var_cov = reg$r.sq #save to output
 	if ( opt$verbose == 2 ) cat( var_cov , "variance in phenotype explained by covariates\n" )
 	pheno[,3] = scale(reg$resid) #regressing out covar to single out genetic effect
 	raw.pheno.file = pheno.file
 	pheno.file = paste(pheno.file,".resid",sep='')
 	write.table(pheno,quote=F,row.names=F,col.names=F,file=pheno.file) #newly scaled pheno file 
 }
-
 
 if ( opt$verbose == 2 ) cat("Covariates loaded and regressed out of phenotype \n")
 
@@ -559,34 +558,21 @@ for (w in wgts){
 
 if ("MAGEPRO" %in% model){
 
-#wgt2 <- c() #magepro weights
+wgt2 <- c() #magepro weights
 
 # SPLIT DATASETS 
-#groups <- IMPACT_split( opt$IMPACT, genos$bim ) 
+groups <- IMPACT_split( opt$IMPACT, genos$bim ) 
 
-#for (w in wgts){
-#	for (g in groups){
-#		vec <- eval(parse(text = w))
-#		vec[-eval(parse(text = g))] <- 0
-#		assign(paste0(w, ".", g), vec, envir = parent.frame())
-#		wgt2 <- append(wgt2, paste0(w, ".", g))
-#	}	
-#}	
+for (w in wgts){
+	for (g in groups){
+		vec <- eval(parse(text = w))
+		vec[-eval(parse(text = g))] <- 0
+		assign(paste0(w, ".", g), vec, envir = parent.frame())
+		wgt2 <- append(wgt2, paste0(w, ".", g))
+	}	
+}	
 
-#ext2 <- length(wgt2)
-
-# --- no split
-wgt2 <- wgts
-ext2 <- ext
-# ---
-
-# PREPARE MATRIX FOR MAGEPRO
-magepro_matrix <- diag(ncol(genos$bed))
-# adding a column of betas for each dataset
-for (w in wgt2){
-	magepro_matrix <- cbind(magepro_matrix, eval(parse(text = w)))	
-}
-
+ext2 <- length(wgt2)
 
 }
 
@@ -688,24 +674,51 @@ for ( cv in 1:opt$crossval ) {
 	}
 	#-----------------------------------------------------------------------------
 
+
 	# MAGEPRO----------------------------------------------------------------------
 	
 	if ("MAGEPRO" %in% model){
 	
 	if (ext2 > 0){	
+	#1a. format glmnet input
+	eq <- matrix(0, nrow = nrow(genos$bed[ cv.sample[ -indx ] , ]), ncol = ext2)
+	for (c in 1:length(wgt2)){
+		eq[,(c)] <- genos$bed[ cv.sample[ -indx ] , ] %*%  eval(parse(text = wgt2[c])) 
+	}	
+	
+	#1b. when geno %*% wgt -> all 0 (snps at nonzero wgt have no variaion among people) -> remove sumstat
+	zero_cols <- colSums(eq == 0) == nrow(eq) 
+	if (any(zero_cols)) {
+  		eq <- eq[, !zero_cols]
+  		ext2 <- ext2 - sum(zero_cols)
+  		wgt2 <- wgt2[-(which(zero_cols) - 1)]
+	}
+	
+	# define the y_residual here 
+	cv_y_estimated = genos$bed[ cv.sample[ -indx ] , ] %*% pred.wgt
+	cv_y_resid = cv.train[,3] - cv_y_estimated
 
-	eq <- genos$bed[ cv.sample[ -indx ] , ] %*% magepro_matrix
-
-	#2. run lasso regression to find optimal coefficients
-	y <- cv.glmnet(x = eq , y = cv.train[,3], alpha = 1, nfold = 5, intercept = T, standardize = T)
-
-	cf = coef(y, s = "lambda.min")[2:(ncol(eq)+1)]
-	pred.wgt.magepro <- magepro_matrix %*% cf
+	#2. run ridge regression to find optimal coefficients for each dataset
+	if (ext2 > 1){
+	y <- cv.glmnet(x = eq , y = cv_y_resid, alpha = 0, nfold = 5, intercept = T, standardize = T)
+	cf = coef(y, s = "lambda.min")[2:(ext2+1)]
+	}else{
+	y <- lm(cv_y_resid ~ eq)
+	cf = y$coefficients[2:(ext2+1)]
+	}
+        predtext = list()
+        for (i in 1:(length(cf))){
+                predtext <- append( predtext, paste0("cf[", i, "]*", wgt2[(i)]) )
+        }
+        predtext <- paste(predtext, collapse="+")
+	pred.wgt.magepro <- eval(parse(text = predtext))
+	pred.wgt.magepro <- pred.wgt + pred.wgt.magepro
 	if(length(pred.wgt.magepro) == 1){
 		pred.wgt.magepro <- t(pred.wgt.magepro)
 	}	
 
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.magepro
+
 
 	# --- for checking cor() of weights in CV
 	wgt.cv[,cv] = pred.wgt.magepro
@@ -716,11 +729,8 @@ for ( cv in 1:opt$crossval ) {
 	r2_training_magepro = append(r2_training_magepro, pred_train$adj.r.sq)	
 	}else{
 	cv.calls[ indx , colcount ] = NA
-	r2_training_magepro = append(r2_training_magepro, NA)
 	}
-	
 	}
-	#-------------------------------------------------------------------------------
 
 }
 
@@ -801,14 +811,35 @@ colcount = colcount + 1
 cf_total = NA
 if ("MAGEPRO" %in% model){
 if (ext2 > 0){
-eqfull <- genos$bed %*% magepro_matrix	
-#run ridge regression to find optimal coefficients and compute multipop weight
-yfull <- cv.glmnet(x = eqfull , y = pheno[,3], alpha = 1, nfold = 5, intercept = T, standardize = T)
-cf_total = coef(yfull, s = "lambda.min")[2:(ncol(eqfull)+1)]	
-pred.wgt.mageprofull <- magepro_matrix %*% cf_total
+eqfull <- matrix(0, nrow = nrow(genos$bed), ncol = ext2)
+num = 1
+for (w in wgt2){	
+	eqfull[,num] <- genos$bed %*% eval(parse(text = w))
+	num = num+1
+}
+
+# define the y_residual here 
+y_estimated = genos$bed %*% pred.wgtfull
+y_resid = pheno[,3] - y_estimated
+
+#2. run ridge regression to find optimal coefficients for each dataset
+if (ext2 > 1){
+yfull <- cv.glmnet(x = eqfull , y = y_resid, alpha = 0, nfold = 5, intercept = T, standardize = T)
+cf_total = coef(yfull, s = "lambda.min")[2:(ext2+1)]
+}else{
+yfull <- lm(y_resid ~ eqfull)
+cf_total = yfull$coefficients[2:(ext2+1)]
+}
+predtextfull = list()
+for (i in 1:(length(cf_total))){
+        predtextfull <- append( predtextfull, paste0("cf_total[", i, "]*", wgt2[(i)]) )
+}
+predtextfull <- paste(predtextfull, collapse="+")
+pred.wgt.mageprofull <- eval(parse(text = predtextfull))
+pred.wgt.mageprofull <- pred.wgtfull + pred.wgt.mageprofull
 if(length(pred.wgt.mageprofull) == 1){
 	pred.wgt.mageprofull <- t(pred.wgt.mageprofull)
-}
+}	
 wgt.matrix[, colcount] = pred.wgt.mageprofull
 }else{
 wgt.matrix[, colcount] = NA
@@ -818,11 +849,14 @@ wgt.matrix[, colcount] = NA
 #--- SAVE RESULTS
 snps = genos$bim
 if ("MAGEPRO" %in% model){
-wgtmagepro <- wgt2
-coefs <- cf_total[ (length(cf_total)-ext2+1) : (length(cf_total)) ]
+wgtmagepro <- append("pred.wgt", wgt2)
+w <- which(cf_total == 0)
+if (length(w) > 0 ) {
+wgtmagepro <- wgtmagepro[-w]
+cf_total <- cf_total[-w]
+}
 }else{
 wgtmagepro = NA
-coefs = NA
 }
 
 # --- for checking cor() of weights in CV
@@ -833,7 +867,7 @@ for (i in 1:(opt$crossval-1)){
 avg_cor <- mean(cors_weights)
 # ---
 
-save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, coefs, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_magepro, var_cov, avg_cor, SINGLE_top1, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_magepro, var_cov, avg_cor, SINGLE_top1, IMPACT_threshold, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("### CLEANING UP\n")
