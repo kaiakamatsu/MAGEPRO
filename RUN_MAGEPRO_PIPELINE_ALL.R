@@ -37,11 +37,6 @@ option_list = list(
 	      MAGEPRO = magepro model"),
   make_option("--ss", action="store", default=NA, type='character',
               help="Comma-separated list of sample sizes of sumstats (in the same order)"), 
-  make_option("--cell_meta", action="store", default=NA, type='character',
-              help="Comma-separated list of prefixes of eqtl datasets to ss-meta-analyze (--ss required) \n 
-	      for ex. --cell-type-meta ota will meta-analyze [ota_CD16, ota_CD4]. \n 
-	      NOTE: this cell-type meta-analysis happens before the --meta flag meta-analysis across all datasets. \n 
-	      the average sample size across all cell types will be assigned as the new sample size of the cell-type meta-analyzed eqtl dataset"),
   make_option("--PATH_plink", action="store", default="plink", type='character',
               help="Path to plink executable [%default]"),
   make_option("--PATH_gcta", action="store", default="gcta_nr_robust", type='character',
@@ -161,7 +156,7 @@ system( "mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRIN
 if ( opt$verbose >= 1 ) cat("### RUNNING JOBS \n")
 batches <- c(1:opt$num_batches)
 for (batch in batches){
-arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs_all.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$cell_meta, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt, opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx, opt$phi_shrinkage_PRSCSx, opt$pops, opt$susie_pip, opt$susie_cs, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
+arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs_all.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt, opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx, opt$phi_shrinkage_PRSCSx, opt$pops, opt$susie_pip, opt$susie_cs, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 }
 

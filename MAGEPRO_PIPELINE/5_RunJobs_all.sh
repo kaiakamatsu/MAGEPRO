@@ -82,7 +82,7 @@ then
     mv $wd/$gene.mod.fam $wd/$gene.fam 
     TMP=$tmpdir/${gene}
     OUT=$weights/${gene}
-    Rscript MAGEPRO_all_MODELS.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --cell_meta $cell_meta --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq --ldref_pt $ldref_pt --prune_r2 $prune_r2 --threshold_p $threshold_p --ldref_PRSCSx $ldref_PRSCSx --dir_PRSCSx $dir_PRSCSx --phi_shrinkage_PRSCSx $phi_shrinkage_PRSCSx --pops $pops --susie_pip $susie_pip --susie_cs $susie_cs
+    Rscript MAGEPRO_all_MODELS.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq --ldref_pt $ldref_pt --prune_r2 $prune_r2 --threshold_p $threshold_p --ldref_PRSCSx $ldref_PRSCSx --dir_PRSCSx $dir_PRSCSx --phi_shrinkage_PRSCSx $phi_shrinkage_PRSCSx --pops $pops --susie_pip $susie_pip --susie_cs $susie_cs
     rm $wd/$gene.* 
 fi
 

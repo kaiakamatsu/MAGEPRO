@@ -25,6 +25,7 @@ option_list = list(
 	      P+T = pruning and thresholding \n
 	      PRS-CSx = PRS-CSx multi-ancestry PRS method \n 
 	      BridgePRS = BridgePRS multi-ancestry PRS method \n
+	      MAGEPRO_fullsumstats = magepro model, no sparsity \n
 	      MAGEPRO = magepro model"),
   make_option("--ss", action="store", default=NA, type='character',
               help="Comma-separated list of sample sizes of sumstats (in the same order)"), 
@@ -156,7 +157,8 @@ weights.pt = function(geno_bed, geno_bim, pheno, r2, p, ldref, tmp) {
 	Betas <- c()
         Pvals <- c()
         SNPs <- c()
-        for (col in 1:ncol(geno_bed)){
+
+	for (col in 1:ncol(geno_bed)){
                 SNPs <- append(SNPs, colnames(geno_bed)[col])
                 snp <- geno_bed[,col]
                 model <- lm(pheno ~ snp)
@@ -191,7 +193,7 @@ weights.pt = function(geno_bed, geno_bim, pheno, r2, p, ldref, tmp) {
                 }
                 pred.wgt.PT_sumstats = sumstats_pt[[2]]
         }else{
-                pred.wgt.PT_sumstats = rep(0, times = nrow(geno_bim))
+                pred.wgt.PT_sumstats = rep(NA, times = nrow(geno_bim))
         }
         if(length(pred.wgt.PT_sumstats) == 1){
                pred.wgt.PT_sumstats <- t(pred.wgt.PT_sumstats)
@@ -287,7 +289,7 @@ weights.magepro = function(basemodel, wgts, geno, pheno, save_alphas) {
 	# geno = genotype matrix for training mixing weights 
 	# pheno = vector of gene expression values for individuals in geno (also for training mixing weights)
 	# save_alphas = T/F, save alpha coefficients to 'cf_total'?
-	ext <- length(wgts)	
+	ext <- length(wgts)
 	#1a. format glmnet input
 	eq <- matrix(0, nrow = nrow(geno), ncol = ext+1)
 	eq[,1] <- geno %*% basemodel
@@ -299,9 +301,9 @@ weights.magepro = function(basemodel, wgts, geno, pheno, save_alphas) {
 	if (any(zero_cols)) {
   		eq <- eq[, !zero_cols]
   		ext <- ext - sum(zero_cols)
-  		ext_magepro <<- ext
+  		#ext_magepro <<- ext
 		wgts <- wgts[-(which(zero_cols) - 1)]
-		wgt_magepro <<- wgts
+		#wgt_magepro <<- wgts
 	}
 	#2. run ridge regression to find optimal coefficients for each dataset
 	y <- cv.glmnet(x = eq , y = pheno, alpha = 0, nfold = 5, intercept = T, standardize = T)
@@ -326,7 +328,7 @@ cleanup = function() {
 	# PURPOSE: clean up temporary directory
 	# RETURN: 
 	if ( ! opt$noclean ) {
-		arg = paste("rm -f " , opt$tmp , "*", sep='')
+		arg = paste("rm -rf " , opt$tmp , "*", sep='')
 		system(arg)
 	}
 }
@@ -521,7 +523,7 @@ if (!is.na(opt$gene)){
 
 #models to use
 model <- strsplit(opt$models, ",", fixed = TRUE)[[1]]
-if ( sum(! model %in% c("SINGLE", "META", "P+T", "PRS-CSx", "BridgePRS", "MAGEPRO")) > 0 | length(model) > 6 ){
+if ( sum(! model %in% c("SINGLE", "META", "P+T", "PRS-CSx", "BridgePRS", "MAGEPRO_fullsumstats", "MAGEPRO")) > 0 | length(model) > 6 ){
 	cat( "ERROR: Please input valid models \n" , sep='', file=stderr() )
         cleanup()
         q()
@@ -529,7 +531,7 @@ if ( sum(! model %in% c("SINGLE", "META", "P+T", "PRS-CSx", "BridgePRS", "MAGEPR
 
 if (opt$verbose >= 1) cat("### USING THE FOLLOWING MODELS:", opt$models, "\n")
 
-order <- c("SINGLE","META", "P+T", "PRS-CSx", "BridgePRS", "MAGEPRO") 
+order <- c("SINGLE","META", "P+T", "PRS-CSx", "BridgePRS", "MAGEPRO_fullsumstats", "MAGEPRO")
 types <- model[match(order, model)]
 types <- unique(types[!is.na(types)])
 
@@ -563,7 +565,7 @@ if ( ! is.na(opt$sumstats)){
 		}
 	}
 }else{
-	if ("META" %in% model | "PRS-CSx" %in% model | "BridgePRS" %in% model | "MAGEPRO" %in% model){
+	if ("META" %in% model | "PRS-CSx" %in% model | "BridgePRS" %in% model | "MAGEPRO_fullsumstats" %in% model | "MAGEPRO" %in% model){
 		cat( "ERROR: --sumstats not supplied, cannot compute META, PRS-CSx, BridgePRS, MAGEPRO models \n" , sep='', file=stderr() )
 		cleanup()
                 q()
@@ -609,7 +611,7 @@ pops <- list()
 if ( "PRS-CSx" %in% model ){
 
 	if (is.na(opt$ldref_PRSCSx)){
-        	cat( "ERROR: input ldref directory for PRS-CSx required (check PRS-CSx github) \n" , sep='', file=stderr() )
+        	cat( "ERROR: input ldref directory for PRS-CSx required (check PRS-CSx github to learn how to download and prepare the ldref files) \n" , sep='', file=stderr() )
         	cleanup()
         	q()
 	}
@@ -801,6 +803,7 @@ N.tot = nrow(genos$bed)
 if ( opt$verbose >= 1 ) cat(nrow(pheno),"phenotyped samples, ",nrow(genos$bed),"genotyped samples, ",ncol(genos$bed)," markers\n")
 
 # --- SETUP SUMSTATS
+ext <- length(datasets)
 
 lasso_h2 <- hsq[1]
 if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){
@@ -808,31 +811,31 @@ if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){
 	lasso_h2 <- opt$lassohsq
 }  #when gcta does not converge or yield wild estimates
 
-if ("META" %in% model){
+if ( ("META" %in% model | "MAGEPRO_fullsumstats" %in% model)  & (ext > 0) ){
 
 if ( opt$verbose >= 1){
-	cat("### PROCESSING SUMSTATS FOR META \n")
+	cat("### PROCESSING SUMSTATS FOR META AND MAGEPRO_fullsumstats \n")
 }
 
-wgt_meta <- c() #sumstats weights before splitting (used for meta-analysis)
+wgt_fullsumstats <- c() #sumstats weights before splitting (used for meta-analysis)
 
 for (d in datasets){
 	name <- strsplit(d, split="[.]")[[1]][2]
-	wgt_meta <- datasets_process(genos$bim, name, eval(parse(text = d)), wgt_meta) # Run process dataset function on all datasets
+	wgt_fullsumstats <- datasets_process(genos$bim, name, eval(parse(text = d)), wgt_fullsumstats) # Run process dataset function on all datasets
 }
 
-ext_meta <- length(wgt_meta)
+ext_fullsumstats <- length(wgt_fullsumstats)
 
 # COMPUTE TOTAL SAMPLE SIZE OF SUMSTATS -> USED LATER IN META-ANALYSIS
 total_ss_sumstats <- 0 
-for (w in wgt_meta){
+for (w in wgt_fullsumstats){
 	dataset <- strsplit(w, split="[.]")[[1]][3]
 	total_ss_sumstats = total_ss_sumstats + h[[dataset]]
 }
 
 }
 
-if ("PRS-CSx" %in% model){
+if ( ("PRS-CSx" %in% model) & (ext > 0) ){
 
 if ( opt$verbose >= 1){
         cat("### PROCESSING SUMSTATS FOR PRS-CSx \n")
@@ -844,7 +847,6 @@ ss <- c()
 pp <- c()
 
 for (d in datasets){
-
 	name <- strsplit(d, split="[.]")[[1]][2]
 	datasets_process_prscsx( genos$bim, name, eval(parse(text = d)), PRS_CSx_working_dir, 2, 3, 4, 5, 7)
 	input <- append(input, paste0(PRS_CSx_working_dir, name, ".txt"))
@@ -863,7 +865,7 @@ ext_prscsx <- length(wgt_prscsx)
 
 }
 
-if ("MAGEPRO" %in% model){
+if ( ("MAGEPRO" %in% model) & (ext > 0) ){
 
 if ( opt$verbose >= 1){
         cat("### PROCESSING SUMSTATS FOR MAGEPRO \n")
@@ -884,7 +886,7 @@ ext_magepro <- length(wgt_magepro)
 
 # --- CROSSVALIDATION ANALYSES
 set.seed(1)
-avg_training_r2_single <- avg_training_r2_meta <- avg_training_r2_pt <- avg_training_r2_prscsx <- avg_training_r2_bridge <- avg_training_r2_magepro <- NA
+avg_training_r2_single <- avg_training_r2_meta <- avg_training_r2_pt <- avg_training_r2_prscsx <- avg_training_r2_bridge <- avg_training_r2_magepro_fullsumstats <- avg_training_r2_magepro <- NA
 #default crossval = 5 fold split
 if ( opt$crossval <= 1 ) { 
 if ( opt$verbose >= 1 ) cat("### SKIPPING CROSS-VALIDATION\n")
@@ -899,7 +901,7 @@ folds = cut(seq(1,n),breaks=opt$crossval,labels=FALSE) #5 fold split - split int
 cv.calls = matrix(NA,nrow=n,ncol=length(model)) 
 
 # --- for checking cor() of weights in CV 
-wgt.cv = matrix(0, nrow=nrow(genos$bim), ncol=opt$crossval)
+wgt.cv = matrix(NA, nrow=nrow(genos$bim), ncol=opt$crossval)
 # ---
 
 # --- keep track of SINGLE_model
@@ -911,9 +913,10 @@ r2_training_meta <- c()
 r2_training_pt <- c()
 r2_training_prscsx <- c()
 r2_training_bridge <- c()
+r2_training_magepro_fullsumstats <- c()
 r2_training_magepro <- c()
 
-if ("META" %in% model){
+if ( ("META" %in% model) & (ext > 0) ){
 training_ss <- N.tot * ((opt$crossval - 1)/opt$crossval)
 total_ss_cv <- total_ss_sumstats + training_ss # total sample size in cross validation (used as denominator in ss-weighted meta-analysis)
 }
@@ -944,10 +947,9 @@ for ( cv in 1:opt$crossval ) {
 		pred.wgt <- t(pred.wgt) # 1 snp in the cis window -> transpose for "matrix" mult
 	}
 	
-	if ("SINGLE" %in% model){
-	
-	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt
-	pred_train_single = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt)))
+	if ("SINGLE" %in% model){	
+	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt
+	pred_train_single = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt)))
 	r2_training_single = append(r2_training_single, pred_train_single$adj.r.sq)
 	
 	colcount = colcount + 1
@@ -957,10 +959,10 @@ for ( cv in 1:opt$crossval ) {
 
 	# SS-WEIGHTED META-ANALYSIS-------------------------------------------------------------
 	if ("META" %in% model){
-	if (ext_meta > 0){
-	pred.wgt.meta = weights.meta(pred.wgt, training_ss, wgt_meta, h, total_ss_cv)	
-	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.meta 
-	pred_train_meta = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.meta))) 
+	if (ext > 0){
+	pred.wgt.meta = weights.meta(pred.wgt, training_ss, wgt_fullsumstats, h, total_ss_cv)	
+	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.meta 
+	pred_train_meta = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.meta))) 
         r2_training_meta = append(r2_training_meta, pred_train_meta$adj.r.sq)
 	}else{
 	cv.calls[ indx , colcount ] = NA
@@ -974,12 +976,17 @@ for ( cv in 1:opt$crossval ) {
 
 	# P+T--------------------------------------------------------------------------
 	if ("P+T" %in% model){
-
-	pred.wgt.PT_sumstats <- weights.pt(genos$bed[cv.sample[-indx],], genos$bim, cv.train[,3], opt$prune_r2, opt$threshold_p, opt$ldref_pt, opt$tmp)
-	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.PT_sumstats
-	pred_train_meta = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.PT_sumstats)))
-        r2_training_pt = append(r2_training_pt, pred_train_meta$adj.r.sq)
-
+	pred.wgt.PT_sumstats <- weights.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train[,3], opt$prune_r2, opt$threshold_p, opt$ldref_pt, opt$tmp)
+	if (sum(is.na(pred.wgt.PT_sumstats)) == length(pred.wgt)){
+	if ( opt$verbose >= 1 ) cat("No clumps remaining after P+T, NA results \n")
+	cv.calls[ indx , colcount ] = NA
+	r2_training_pt = append(r2_training_pt, NA)	
+	}else{
+	cv.calls[ indx , colcount ] = genos$bed[cv.sample[indx], , drop = FALSE] %*% pred.wgt.PT_sumstats
+	pred_train_pt = summary(lm( cv.all[-indx,3] ~ (genos$bed[cv.sample[-indx], , drop = FALSE] %*% pred.wgt.PT_sumstats)))
+        r2_training_pt = append(r2_training_pt, pred_train_pt$adj.r.sq)
+	}
+	
 	colcount = colcount + 1
 
 	}
@@ -988,10 +995,10 @@ for ( cv in 1:opt$crossval ) {
 	# PRS-CSx----------------------------------------------------------------------
 
 	if ("PRS-CSx" %in% model){
-	if (ext_prscsx > 0){
-	pred.wgt.prs_csx <- weights.prscsx(wgt_prscsx, genos$bed[cv.sample[-indx],], cv.train[,3])
-	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.prs_csx
-	pred_train_prscsx = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.prs_csx)))
+	if (ext > 0){
+	pred.wgt.prs_csx <- weights.prscsx(wgt_prscsx, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3])
+	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.prs_csx
+	pred_train_prscsx = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.prs_csx)))
         r2_training_prscsx = append(r2_training_prscsx, pred_train_prscsx$adj.r.sq)
 	}else{
 	cv.calls[ indx , colcount ] = NA
@@ -1010,20 +1017,38 @@ for ( cv in 1:opt$crossval ) {
 
 	#------------------------------------------------------------------------------
 
+	# MAGEPRO_fullsumstats---------------------------------------------------------
+
+	if ("MAGEPRO_fullsumstats" %in% model){
+	if (ext > 0){
+	pred.wgt.magepro_fullsumstats <- weights.magepro(pred.wgt, wgt_fullsumstats, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], FALSE)
+	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ], , drop = FALSE] %*% pred.wgt.magepro_fullsumstats
+	pred_train_magepro_fullsumstats = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.magepro_fullsumstats))) #r^2 between predicted and actual
+        r2_training_magepro_fullsumstats = append(r2_training_magepro_fullsumstats, pred_train_magepro_fullsumstats$adj.r.sq)
+	}else{
+	cv.calls[ indx , colcount ] = NA
+        r2_training_magepro_fullsumstats = append(r2_training_magepro_fullsumstats, NA)
+	}
+	
+	colcount = colcount + 1
+
+	}
+
+	#------------------------------------------------------------------------------
+
 
 	# MAGEPRO----------------------------------------------------------------------
 	
-	if ("MAGEPRO" %in% model){
-	
-	if (ext_magepro > 0){	
-	pred.wgt.magepro <- weights.magepro(pred.wgt, wgt_magepro, genos$bed[cv.sample[-indx],], cv.train[,3], FALSE)
-	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , ] %*% pred.wgt.magepro
+	if ("MAGEPRO" %in% model){	
+	if (ext > 0){	
+	pred.wgt.magepro <- weights.magepro(pred.wgt, wgt_magepro, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], FALSE)
+	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ], , drop = FALSE] %*% pred.wgt.magepro
 	# --- for checking cor() of weights in CV
 	wgt.cv[,cv] = pred.wgt.magepro
 	# --- 
 	#store the r2 on training set
-	pred_train = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], ] %*% pred.wgt.magepro))) #r^2 between predicted and actual 
-	r2_training_magepro = append(r2_training_magepro, pred_train$adj.r.sq)	
+	pred_train_magepro = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.magepro))) #r^2 between predicted and actual 
+	r2_training_magepro = append(r2_training_magepro, pred_train_magepro$adj.r.sq)	
 	}else{
 	cv.calls[ indx , colcount ] = NA
 	r2_training_magepro = append(r2_training_magepro, NA)
@@ -1060,6 +1085,7 @@ if ("META" %in% model) avg_training_r2_meta <- mean(r2_training_meta)
 if ("P+T" %in% model) avg_training_r2_pt <- mean(r2_training_pt)
 if ("PRS-CSx" %in% model) avg_training_r2_prscsx <- mean(r2_training_prscsx)
 if ("BridgePRS" %in% model) avg_training_r2_bridge <- mean(r2_training_bridge)
+if ("MAGEPRO_fullsumstats" %in% model) avg_training_r2_magepro_fullsumstats <- mean(r2_training_magepro_fullsumstats)
 if ("MAGEPRO" %in% model) avg_training_r2_magepro <- mean(r2_training_magepro)
 
 }
@@ -1076,6 +1102,7 @@ colcount = 1
 # --- SINGLE ANCESTRY
 pred.wgtfull = weights.lasso( geno.file , lasso_h2 , snp=genos$bim[,2] )	
 if ( sum(is.na(pred.wgtfull)) == length(pred.wgtfull)) {
+	if ( opt$verbose >= 1 ) cat("LASSO pushed all weights to 0, using top1 as backup \n")
 	pred.wgtfull = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T )
 	pred.wgtfull[ - which.max( pred.wgtfull^2 )]
 }
@@ -1088,12 +1115,11 @@ colcount = colcount + 1
 }
 # --- SS-WEIGHTED META-ANALYSIS
 if ("META" %in% model){
-if (ext_meta > 0){
+if (ext > 0){
 total_ss_full <- total_ss_sumstats + N.tot
-pred.wgt.metafull <- weights.meta(pred.wgtfull, N.tot, wgt_meta, h, total_ss_full)
+pred.wgt.metafull <- weights.meta(pred.wgtfull, N.tot, wgt_fullsumstats, h, total_ss_full)
 wgt.matrix[, colcount] = pred.wgt.metafull
-}
-else{
+}else{
 wgt.matrix[, colcount] = NA
 }
 colcount = colcount + 1
@@ -1106,7 +1132,7 @@ colcount = colcount + 1
 }
 # --- PRS-CSx
 if ("PRS-CSx" %in% model){
-if (ext_prscsx > 0){
+if (ext > 0){
 pred.wgt.prs_csxfull <- weights.prscsx(wgt_prscsx, genos$bed, pheno[,3])
 wgt.matrix[, colcount] = pred.wgt.prs_csxfull
 }else{
@@ -1116,11 +1142,21 @@ colcount = colcount + 1
 }
 # --- BridgePRS
 
+# --- MAGEPROfullsumstats
+if ("MAGEPRO_fullsumstats" %in% model){
+if (ext > 0){
+pred.wgt.magepro_fullsumstatsfull <- weights.magepro(pred.wgtfull, wgt_fullsumstats, genos$bed, pheno[,3], FALSE)
+wgt.matrix[, colcount] = pred.wgt.magepro_fullsumstatsfull
+}else{
+wgt.matrix[, colcount] = NA
+}
+colcount = colcount + 1
+}
 
 # --- MAGEPRO
 cf_total = NA
 if ("MAGEPRO" %in% model){
-if (ext_magepro > 0){
+if (ext > 0){
 pred.wgt.mageprofull <- weights.magepro(pred.wgtfull, wgt_magepro, genos$bed, pheno[,3], TRUE)
 wgt.matrix[, colcount] = pred.wgt.mageprofull
 }else{
@@ -1130,13 +1166,13 @@ wgt.matrix[, colcount] = NA
 
 #--- SAVE RESULTS
 snps = genos$bim
-if ("MAGEPRO" %in% model){
+if ( ("MAGEPRO" %in% model) & (ext > 0) ){
 wgtmagepro <- append("pred.wgt", wgt_magepro)
-w <- which(cf_total == 0)
-if (length(w) > 0 ) {
-wgtmagepro <- wgtmagepro[-w]
-cf_total <- cf_total[-w]
-}
+#w <- which(cf_total == 0)
+#if (length(w) > 0 ) {
+#wgtmagepro <- wgtmagepro[-w]
+#cf_total <- cf_total[-w]
+#}
 }else{
 wgtmagepro = NA
 }
@@ -1149,7 +1185,7 @@ for (i in 1:(opt$crossval-1)){
 avg_cor <- mean(cors_weights)
 # ---
 
-save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_pt, avg_training_r2_prscsx, avg_training_r2_bridge, avg_training_r2_magepro, var_cov, avg_cor, SINGLE_top1, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_pt, avg_training_r2_prscsx, avg_training_r2_bridge, avg_training_r2_magepro_fullsumstats, avg_training_r2_magepro, var_cov, avg_cor, SINGLE_top1, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("### CLEANING UP\n")
