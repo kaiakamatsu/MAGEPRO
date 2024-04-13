@@ -48,6 +48,12 @@ Although this may be a useful option, it require some extra dependencies:
 **Python3**
 - matplotlib
 
+### SuSiE 
+> https://stephenslab.github.io/susieR/index.html
+
+**R**  
+> install.packages("susieR")
+
 ## Preparing datasets
 
 MAGEPRO utilizes external eQTL summary statistics to improve gene models trained on a specific population. See PROCESS_DATASET directory for more information on how to prepare summary statistics used in our analysis.
