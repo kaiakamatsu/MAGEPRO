@@ -33,15 +33,18 @@ Although this may be a useful option, it require some extra dependencies:
 
 ### PRS-CSx 
 > https://github.com/getian107/PRScsx  
+
 **Python**
 - scipy (https://www.scipy.org/)
 - h5py (https://www.h5py.org/)
 
 ### Bridge-PRS
 > https://www.bridgeprs.net/  
+
 **R**
 - BEDMatrix, boot, data.table, doMC, glmnet, MASS, optparse, parallel, and R.utils
 > install.packages(c("BEDMatrix","boot","data.table","doMC","glmnet","MASS","optparse","parallel","R.utils"))  
+
 **Python3**
 - matplotlib
 
