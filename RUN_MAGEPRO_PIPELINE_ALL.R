@@ -32,8 +32,13 @@ option_list = list(
               help="Comma-separated list of external datasets to include"),
   make_option("--models", action="store", default="SINGLE,META,MAGEPRO",
               help="Comma-separated list of models to use \n 
-	      SINGLE = single ancestry approach \n
-	      META = ss-weighted meta-analysis \n 
+	      SINGLE = single ancestry FUSION lasso approach \n
+	      META = ss-weighted meta-analysis of datasets \n 
+	      P+T = pruning and thresholding \n
+	      SuSiE = sum of single effects regression \n
+	      PRS-CSx = PRS-CSx multi-ancestry PRS method \n 
+	      BridgePRS = BridgePRS multi-ancestry PRS method \n
+	      MAGEPRO_fullsumstats = magepro model, no sparsity \n
 	      MAGEPRO = magepro model"),
   make_option("--ss", action="store", default=NA, type='character',
               help="Comma-separated list of sample sizes of sumstats (in the same order)"), 
@@ -58,11 +63,12 @@ option_list = list(
   make_option("--save_hsq", action="store_true", default=FALSE,
               help="Save heritability results even if weights are not computed [default: %default]"), 
   make_option("--ldref_pt", action="store", default=NA, type='character',
-              help="Path to LD reference file for pruning and thresholding, plink format"),
-  make_option("--prune_r2", action="store", default=0.2, type='numeric',
-              help="Pruning threshold to use in P+T"),
-  make_option("--threshold_p", action="store", default=0.5, type='numeric',
-              help="p-value threshold to use in P+T"),
+              help="Path to LD reference file for pruning and thresholding, prefix of plink formatted files (assumed to be split by chr) \n 
+	      ex. path/file_chr for path/file_chr1.bed/bim/fam "),
+  make_option("--prune_r2", action="store", default=NA, type='numeric',
+              help="Pruning threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation"),
+  make_option("--threshold_p", action="store", default=NA, type='numeric',
+              help="p-value threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation"),
   make_option("--ldref_PRSCSx", action="store", default=NA, type='character',
               help="Path to LD reference directory for PRS-CSx, made available by PRS-CSx github"),
   make_option("--dir_PRSCSx", action="store", default="PRScsx", type='character',
@@ -73,7 +79,9 @@ option_list = list(
 	      help="Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR)"),
   make_option("--susie_pip", action="store", default=8, type='numeric',
 	      help="Column number in external datasets where susie pips are stored"),
-  make_option("--susie_cs", action="store", default=9, type='numeric',                                             
+  make_option("--susie_beta", action="store", default=9, type='numeric',
+              help="Column number in external datasets where susie coefs are stored"),
+  make_option("--susie_cs", action="store", default=10, type='numeric',                                             
 	      help="Column number in external datasets where susie credible set groups are stored")
 )
 
@@ -156,7 +164,7 @@ system( "mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRIN
 if ( opt$verbose >= 1 ) cat("### RUNNING JOBS \n")
 batches <- c(1:opt$num_batches)
 for (batch in batches){
-arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs_all.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt, opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx, opt$phi_shrinkage_PRSCSx, opt$pops, opt$susie_pip, opt$susie_cs, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
+arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs_all.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt, opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx, opt$phi_shrinkage_PRSCSx, opt$pops, opt$susie_pip, opt$susie_beta, opt$susie_cs, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 }
 

@@ -4,6 +4,7 @@ suppressMessages(library('plink2R'))
 suppressMessages(library('glmnet'))
 suppressMessages(library('data.table'))
 
+# SuSiE R package will be loaded when we check input/outputs
 
 option_list = list(
   make_option("--gene", action="store", default=NA, type='character',
@@ -22,8 +23,9 @@ option_list = list(
               help="Comma-separated list of models to use \n 
 	      SINGLE = single ancestry FUSION lasso approach \n
 	      META = ss-weighted meta-analysis of datasets \n 
-	      P+T = pruning and thresholding \n
-	      PRS-CSx = PRS-CSx multi-ancestry PRS method \n 
+	      PT = pruning and thresholding \n
+	      SuSiE = sum of single effects regression \n
+	      PRSCSx = PRS-CSx multi-ancestry PRS method \n 
 	      BridgePRS = BridgePRS multi-ancestry PRS method \n
 	      MAGEPRO_fullsumstats = magepro model, no sparsity \n
 	      MAGEPRO = magepro model"),
@@ -56,10 +58,10 @@ option_list = list(
   make_option("--ldref_pt", action="store", default=NA, type='character',
               help="Path to LD reference file for pruning and thresholding, prefix of plink formatted files (assumed to be split by chr) \n 
 	      ex. path/file_chr for path/file_chr1.bed/bim/fam "),
-  make_option("--prune_r2", action="store", default=0.2, type='numeric',
-              help="Pruning threshold to use in P+T"),
-  make_option("--threshold_p", action="store", default=0.5, type='numeric',
-              help="p-value threshold to use in P+T"),
+  make_option("--prune_r2", action="store", default=NA, type='numeric',
+              help="Pruning threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation"),
+  make_option("--threshold_p", action="store", default=NA, type='numeric',
+              help="p-value threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation"),
   make_option("--ldref_PRSCSx", action="store", default=NA, type='character',
               help="Path to LD reference directory for PRS-CSx, made available by PRS-CSx github"),
   make_option("--dir_PRSCSx", action="store", default="PRScsx", type='character',
@@ -70,7 +72,9 @@ option_list = list(
 	      help="Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR)"),
   make_option("--susie_pip", action="store", default=8, type='numeric',
 	      help="Column number in external datasets where susie pips are stored"),
-  make_option("--susie_cs", action="store", default=9, type='numeric',                                             
+  make_option("--susie_beta", action="store", default=9, type='numeric',
+              help="Column number in external datasets where susie coefs are stored"),
+  make_option("--susie_cs", action="store", default=10, type='numeric',                                             
 	      help="Column number in external datasets where susie credible set groups are stored")
 )
 
@@ -144,6 +148,70 @@ weights.meta = function(target_model, target_ss, wgts, h, total_ss) {
 	return (pred.wgt.meta)
 }
 
+tune.pt = function(geno_bed, geno_bim, pheno_df, r2_choices, p_choices, cross, ldref, tmp){
+	# PURPOSE: perform 5-fold cross validation on individuals in geno-bed and pheno to fine the best r2 and p parameter out of given choices 
+	# geno_bed = genotype matrix (row = people, col = snps)
+	# geno_bim = bim file for target population (snps correspond to geno_bed)
+	# pheno = phenotype data for individuals in geno_bed (dataframe with phenotype in third column)
+	# r2_choices = vector of r2 thresholds to search over 
+	# p_choices = vector of p value thresholds to search over 
+	# cross = number of cross validation folds
+	# ldref = ld reference file for pruning and thresholding 
+	# tmp = path/name for temporary files	
+	# RETURN: c(r2_best, p_best): a vector holding the best r2 and p value threshold 
+
+	# 1. create a matrix of size |r2_choices| x |p_choices|
+		# holds the r-squared of the model created using i_th r2 and j_th p 
+	performance = matrix(NA, nrow=length(r2_choices), ncol=length(p_choices))
+	rownames(performance) <- r2_choices
+	colnames(performance) <- p_choices
+	# 2. define indices of cross validation 
+	all_phenos = pheno_df
+	sample_size = nrow(all_phenos)
+	index_sample = sample(sample_size) #sample randomly 
+	all_phenos = all_phenos[index_sample,]
+	folds = cut(seq(1,sample_size),breaks=cross,labels=FALSE)
+	# 3. for every r2,p pair
+	for (i in 1:length(r2_choices)){	
+		for (j in 1:length(p_choices)){
+			r2_current = r2_choices[i]
+			p_current = p_choices[j]
+			calls = matrix(NA,nrow=sample_size,ncol=1) # reset calls for every r2/p pair 
+			# 4. for loop cross valdiation
+			for ( fold in 1:cross ) { 		
+				fold_indx = which(folds==fold,arr.ind=TRUE)
+				train_phenos = all_phenos[-fold_indx,]
+				train_phenos[,3] = scale(train_phenos[,3]) 
+				geno_bed_train = geno_bed[index_sample[-fold_indx], , drop = FALSE]	
+				current_pred = weights.pt(geno_bed_train, geno_bim, train_phenos[,3], r2_current, p_current, ldref, tmp)
+				if (sum(is.na(current_pred)) == nrow(geno_bim)){
+					calls[fold_indx, 1 ] = NA
+				}else{
+					calls[fold_indx, 1] <- geno_bed[index_sample[fold_indx], , drop = FALSE] %*% current_pred
+				}
+			}
+			# 5. compute r-squared of prediction
+				# store r-squared in matrix 
+			if ( !is.na(sd(calls[,1])) && sd(calls[,1]) != 0 ) {   
+				summ = summary(lm( all_phenos[,3] ~ calls[,1] )) #r^2 between predicted and actual 
+				performance[i,j] = summ$adj.r.sq
+			}else{
+				performance[i,j] = NA
+			}
+		}
+	}
+	# 6. return the r2 and p that results in the maximum r-squared
+	max_index <- which(performance == max(performance), arr.ind=TRUE)
+	if (nrow(max_index) > 0){
+		row_max <- max_index[1,1]
+		col_max <- max_index[1,2]
+		best_r2_p <- c(r2_choices[row_max], p_choices[col_max])
+	}else{
+		best_r2_p <- c(0.2,0.5) # if none of the tuned parameters result in any clumps, just try 0.2 and 0.5
+	}
+	return(best_r2_p)
+}
+
 weights.pt = function(geno_bed, geno_bim, pheno, r2, p, ldref, tmp) {
 	# PURPOSE: compute effect sizes of eQTL and run pruning+thresholding
 	# geno_bed = genotype matrix (row = people, col = snps)
@@ -200,6 +268,25 @@ weights.pt = function(geno_bed, geno_bim, pheno, r2, p, ldref, tmp) {
         }
 	system(paste0("rm -rf ", sumstats_file, ".clumped"))
 	return (pred.wgt.PT_sumstats)
+
+}
+
+weights.susie = function(geno, pheno){
+	# PURPOSE: fit the sum of single effects model and return coefficients for prediction
+	# geno = nxp genotype matrix 
+	# pheno = n-length vector of phenotype 
+	# RETURN: p-length vector of effect sizes
+
+	# for this model, define:
+       		# effect_size_snp_j = coef()_j
+	# the Betas given by SuSiE are parametrized by PIP
+
+	fitted <- susie(geno, pheno)
+	#pips <- fitted$pip
+	coefs <- coef(fitted)[-1]
+	#pred.wgt.susie <- coefs*pips
+	pred.wgt.susie <- coefs
+	return(pred.wgt.susie)
 
 }
 
@@ -301,9 +388,7 @@ weights.magepro = function(basemodel, wgts, geno, pheno, save_alphas) {
 	if (any(zero_cols)) {
   		eq <- eq[, !zero_cols]
   		ext <- ext - sum(zero_cols)
-  		#ext_magepro <<- ext
 		wgts <- wgts[-(which(zero_cols) - 1)]
-		#wgt_magepro <<- wgts
 	}
 	#2. run ridge regression to find optimal coefficients for each dataset
 	y <- cv.glmnet(x = eq , y = pheno, alpha = 0, nfold = 5, intercept = T, standardize = T)
@@ -333,16 +418,16 @@ cleanup = function() {
 	}
 }
 
-
-# --- PROCESS-SUMSTATS
-datasets_process <- function(bim, dataset, file, wgts){
-	# PURPOSE: process sumstats by flipping signs according to effect allele and matching snps
-	# bim = bim file of snps	
+# --- LOAD SUMSTATS AND FIX FLIPPED ALLELES
+load_flip_dataset <- function(bim, dataset, file, datasets_loaded, select){
+	# PURPOSE: read summary statistics, flip signs according to effect allele 
+	# bim = bim file of snps
 	# dataset = name of sumstat dataset
 	# file = file path to sumstat (make sure it is properly formatted)
-	# wgts = current list of wgts 
-	# RETURN: updated list of wgts, including the one that was processed in this function
-	table <- fread(file, select = c(2, 3, 4, 5)) 
+	# datasets_loaded = current list of loaded datasets
+	# select = columns numbers to extract from file 
+	# RETURN: updated list of loaded datasets, including the one processed here
+	table <- fread(file, select = select) 
 	for (k in 1:nrow(table)){
 		match=which(bim$V2 == table[k, 1])
 		if (! identical(match, integer(0))){
@@ -362,8 +447,26 @@ datasets_process <- function(bim, dataset, file, wgts){
 	m <- match(bim[,2], table[[1]])
 	table <- table[m,]
 	w <- which(is.na(table[[1]]))
-	if(length(w) > 0){table[w,4] <- 0}
-	assign(paste0("pred.wgt.", dataset), table[[4]], envir = .GlobalEnv)
+	if(length(w) > 0){
+		table[w,4] <- 0
+		if (length(select) > 5){			
+			table[w,7] <- 0
+		}
+	}
+	assign(paste0("loaded.", dataset), table, envir = .GlobalEnv)
+	datasets_loaded <- append(datasets_loaded, paste0("loaded.", dataset))
+	return(datasets_loaded)
+}
+
+# --- PROCESS-SUMSTATS
+datasets_process_fullsumstats <- function(dataset, loaded, wgts){
+	# PURPOSE: process effect sizes from full summary statistics
+	# dataset = name of sumstat dataset
+	# loaded = dataframe containing summary statistics from this dataset 
+		# SNP(rsid) A1(allele1) A2(allele2) b(effect size) p(p-value) pip(pip from SuSiE) cs(credible set membersip from SuSiE) 
+	# wgts = current list of the names of the variables containing these wgts
+	# RETURN: updated list of wgts, including the one that was processed in this function
+	assign(paste0("pred.wgt.", dataset), loaded[[4]], envir = .GlobalEnv)
 	if(sum(which(eval(parse(text = paste0("pred.wgt.", dataset))) != 0)) > 0){
 		wgts <- append(wgts, paste0("pred.wgt.", dataset))
 		return (wgts)
@@ -373,50 +476,22 @@ datasets_process <- function(bim, dataset, file, wgts){
 }
 
 # --- PROCESS-SUMSTATS-USE-SUSIE
-datasets_process_susie <- function(bim, dataset, file, wgts, susie_pip, susie_cs){
-	# PURPOSE: process sumstats by flipping signs according to effect allele and matching snps.
-		# ONLY keep nonzero effect sizes for high PIP SNPs. 
-	# bim = bim file of snps	
+datasets_process_susie <- function(dataset, loaded, wgts){
+	# PURPOSE: process sumstats using SuSiE results: ONLY keep nonzero effect sizes for high PIP SNPs. 
 	# dataset = name of sumstat dataset
-	# file = file path to sumstat (make sure it is properly formatted)
-	# wgts = current list of wgts 
-	# susie_pip = column number where SuSiE PIPs are stored in the file
-	# susie_cs = column number where SuSiE credible sets info is stored in file
-
-	# general process: 
-		# fix flipped alleles, subset to snps present in bim 
-		# take top snp in each credible set, set all other effect sizes to 0 
-
+	# loaded = dataframe containing summary statistics from this dataset
+		# SNP(rsid) A1(allele1) A2(allele2) b(effect size) p(p-value) pip(pip from SuSiE) b(coef from SuSiE) cs(credible set membersip from SuSiE)
+	# wgts = current list of the names of the variables containing these wgts
 	# RETURN: updated list of wgts including the one that was processed in this function
-	table <- fread(file, select = c(2, 3, 4, 5, susie_pip)) 
-	for (k in 1:nrow(table)){
-		match=which(bim$V2 == table[k, 1])
-		if (! identical(match, integer(0))){
-			if (!is.na(table[k, 2]) && !is.na(table[k, 3])){
-				if (as.character(bim$V5[match]) != as.character(table[k, 2]) || as.character(bim$V6[match]) != as.character(table[k, 3])) { 
-					if (as.character(bim$V5[match]) == as.character(table[k, 3]) && as.character(bim$V6[match]) == as.character(table[k, 2])){
-						table[k, 4] <- table[k, 4] * -1
-					}else{
-						table[k, 4] <- 0
-					}
-				}
-			} else {
-				table[k, 4] <- 0
-			}
-		}
-	}
-	# --- use SuSiE pips to only keep nonzero effect sizes for high PIP snps
-	# EDIT THIS LATER 
-	indices_high_pip <- which(table[[5]]>=0.95)
-	if (!identical(integer(0), indices_high_pip)){
-		table[-indices_high_pip, 4] <- 0
-	}
-	# ---
-	m <- match(bim[,2], table[[1]])
-	table <- table[m,]
-	w <- which(is.na(table[[1]]))
-	if(length(w) > 0){table[w,4] <- 0}
-	assign(paste0("pred.wgtsusie.", dataset), table[[4]], envir = .GlobalEnv)
+
+	# STRATEGY:
+		# SuSiE coefficients for all snps
+
+	#indices_high_pip <- which(loaded[[6]]>=0.95)
+	#if (!identical(integer(0), indices_high_pip)){
+	#	loaded[-indices_high_pip, 4] <- 0
+	#}
+	assign(paste0("pred.wgtsusie.", dataset), loaded[[7]], envir = .GlobalEnv)
 	if(sum(which(eval(parse(text = paste0("pred.wgtsusie.", dataset))) != 0)) > 0){
 		wgts <- append(wgts, paste0("pred.wgtsusie.", dataset))
 		return (wgts)
@@ -425,33 +500,13 @@ datasets_process_susie <- function(bim, dataset, file, wgts, susie_pip, susie_cs
 	}
 }
 
-datasets_process_prscsx <- function(bim, name, file, working_dir, snp, A1, A0, B, P){
-	# PURPOSE = process datasets to prepare to run PRS-CSx
-	# bim = bim file of target cohort
+datasets_process_prscsx <- function(name, loaded, working_dir){
+	# PURPOSE = write summary statistics files to prepare to run PRS-CSx
 	# name = name of the dataset
-	# file = path to the external dataset summary statistics 
+	# loaded = dataframe containing summary statistics from this dataset
+		# SNP(rsid) A1(allele1) A2(allele2) b(effect size) p(p-value) pip(pip from SuSiE) cs(credible set membersip from SuSiE)
 	# working_dir = temporary directory to write intermediate files for running PRS-CSx
-	# snp, A1, A0, B, P = column numbers of rsid, alleles, betas, and p values in sumstats
-	table <- fread(file, select = c(snp, A1, A0, B, P))
-	for (k in 1:nrow(table)){
-		match=which(bim$V2 == table[k, 1])
-		if (!identical(match, integer(0))){
-			if (!is.na(table[k, 2]) && !is.na(table[k, 3])){
-				if (as.character(bim$V5[match]) != as.character(table[k, 2]) || as.character(bim$V6[match]) != as.character(table[k, 3])) {
-					if (as.character(bim$V5[match]) == as.character(table[k, 3]) && as.character(bim$V6[match]) == as.character(table[k, 2])){
-						table[k, 4] <- table[k, 4] * -1
-						table[k, 2] <- bim$V5[match]
-						table[k, 3] <- bim$V6[match]
-					}else{
-						table[k, 4] <- 0
-					}
-				}
-			}else{
-				table[k, 4] <- 0
-			}
-		}
-	}
-	df <- data.frame(table)
+	df <- data.frame(loaded[,c(1,2,3,4,5)])
 	colnames(df) <- c("SNP", "A1", "A2", "BETA", "P")
 	f_name <- paste0(working_dir, name, ".txt")
 	write.table(df, file = f_name, sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
@@ -523,7 +578,7 @@ if (!is.na(opt$gene)){
 
 #models to use
 model <- strsplit(opt$models, ",", fixed = TRUE)[[1]]
-if ( sum(! model %in% c("SINGLE", "META", "P+T", "PRS-CSx", "BridgePRS", "MAGEPRO_fullsumstats", "MAGEPRO")) > 0 | length(model) > 6 ){
+if ( sum(! model %in% c("SINGLE", "META", "PT", "SuSiE", "PRSCSx", "BridgePRS", "MAGEPRO_fullsumstats", "MAGEPRO")) > 0 | length(model) > 8 ){
 	cat( "ERROR: Please input valid models \n" , sep='', file=stderr() )
         cleanup()
         q()
@@ -531,7 +586,7 @@ if ( sum(! model %in% c("SINGLE", "META", "P+T", "PRS-CSx", "BridgePRS", "MAGEPR
 
 if (opt$verbose >= 1) cat("### USING THE FOLLOWING MODELS:", opt$models, "\n")
 
-order <- c("SINGLE","META", "P+T", "PRS-CSx", "BridgePRS", "MAGEPRO_fullsumstats", "MAGEPRO")
+order <- c("SINGLE","META", "PT", "SuSiE", "PRSCSx", "BridgePRS", "MAGEPRO_fullsumstats", "MAGEPRO")
 types <- model[match(order, model)]
 types <- unique(types[!is.na(types)])
 
@@ -565,7 +620,7 @@ if ( ! is.na(opt$sumstats)){
 		}
 	}
 }else{
-	if ("META" %in% model | "PRS-CSx" %in% model | "BridgePRS" %in% model | "MAGEPRO_fullsumstats" %in% model | "MAGEPRO" %in% model){
+	if ("META" %in% model | "PRSCSx" %in% model | "BridgePRS" %in% model | "MAGEPRO_fullsumstats" %in% model | "MAGEPRO" %in% model){
 		cat( "ERROR: --sumstats not supplied, cannot compute META, PRS-CSx, BridgePRS, MAGEPRO models \n" , sep='', file=stderr() )
 		cleanup()
                 q()
@@ -573,7 +628,7 @@ if ( ! is.na(opt$sumstats)){
 }
 
 h <- list() #hashmap for sample sizes per dataset
-if ( ("META" %in% model | "PRS-CSx" %in% model) ){
+if ( ("META" %in% model | "PRSCSx" %in% model) ){
 	if (!is.na(opt$ss)){
 		sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
 		if (length(sumstats) != length(sample_sizes)){
@@ -591,24 +646,36 @@ if ( ("META" %in% model | "PRS-CSx" %in% model) ){
 	}
 }
 
-if ( "P+T" %in% model ){
+if ( "PT" %in% model ){
 
 	if (is.na(opt$ldref_pt)){
-		cat( "ERROR: Cannot perform P+T without ld reference file (--ldref_pt) \n" , sep='', file=stderr() )
+		cat( "ERROR: Cannot perform PT without ld reference file (--ldref_pt) \n" , sep='', file=stderr() )
                 cleanup()
                 q()
 	}
 
-	if ( opt$prune_r2 < 0 | opt$prune_r2 > 1 |  opt$threshold_p < 0 | opt$threshold_p > 1 ){
-		cat( "ERROR: --prune_r2 and --threshold_p has to be between 0 and 1 \n" , sep='', file=stderr() )
-                cleanup()
-                q()
+	if ( !is.na(opt$prune_r2) ){
+		if ( opt$prune_r2 < 0 | opt$prune_r2 > 1 ){
+                	cat( "ERROR: --prune_r2 has to be between 0 and 1 \n" , sep='', file=stderr() )
+                	cleanup()
+                	q()
+        	}
+	}
+
+	if ( !is.na(opt$threshold_p) ){
+		if ( opt$threshold_p < 0 | opt$threshold_p > 1 ){
+			cat( "ERROR: --threshold_p has to be between 0 and 1 \n" , sep='', file=stderr() )
+                	cleanup()
+                	q()
+		}	
 	}
 
 }
 
 pops <- list()
-if ( "PRS-CSx" %in% model ){
+if ( "PRSCSx" %in% model ){
+
+	if (opt$verbose >= 1) cat( "Using PRS-CSx model. Please make sure all dependencies for PRS-CSx are installed (see our Github or PRS-CSx Github) \n " )
 
 	if (is.na(opt$ldref_PRSCSx)){
         	cat( "ERROR: input ldref directory for PRS-CSx required (check PRS-CSx github to learn how to download and prepare the ldref files) \n" , sep='', file=stderr() )
@@ -638,6 +705,12 @@ if ( "PRS-CSx" %in% model ){
 
 }
 
+
+if ( "SuSiE" %in% model ){
+
+	suppressMessages(library('susieR'))
+
+}
 
 
 if ( opt$verbose == 2 ) {
@@ -802,15 +875,30 @@ if ( !is.na(opt$covar) && opt$resid ) {
 N.tot = nrow(genos$bed)
 if ( opt$verbose >= 1 ) cat(nrow(pheno),"phenotyped samples, ",nrow(genos$bed),"genotyped samples, ",ncol(genos$bed)," markers\n")
 
-# --- SETUP SUMSTATS
-ext <- length(datasets)
-
+# --- prepare heritability value to use for LASSO in plink
 lasso_h2 <- hsq[1]
 if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){
 	if ( opt$verbose >= 1 ) cat("forcing lasso heritability to ", opt$lassohsq, " \n")
 	lasso_h2 <- opt$lassohsq
 }  #when gcta does not converge or yield wild estimates
 
+# --- SETUP SUMSTATS
+ext <- length(datasets)
+
+# --- READ SUMSTATS AND FLIP ALLELES AS NECESSARY
+loaded_datasets <- c()
+if (ext > 0){
+	select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
+	if ( "MAGEPRO" %in% model ){
+		select_cols <- append(select_cols, c(opt$susie_pip, opt$susie_beta, opt$susie_cs))
+	}
+	for (d in datasets){
+		name <- strsplit(d, split="[.]")[[1]][2]
+		loaded_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets, select_cols)
+	}
+}
+
+# --- PREPARE SUMMARY STATISTICS FOR META AND MAGEPRO_fullsumstats
 if ( ("META" %in% model | "MAGEPRO_fullsumstats" %in% model)  & (ext > 0) ){
 
 if ( opt$verbose >= 1){
@@ -819,9 +907,9 @@ if ( opt$verbose >= 1){
 
 wgt_fullsumstats <- c() #sumstats weights before splitting (used for meta-analysis)
 
-for (d in datasets){
-	name <- strsplit(d, split="[.]")[[1]][2]
-	wgt_fullsumstats <- datasets_process(genos$bim, name, eval(parse(text = d)), wgt_fullsumstats) # Run process dataset function on all datasets
+for (loaded in loaded_datasets){
+	name <- strsplit(loaded, split="[.]")[[1]][2]
+	wgt_fullsumstats <- datasets_process_fullsumstats(name, eval(parse(text = loaded)), wgt_fullsumstats)
 }
 
 ext_fullsumstats <- length(wgt_fullsumstats)
@@ -833,9 +921,12 @@ for (w in wgt_fullsumstats){
 	total_ss_sumstats = total_ss_sumstats + h[[dataset]]
 }
 
+}else{
+ext_fullsumstats <- 0
 }
 
-if ( ("PRS-CSx" %in% model) & (ext > 0) ){
+# --- PREPARE SUMMARY STATISTICS FOR PRS-CSx
+if ( ("PRSCSx" %in% model) & (ext > 0) ){
 
 if ( opt$verbose >= 1){
         cat("### PROCESSING SUMSTATS FOR PRS-CSx \n")
@@ -846,9 +937,9 @@ input <- c()
 ss <- c()
 pp <- c()
 
-for (d in datasets){
-	name <- strsplit(d, split="[.]")[[1]][2]
-	datasets_process_prscsx( genos$bim, name, eval(parse(text = d)), PRS_CSx_working_dir, 2, 3, 4, 5, 7)
+for (loaded in loaded_datasets){
+	name <- strsplit(loaded, split="[.]")[[1]][2]
+	datasets_process_prscsx( name, eval(parse(text = loaded)), PRS_CSx_working_dir)
 	input <- append(input, paste0(PRS_CSx_working_dir, name, ".txt"))
 	ss <- append(ss, h[[name]])
 	pp <- append(pp, pops[[name]])
@@ -863,8 +954,11 @@ wgt_prscsx <- shrinkage.prscsx(opt$dir_PRSCSx, opt$ldref_PRSCSx, PRS_CSx_working
 
 ext_prscsx <- length(wgt_prscsx)
 
+}else{
+ext_prscsx <- 0
 }
 
+# --- PREPARE SUMMARY STATISTICS FOR MAGEPRO
 if ( ("MAGEPRO" %in% model) & (ext > 0) ){
 
 if ( opt$verbose >= 1){
@@ -873,20 +967,21 @@ if ( opt$verbose >= 1){
 
 wgt_magepro <- c() #magepro weights
 
-# SuSiE
-for (d in datasets){
-        name <- strsplit(d, split="[.]")[[1]][2]
-        wgt_magepro <- datasets_process_susie(genos$bim, name, eval(parse(text = d)), wgt_magepro, opt$susie_pip, opt$susie_cs) # Run process dataset function on all datasets
+for (loaded in loaded_datasets){
+        name <- strsplit(loaded, split="[.]")[[1]][2]
+        wgt_magepro <- datasets_process_susie(name, eval(parse(text = loaded)), wgt_magepro)
 }
 
 ext_magepro <- length(wgt_magepro)
 
+}else{
+ext_magepro <- 0
 }
 
 
 # --- CROSSVALIDATION ANALYSES
 set.seed(1)
-avg_training_r2_single <- avg_training_r2_meta <- avg_training_r2_pt <- avg_training_r2_prscsx <- avg_training_r2_bridge <- avg_training_r2_magepro_fullsumstats <- avg_training_r2_magepro <- NA
+avg_training_r2_single <- avg_training_r2_meta <- avg_training_r2_pt <- avg_training_r2_susie <- avg_training_r2_prscsx <- avg_training_r2_bridge <- avg_training_r2_magepro_fullsumstats <- avg_training_r2_magepro <- NA
 #default crossval = 5 fold split
 if ( opt$crossval <= 1 ) { 
 if ( opt$verbose >= 1 ) cat("### SKIPPING CROSS-VALIDATION\n")
@@ -911,12 +1006,13 @@ SINGLE_top1 <- 0
 r2_training_single <- c()
 r2_training_meta <- c()
 r2_training_pt <- c()
+r2_training_susie <- c()
 r2_training_prscsx <- c()
 r2_training_bridge <- c()
 r2_training_magepro_fullsumstats <- c()
 r2_training_magepro <- c()
 
-if ( ("META" %in% model) & (ext > 0) ){
+if ( ("META" %in% model) & (ext_fullsumstats > 0) ){
 training_ss <- N.tot * ((opt$crossval - 1)/opt$crossval)
 total_ss_cv <- total_ss_sumstats + training_ss # total sample size in cross validation (used as denominator in ss-weighted meta-analysis)
 }
@@ -937,7 +1033,7 @@ for ( cv in 1:opt$crossval ) {
 	# SINGLE ANCESTRY------------------------------------------------------------------
 	# lasso_h2 defined when we split datasets
 	pred.wgt = weights.lasso( cv.file , lasso_h2 , snp=genos$bim[,2] )	
-	if ( sum(is.na(pred.wgt)) == length(pred.wgt)) {
+	if ( sum(is.na(pred.wgt)) == nrow(genos$bim)) {
 		if ( opt$verbose >= 1 ) cat("LASSO pushed all weights to 0, using top1 as backup \n")
 		SINGLE_top1 <- SINGLE_top1 + 1
 		pred.wgt = weights.marginal( genos$bed[ cv.sample[ -indx ],] , as.matrix(cv.train[,3,drop=F]) , beta=T )
@@ -959,7 +1055,7 @@ for ( cv in 1:opt$crossval ) {
 
 	# SS-WEIGHTED META-ANALYSIS-------------------------------------------------------------
 	if ("META" %in% model){
-	if (ext > 0){
+	if (ext_fullsumstats > 0){
 	pred.wgt.meta = weights.meta(pred.wgt, training_ss, wgt_fullsumstats, h, total_ss_cv)	
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.meta 
 	pred_train_meta = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.meta))) 
@@ -975,9 +1071,19 @@ for ( cv in 1:opt$crossval ) {
 	#-----------------------------------------------------------------------------
 
 	# P+T--------------------------------------------------------------------------
-	if ("P+T" %in% model){
-	pred.wgt.PT_sumstats <- weights.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train[,3], opt$prune_r2, opt$threshold_p, opt$ldref_pt, opt$tmp)
-	if (sum(is.na(pred.wgt.PT_sumstats)) == length(pred.wgt)){
+	if ("PT" %in% model){
+	# if --prune_r2 and --threshold_p are not provided, cross validation on the training fold again to tune r2 and p values 
+	if ( is.na(opt$prune_r2) & is.na(opt$threshold_p) ){
+	tuned_pt <- tune.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train, c(0.2,0.5,0.8), c(0.001, 0.01, 0.1, 0.5), 2, opt$ldref_pt, opt$tmp)
+	}else if ( is.na(opt$prune_r2) & !is.na(opt$threshold_p) ){
+	tuned_pt <- tune.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train, c(0.2,0.5,0.8), c(opt$threshold_p), 2, opt$ldref_pt, opt$tmp)
+	}else if ( !is.na(opt$prune_r2) & is.na(opt$threshold_p) ){
+	tuned_pt <- tune.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train, c(opt$prune_r2), c(0.001, 0.01, 0.1, 0.5), 2, opt$ldref_pt, opt$tmp)
+	}else{
+	tuned_pt <- c(opt$prune_r2, opt$threshold_p)
+	}
+	pred.wgt.PT_sumstats <- weights.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train[,3], tuned_pt[1], tuned_pt[2], opt$ldref_pt, opt$tmp)
+	if (sum(is.na(pred.wgt.PT_sumstats)) == nrow(genos$bim)){
 	if ( opt$verbose >= 1 ) cat("No clumps remaining after P+T, NA results \n")
 	cv.calls[ indx , colcount ] = NA
 	r2_training_pt = append(r2_training_pt, NA)	
@@ -992,10 +1098,24 @@ for ( cv in 1:opt$crossval ) {
 	}
 	#------------------------------------------------------------------------------
 
+	# SuSiE------------------------------------------------------------------------
+
+	if ("SuSiE" %in% model){
+	pred.wgt.susie <- weights.susie(genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3])
+	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.susie
+	pred_train_susie = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.susie)))
+        r2_training_susie = append(r2_training_susie, pred_train_susie$adj.r.sq)
+
+	colcount = colcount + 1
+	
+	}
+
+	#------------------------------------------------------------------------------
+
 	# PRS-CSx----------------------------------------------------------------------
 
-	if ("PRS-CSx" %in% model){
-	if (ext > 0){
+	if ("PRSCSx" %in% model){
+	if (ext_prscsx > 0){
 	pred.wgt.prs_csx <- weights.prscsx(wgt_prscsx, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3])
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.prs_csx
 	pred_train_prscsx = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.prs_csx)))
@@ -1020,7 +1140,7 @@ for ( cv in 1:opt$crossval ) {
 	# MAGEPRO_fullsumstats---------------------------------------------------------
 
 	if ("MAGEPRO_fullsumstats" %in% model){
-	if (ext > 0){
+	if (ext_fullsumstats > 0){
 	pred.wgt.magepro_fullsumstats <- weights.magepro(pred.wgt, wgt_fullsumstats, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], FALSE)
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ], , drop = FALSE] %*% pred.wgt.magepro_fullsumstats
 	pred_train_magepro_fullsumstats = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.magepro_fullsumstats))) #r^2 between predicted and actual
@@ -1040,7 +1160,7 @@ for ( cv in 1:opt$crossval ) {
 	# MAGEPRO----------------------------------------------------------------------
 	
 	if ("MAGEPRO" %in% model){	
-	if (ext > 0){	
+	if (ext_magepro > 0){	
 	pred.wgt.magepro <- weights.magepro(pred.wgt, wgt_magepro, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], FALSE)
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ], , drop = FALSE] %*% pred.wgt.magepro
 	# --- for checking cor() of weights in CV
@@ -1082,8 +1202,9 @@ if ( opt$verbose >= 1 ) write.table(cv.performance,quote=F,sep='\t')
 #take average of r2 on training set
 if ("SINGLE" %in% model) avg_training_r2_single <- mean(r2_training_single)
 if ("META" %in% model) avg_training_r2_meta <- mean(r2_training_meta)
-if ("P+T" %in% model) avg_training_r2_pt <- mean(r2_training_pt)
-if ("PRS-CSx" %in% model) avg_training_r2_prscsx <- mean(r2_training_prscsx)
+if ("PT" %in% model) avg_training_r2_pt <- mean(r2_training_pt)
+if ("SuSiE" %in% model) avg_training_r2_susie <- mean(r2_training_susie)
+if ("PRSCSx" %in% model) avg_training_r2_prscsx <- mean(r2_training_prscsx)
 if ("BridgePRS" %in% model) avg_training_r2_bridge <- mean(r2_training_bridge)
 if ("MAGEPRO_fullsumstats" %in% model) avg_training_r2_magepro_fullsumstats <- mean(r2_training_magepro_fullsumstats)
 if ("MAGEPRO" %in% model) avg_training_r2_magepro <- mean(r2_training_magepro)
@@ -1115,7 +1236,7 @@ colcount = colcount + 1
 }
 # --- SS-WEIGHTED META-ANALYSIS
 if ("META" %in% model){
-if (ext > 0){
+if (ext_fullsumstats > 0){
 total_ss_full <- total_ss_sumstats + N.tot
 pred.wgt.metafull <- weights.meta(pred.wgtfull, N.tot, wgt_fullsumstats, h, total_ss_full)
 wgt.matrix[, colcount] = pred.wgt.metafull
@@ -1125,14 +1246,29 @@ wgt.matrix[, colcount] = NA
 colcount = colcount + 1
 }
 # --- P+T 
-if ("P+T" %in% model){
-pred.wgt.PT_sumstatsfull <- weights.pt(genos$bed, genos$bim, pheno[,3], opt$prune_r2, opt$threshold_p, opt$ldref_pt, opt$tmp)
+if ("PT" %in% model){
+if ( is.na(opt$prune_r2) & is.na(opt$threshold_p) ){
+tuned_pt <- tune.pt(genos$bed, genos$bim, pheno, c(0.2,0.5,0.8), c(0.001, 0.01, 0.1, 0.5), 5, opt$ldref_pt, opt$tmp)
+}else if ( is.na(opt$prune_r2) & !is.na(opt$threshold_p) ){
+tuned_pt <- tune.pt(genos$bed, genos$bim, pheno, c(0.2,0.5,0.8), c(opt$threshold_p), 5, opt$ldref_pt, opt$tmp)
+}else if ( !is.na(opt$prune_r2) & is.na(opt$threshold_p) ){
+tuned_pt <- tune.pt(genos$bed, genos$bim, pheno, c(opt$prune_r2), c(0.001, 0.01, 0.1, 0.5), 5, opt$ldref_pt, opt$tmp)
+}else{
+tuned_pt <- c(opt$prune_r2, opt$threshold_p)
+}
+pred.wgt.PT_sumstatsfull <- weights.pt(genos$bed, genos$bim, pheno[,3], tuned_pt[1], tuned_pt[2], opt$ldref_pt, opt$tmp)
 wgt.matrix[, colcount] = pred.wgt.PT_sumstatsfull
 colcount = colcount + 1
 }
+# --- SuSiE
+if ("SuSiE" %in% model){
+pred.wgt.susiefull <- weights.susie(genos$bed, pheno[,3])
+wgt.matrix[, colcount] = pred.wgt.susiefull
+colcount = colcount + 1
+}
 # --- PRS-CSx
-if ("PRS-CSx" %in% model){
-if (ext > 0){
+if ("PRSCSx" %in% model){
+if (ext_prscsx > 0){
 pred.wgt.prs_csxfull <- weights.prscsx(wgt_prscsx, genos$bed, pheno[,3])
 wgt.matrix[, colcount] = pred.wgt.prs_csxfull
 }else{
@@ -1144,7 +1280,7 @@ colcount = colcount + 1
 
 # --- MAGEPROfullsumstats
 if ("MAGEPRO_fullsumstats" %in% model){
-if (ext > 0){
+if (ext_fullsumstats > 0){
 pred.wgt.magepro_fullsumstatsfull <- weights.magepro(pred.wgtfull, wgt_fullsumstats, genos$bed, pheno[,3], FALSE)
 wgt.matrix[, colcount] = pred.wgt.magepro_fullsumstatsfull
 }else{
@@ -1156,7 +1292,7 @@ colcount = colcount + 1
 # --- MAGEPRO
 cf_total = NA
 if ("MAGEPRO" %in% model){
-if (ext > 0){
+if (ext_magepro > 0){
 pred.wgt.mageprofull <- weights.magepro(pred.wgtfull, wgt_magepro, genos$bed, pheno[,3], TRUE)
 wgt.matrix[, colcount] = pred.wgt.mageprofull
 }else{
@@ -1166,7 +1302,7 @@ wgt.matrix[, colcount] = NA
 
 #--- SAVE RESULTS
 snps = genos$bim
-if ( ("MAGEPRO" %in% model) & (ext > 0) ){
+if ( ("MAGEPRO" %in% model) & (ext_magepro > 0) ){
 wgtmagepro <- append("pred.wgt", wgt_magepro)
 #w <- which(cf_total == 0)
 #if (length(w) > 0 ) {
@@ -1185,7 +1321,7 @@ for (i in 1:(opt$crossval-1)){
 avg_cor <- mean(cors_weights)
 # ---
 
-save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_pt, avg_training_r2_prscsx, avg_training_r2_bridge, avg_training_r2_magepro_fullsumstats, avg_training_r2_magepro, var_cov, avg_cor, SINGLE_top1, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_pt, avg_training_r2_susie, avg_training_r2_prscsx, avg_training_r2_bridge, avg_training_r2_magepro_fullsumstats, avg_training_r2_magepro, var_cov, avg_cor, SINGLE_top1, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("### CLEANING UP\n")
