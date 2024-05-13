@@ -4,7 +4,7 @@ lst = read.table(arg[1],as.is=T)[,1]
 names = gsub(".wgt.RDat","",basename(lst))
 N = length(lst)
 
-model = c("lasso,afr", "lasso,meta","lasso,multipop")
+model = c() # <name of all models>
 colnames = c( "id" , "nsnps" , "hsq" , "hsq.se" , "hsq.pv" , paste(model,"r2",sep='.') , paste(model,"pv",sep='.') )
 
 mat.snps = matrix(nrow=N,ncol=1)

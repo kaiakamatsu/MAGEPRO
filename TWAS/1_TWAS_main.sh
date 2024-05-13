@@ -1,7 +1,6 @@
-#Rscript makePOS.R
+Rscript makePOS.R
 
-#phenos="HGB MCHC MPV RBC EOS LYM MCV NEU RDW HCT MCH MON PLT WBC"
-phenos="BAS"
+phenos="BAS HGB MCHC MPV RBC EOS LYM MCV NEU RDW HCT MCH MON PLT WBC"
 
 for pheno in $phenos; do
 	echo $pheno

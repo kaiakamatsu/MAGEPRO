@@ -22,16 +22,15 @@ conda activate r_env
 home=/expanse/lustre/projects/ddp412/kakamatsu
 
 pheno=$1
-gwas=${home}/gwas/AA_BCX_LETTRELAB/munged/BCX2_${pheno}_AA_GWAMA_munged.sumstats.gz
+gwas=${home}/gwas/AA_BCX_LETTRELAB/munged/BCX2_${pheno}_AA_GWAMA_munged.sumstats.gz # path to GWAS summary statistics, munged
 echo $gwas
 
-wgt=${home}/fusion_multipop/magepro_weight.pos
-wgtdir=/expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/GTExAFR_WHOLEBLOOD_MAGEPRO/weights_15PEER/
+wgt=${home}/fusion_multipop/magepro_weight.pos # path to .pos file 
+wgtdir=/expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/<path to gene models>/ # path to gene models
 
-out=${home}/fusion_multipop/outputMAGEPRO_BCX_LETTER/${pheno}
+out=${home}/fusion_multipop/outputMAGEPRO_BCX_LETTER/${pheno} # output directory 
 
-#ld=${home}/eQTLsummary/1000g/1000G_AFR_gtexSNPs/1000G_AFR_
-ld=${home}/GENOTYPES_GE_data/GTEX_AFR/GTEx_v8_genotype_AFR_HM3_exclude_dups.
+ld=${home}/GENOTYPES_GE_data/<path to ld reference file> # ld reference file
 
 #--force_model SINGLE
 
