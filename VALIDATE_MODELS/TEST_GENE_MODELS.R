@@ -48,11 +48,11 @@ opt[na] <- NA
 print(opt)
 
 # find gene name without version number
-name <- strsplit(opt$gene, ".", fixed = TRUE)[[1]][1]
+#name <- strsplit(opt$gene, ".", fixed = TRUE)[[1]][1]
 
 # path to weights  
 #file.wgts <- paste0(opt$genemodel,"/", opt$gene, ".wgt.RDat")
-file.wgts <- paste0(opt$genemodel,"/", name, ".wgt.RDat")
+file.wgts <- paste0(opt$genemodel,"/", opt$gene, ".wgt.RDat")
 
 if ( opt$verbose == 2 ) {
   SYS_PRINT = F

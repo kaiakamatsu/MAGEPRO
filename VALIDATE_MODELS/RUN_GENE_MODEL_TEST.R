@@ -90,10 +90,10 @@ for (b in bed_files){
 	data = fread( paste0(gene_beds_dir, "/", b), header = F, sep = "\t" )
 	name = data$V4[1]
 	chr = data$V1[1]	
-	base_name = strsplit(name, split = "[.]")[[1]][1]
+	base_name = strsplit(name, split = "[.]")[[1]][1]  # BASE NAME NOT APPLICABLE FOR GTEx
 	plink_file = paste0(opt$bfile, chr)
 	# HERE THE GENE CIS WINDOW IS DEFINED AS THE SAME CIS WINDOW AS THE INSAMPLE BIM
-	arg = paste(opt$PATH_plink, "--bfile", plink_file, "--extract", paste0(opt$insample_bim, "/", base_name, ".bim"), "--allow-no-sex", "--make-bed", "--out", paste0(plink_gene_dir, "/", name), sep = " " )
+	arg = paste(opt$PATH_plink, "--bfile", plink_file, "--extract", paste0(opt$insample_bim, "/", name, ".bim"), "--allow-no-sex", "--make-bed", "--out", paste0(plink_gene_dir, "/", name), sep = " " )
 	system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 	system( paste0("rm -rf ", plink_gene_dir, "/", name, ".log"), ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 }

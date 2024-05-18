@@ -497,7 +497,6 @@ weights.magepro_marquezluna = function(basemodel, wgts, geno, pheno_df, geno_bim
 	return(pred.wgt.magepro)
 }
 
-
 weights.magepro = function(basemodel, wgts, geno, pheno, save_alphas) {
 	# PURPOSE: compute MAGEPRO weights
 	# basemodel = target population prediction model, a vector of effect sizes (this base model will be one of the features in the regression)
@@ -506,19 +505,12 @@ weights.magepro = function(basemodel, wgts, geno, pheno, save_alphas) {
 	# pheno = vector of gene expression values for individuals in geno (also for training mixing weights)
 	# save_alphas = T/F, save alpha coefficients to 'cf_total'?
 	ext <- length(wgts)
-	#1a. format glmnet input
+	#1. format glmnet input
 	eq <- matrix(0, nrow = nrow(geno), ncol = ext+1)
 	eq[,1] <- geno %*% basemodel
 	for (c in 1:length(wgts)){
 		eq[,(c+1)] <- geno %*%  eval(parse(text = wgts[c])) 
 	}	
-	#1b. when geno %*% wgt -> all 0 (snps at nonzero wgt have no variaion among people) -> remove sumstat
-	zero_cols <- colSums(eq == 0) == nrow(eq) 
-	if (any(zero_cols)) {
-  		eq <- eq[, !zero_cols]
-  		ext <- ext - sum(zero_cols)
-		wgts <- wgts[-(which(zero_cols) - 1)]
-	}
 	#2. run ridge regression to find optimal coefficients for each dataset
 	y <- cv.glmnet(x = eq , y = pheno, alpha = 0, nfold = 5, intercept = T, standardize = T)
 	cf = coef(y, s = "lambda.min")[2:(ext+2)]
@@ -1248,8 +1240,15 @@ for ( cv in 1:opt$crossval ) {
 
 	# SuSiE------------------------------------------------------------------------
 
-	if ("SuSiE" %in% model){
 	pred.wgt.susie <- weights.susie(genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3])
+	if ( sum(pred.wgt.susie == 0) == nrow(genos$bim) ) {
+		pred.wgt.susie = weights.marginal( genos$bed[ cv.sample[ -indx ],] , as.matrix(cv.train[,3,drop=F]) , beta=T )
+		pred.wgt.susie[ - which.max( pred.wgt.susie^2 ) ] = 0
+	}
+	if (length(pred.wgt.susie) == 1){
+		pred.wgt.susie <- t(pred.wgt.susie) # 1 snp in the cis window -> transpose for "matrix" mult
+	}
+	if ("SuSiE" %in% model){
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.susie
 	pred_train_susie = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.susie)))
         r2_training_susie = append(r2_training_susie, pred_train_susie$adj.r.sq)
@@ -1421,8 +1420,15 @@ wgt.matrix[, colcount] = pred.wgt.PT_sumstatsfull
 colcount = colcount + 1
 }
 # --- SuSiE
-if ("SuSiE" %in% model){
 pred.wgt.susiefull <- weights.susie(genos$bed, pheno[,3])
+if ( sum(pred.wgt.susiefull == 0) == nrow(genos$bim) ) {
+pred.wgt.susiefull = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T ) # use marginal weights for susie if NA
+pred.wgt.susiefull[ - which.max( pred.wgt.susiefull^2 ) ] = 0
+}
+if (length(pred.wgt.susiefull) == 1){
+pred.wgt.susiefull <- t(pred.wgt.susiefull) # 1 snp in the cis window -> transpose for "matrix" mult
+}
+if ("SuSiE" %in% model){
 wgt.matrix[, colcount] = pred.wgt.susiefull
 colcount = colcount + 1
 }
