@@ -11,12 +11,7 @@
 #SBATCH --export=ALL
 #SBATCH --constraint="lustre"
 
-#Compute Weights
-module purge
-module load cpu/0.15.4
-module load gcc/9.2.0
-module load mvapich2/2.3.6
-module load slurm
+
 source ~/.bashrc
 conda activate r_env
 
