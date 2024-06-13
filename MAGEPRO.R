@@ -517,6 +517,13 @@ weights.magepro = function(basemodel, wgts, geno, pheno, save_alphas) {
 	predtext <- "cf[1]*basemodel"
 	for (i in 2:(length(cf))){
 		predtext <- paste0(predtext, " + cf[", i, "]*", wgts[(i-1)])
+		#--- check why effect sizes are sometimes massive
+		if(save_alphas){
+			print(wgts[(i-1)])
+			print(max(abs(eval(parse(text = wgts[(i-1)])))))
+			print(cf[i])
+		}
+		#---
 	}
 	pred.wgt.magepro <- eval(parse(text = predtext))
 	if(length(pred.wgt.magepro) == 1){
@@ -1240,6 +1247,7 @@ for ( cv in 1:opt$crossval ) {
 
 	# SuSiE------------------------------------------------------------------------
 
+	if ("SuSiE" %in% model){
 	pred.wgt.susie <- weights.susie(genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3])
 	if ( sum(pred.wgt.susie == 0) == nrow(genos$bim) ) {
 		pred.wgt.susie = weights.marginal( genos$bed[ cv.sample[ -indx ],] , as.matrix(cv.train[,3,drop=F]) , beta=T )
@@ -1248,7 +1256,6 @@ for ( cv in 1:opt$crossval ) {
 	if (length(pred.wgt.susie) == 1){
 		pred.wgt.susie <- t(pred.wgt.susie) # 1 snp in the cis window -> transpose for "matrix" mult
 	}
-	if ("SuSiE" %in% model){
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.susie
 	pred_train_susie = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.susie)))
         r2_training_susie = append(r2_training_susie, pred_train_susie$adj.r.sq)
@@ -1420,6 +1427,7 @@ wgt.matrix[, colcount] = pred.wgt.PT_sumstatsfull
 colcount = colcount + 1
 }
 # --- SuSiE
+if ("SuSiE" %in% model){
 pred.wgt.susiefull <- weights.susie(genos$bed, pheno[,3])
 if ( sum(pred.wgt.susiefull == 0) == nrow(genos$bim) ) {
 pred.wgt.susiefull = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T ) # use marginal weights for susie if NA
@@ -1428,7 +1436,6 @@ pred.wgt.susiefull[ - which.max( pred.wgt.susiefull^2 ) ] = 0
 if (length(pred.wgt.susiefull) == 1){
 pred.wgt.susiefull <- t(pred.wgt.susiefull) # 1 snp in the cis window -> transpose for "matrix" mult
 }
-if ("SuSiE" %in% model){
 wgt.matrix[, colcount] = pred.wgt.susiefull
 colcount = colcount + 1
 }
