@@ -4,7 +4,7 @@ MAGEPRO is a predictive genetics method to create powerful gene expression predi
 # FIXES 
 - in 1_CollectSamples.R, also subset to individuals in covar file, and create a set of indivdiuasl present in ge, genotype and covars
 - --num_covar flag is hard to use for gtex formatted covars with sex and age in the last row
-- 
+- --ldref_pt by default uses bfile
 
 # USING MAGEPRO 
 
