@@ -520,7 +520,8 @@ weights.magepro = function(basemodel, wgts, geno, pheno, save_alphas) {
 		#--- check why effect sizes are sometimes massive
 		if(save_alphas){
 			print(wgts[(i-1)])
-			print(max(abs(eval(parse(text = wgts[(i-1)])))))
+			print(max(eval(parse(text = wgts[(i-1)]))))
+			print(min(eval(parse(text = wgts[(i-1)]))))
 			print(cf[i])
 		}
 		#---
