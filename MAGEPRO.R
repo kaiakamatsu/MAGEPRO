@@ -5,6 +5,8 @@ suppressMessages(library('glmnet'))
 suppressMessages(library('data.table'))
 suppressMessages(library('dplyr'))
 
+source(('fine_mapping.R'), chdir = TRUE)
+
 # SuSiE R package will be loaded when we check input/outputs
 
 option_list = list(
@@ -59,6 +61,12 @@ option_list = list(
   make_option("--ldref_pt", action="store", default=NA, type='character',
               help="Path to LD reference file for pruning and thresholding, prefix of plink formatted files (assumed to be split by chr) \n 
 	      ex. path/file_chr for path/file_chr1.bed/bim/fam "),
+  make_option("--ldref_dir", action="store", default=NA, type="character",
+  			  help="Directory containing ld reference files used for fine mapping"),
+  make_option("--ldrefs", action="store", default=NA, type="character",
+  			  help="Comma-separated list of ld reference files used for fine mapping"),
+  make_option("--cl_thresh", action="store", default=0.97, type="numeric",
+  			  help="Clumping threshold for plink to clump SNPs that have high R2 [optional]"),
   make_option("--prune_r2", action="store", default=NA, type='numeric',
               help="Pruning threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation"),
   make_option("--threshold_p", action="store", default=NA, type='numeric',
@@ -784,6 +792,45 @@ if ( ("META" %in% model | "PRSCSx" %in% model) ){
 	}
 }
 
+
+if ("MAGEPRO" %in% model) {
+	if (!is.na(opt$ldref_dir)) {
+		if (!file.exists(opt$ldref_dir)) {
+			cat( "ERROR: in --ldref_dir directory does not exist, please check the path\n", sep='', file=stderr())
+			cleanup()
+			q()
+		}
+	} else {
+		cat( "ERROR: --ldref_dir not supplied, cannot perform fine mapping and, hence, compute MAGEPRO model\n", sep='', file=stderr() )
+				cleanup()
+				q()
+	}
+
+	if (!is.na(opt$ldrefs)) {
+		ldrefs_list <- strsplit(opt$ldrefs, ",")[[1]]
+		if (length(sumstats) != length(ldrefs_list)) {
+			cat ("ERROR: --ldrefs flag requires an entry for every dataset\n", sep='', file=stderr())
+				cleanup()
+				q()
+		}
+	} else {
+		cat( "ERROR: --ldrefs not supplied, cannot perform fine mapping and, hence, compute MAGEPRO model\n", sep='', file=stderr() )
+				cleanup()
+				q()
+	}
+}
+
+ldrefs_list <- strsplit(opt$ldrefs, ",")[[1]]
+# create map with cohort as keys 
+cohort_map <- setNames(
+  lapply(seq_along(sumstats), function(i) {
+    list(sample_size = sample_sizes[i], ldref = ldrefs_list[i])
+  }),
+  sumstats
+)
+
+
+
 if ( "PT" %in% model ){
 
 	if (is.na(opt$ldref_pt)){
@@ -1114,9 +1161,32 @@ if ( opt$verbose >= 1){
 
 wgt_magepro <- c() #magepro weights
 
-for (loaded in loaded_datasets){
-        name <- strsplit(loaded, split="[.]")[[1]][2]
-        wgt_magepro <- datasets_process_susie(name, eval(parse(text = loaded)), wgt_magepro)
+for (cohort in names(cohort_map)) {
+	cohort_data <- cohort_map[[cohort]]
+	cohort_path <- file.path(opt$sumstats_dir, cohort)
+	cohort_ld_directory <- file.path(opt$scratch, paste0(cohort, "ld"))
+	cohort_ldref_path <- file.path(opt$ldref_dir, cohort_data$ldref)
+
+	# create directories for output and ld_matrix_path
+	make_ld_matrix_path <- paste0(
+		"mkdir -p ", opt$scratch, "/", cohort, "ld/"
+	)
+	make_output_path <- paste0(
+		"mkdir -p ", opt$out, "/", cohort, "/"
+	)
+	
+	system(make_ld_matrix_path, wait = TRUE)
+	system(make_output_path, wait = TRUE)
+
+	gene_txt <- paste0(trimws(opt$gene), '.txt')
+	path_to_fine_mapping_output <- gene_fine_mapping(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, opt$PATH_plink, opt$cl_thresh, opt$out)
+	if (path_to_fine_mapping_output == "Error") {
+		next
+	}
+	fine_mapping_content <- readLines(path_to_fine_mapping_output)
+	content <- eval(parse(text = fm_content))
+
+	wgt_magepro <- datasets_process_susie(name, evaluated_content, wgt_magepro)
 }
 
 ext_magepro <- length(wgt_magepro)
