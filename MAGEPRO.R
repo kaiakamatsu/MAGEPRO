@@ -233,8 +233,8 @@ eqtl_assoc = function(geno_bed, geno_bim, pheno) {
 	# pheno = phenotype of interest across people
 	
 	Betas <- c()
-        Pvals <- c()
-        SNPs <- c()
+	Pvals <- c()
+	SNPs <- c()
 	for(col in 1:ncol(geno_bed)){
                 SNPs <- append(SNPs, colnames(geno_bed)[col])
                 snp <- geno_bed[,col]
@@ -767,7 +767,7 @@ if ( ! is.na(opt$sumstats)){
 }
 
 h <- list() #hashmap for sample sizes per dataset
-if ( ("META" %in% model | "PRSCSx" %in% model) ){
+if ( ("META" %in% model | "PRSCSx" %in% model | "MAGEPRO" %in% model) ){
 	if (!is.na(opt$ss)){
 		sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
 		if (length(sumstats) != length(sample_sizes)){
