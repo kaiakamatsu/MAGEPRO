@@ -11,17 +11,16 @@
 #SBATCH --export=ALL
 #SBATCH --constraint="lustre"
 
-module purge
-module load cpu/0.15.4
-module load gcc/9.2.0
-module load mvapich2/2.3.6
-module load slurm
 source ~/.bashrc
 conda activate r_py
 
 numafr=$1 #comma separated list of 5 different sample sizes to test
 heritability=$2
+eur_geno_prefix=$3
+afr_geno_prefix=$4
+amr_geno_prefix=$5
+out=$6
 
 echo "running simulations with $numafr AFR individuals and a gene with heritability $heritability"
 
-bash run_highLD_simulation_1000.sh $numafr $heritability
+bash run_highLD_simulation_1000.sh $numafr $heritability $eur_geno_prefix $afr_geno_prefix $amr_geno_prefix $out

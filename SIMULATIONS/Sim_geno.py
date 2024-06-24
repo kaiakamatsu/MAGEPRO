@@ -49,7 +49,10 @@ n, p = [float(x) for x in G.shape]
 p_int = int(p)
 mafs = np.mean(G, axis=0) / 2
 G -= mafs * 2
-G /= np.std(G, axis=0)
+std_devs = np.std(G, axis=0)
+std_devs[std_devs == 0] = 1 # when standard deviation at a snp is 0, set it to 1 to prevent NA values in LD matrix
+G /= std_devs
+
 # --- regularize so that LD is PSD (positive semi definite)
 LD = np.dot(G.T, G) / n + np.eye(p_int) * 0.1 #this is the LD matrix!!!
 

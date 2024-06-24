@@ -116,7 +116,7 @@ def sim_eqtl(Z_qtl, nqtl, b_qtls, eqtl_h2, temp):
     allqtlshape = b_qtls.shape
     n, p = [float(x) for x in Z_qtl.shape] 
 
-    tempdir = "/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/simulations/" + temp + "/temp"
+    tempdir = temp + "/temp"
     b = b_qtls[:,0]
     nonzeroindex = np.where(b != 0)[0]
     gexpr = sim_trait(np.dot(Z_qtl,b), eqtl_h2)[0]
@@ -233,6 +233,124 @@ def weights_marginal_FUSION(genos, pheno, beta=True):
     
     return eff_wgt
 
+def load_process_sumstats(file_sumstats, bim_df):
+    # LOAD AND PROCESS SUMMARY STATISTICS (SUSIE POSTERIOR) FOR MAGEPRO 
+
+    # --- LOAD IN SUM STATS
+    sumstats = pd.read_csv(file_sumstats, sep = "\t")
+
+    # --- FLIP SIGNS, SUBSET SUM STATS TO SNPS IN COMMON
+    # match snps, flip signs? - unfortunately the snps present in one population isn't always present in the other
+    for index, row in sumstats.iterrows():
+        matched = np.where(bim_df[:,1] == row['SNP'])
+        if len(matched[0]) > 0:
+            if bim_df[matched, 4] != row['A1'] or bim_df[matched,5] != row['A2']:
+                if bim_df[matched, 5] == row['A1'] and bim_df[matched,4] == row['A2']:
+                    sumstats.loc[index, 'BETA'] = row['BETA'] * -1
+                    sumstats.loc[index, 'POSTERIOR'] = row['POSTERIOR'] * -1
+                else:
+                    sumstats.loc[index,'BETA'] = 0
+                    sumstats.loc[index, 'POSTERIOR'] = 0
+
+    # --- get SNPs in common between bim and sumstats
+    snps_bim = pd.DataFrame(bim_df[:, 1], columns=['SNP'])
+    merged = sumstats.merge(snps_bim, on='SNP', how = 'inner')
+    merged = merged.set_index('SNP')
+    merged = merged.reindex(bim_df[:, 1])
+    merged = merged.fillna(0)
+    sumstats = merged.reset_index()
+
+    wgt = np.array(sumstats['POSTERIOR'])
+    pips = np.array(sumstats['PIP'])
+
+    return wgt, pips
+
+def top1_cv(N, genotypes, phenotype):
+    #r2all also has to be reassigned - have to perform 5-fold cross validation again using top1 model
+    predicted_expressions = np.zeros(N)
+    kf_top1=KFold(n_splits=5)
+    for train_i_top1, test_i_top1 in kf_top1.split(genotypes):
+        X_train_top1, X_test_top1 = genotypes[train_i_top1], genotypes[test_i_top1]
+        y_train_top1, y_test_top1 = phenotype[train_i_top1], phenotype[test_i_top1] 
+        y_train_std_top1=(y_train_top1-np.mean(y_train_top1))/np.std(y_train_top1)
+        y_test_std_top1=(y_test_top1-np.mean(y_test_top1))/np.std(y_test_top1)
+        wgts = weights_marginal_FUSION(X_train_top1, y_train_std_top1, beta = True)
+        top1_wgts, r2_top1 = top1(y_test_std_top1, X_test_top1, wgts)
+        top1_wgts_train, r2_top1_train = top1(y_train_std_top1, X_train_top1, wgts)
+        predicted_expressions[test_i_top1] = np.dot(X_test_top1, top1_wgts)
+    lreg = LinearRegression().fit(np.array(predicted_expressions).reshape(-1, 1), phenotype)
+    r2_top1_cv = lreg.score(np.array(predicted_expressions).reshape(-1, 1), phenotype) # cross validation r2
+    #full model 
+    wgts_full = weights_marginal_FUSION(genotypes, phenotype, beta = True)
+    coef_top1_full, r2_top1_training = top1(phenotype, genotypes, wgts_full) # top1 gene models weights, total training r2 
+
+    return r2_top1_cv, r2_top1_training, coef_top1_full
+
+
+def magepro_cv(N, geno_magepro, pheno_magepro, susie_weights):
+    # N = sample size 
+    # geno_magepro = genotypes
+    # pheno_magepro = gene expression or phenotype data 
+    # susie_weights = dictionary of external datasets to use (susie posterior weights)
+        # Ancestry : Array of weights
+    alphas_magepro=np.logspace(-2,1.2,50,base=10)
+    kf_magepro=KFold(n_splits=5)
+    #store r2 from lm for each penalty
+    lm_r2_allpenalty=[] 
+    for penalty_magepro in alphas_magepro:
+        #everyfold record predicted expression on testing set
+        predicted_expressions = np.zeros(N)
+        for train_index_magepro, test_index_magepro in kf_magepro.split(geno_magepro):
+            y_train_magepro, y_test_magepro = pheno_magepro[train_index_magepro], pheno_magepro[test_index_magepro]
+            y_train_std_magepro=(y_train_magepro-np.mean(y_train_magepro))/np.std(y_train_magepro)
+            y_test_std_magepro=(y_test_magepro-np.mean(y_test_magepro))/np.std(y_test_magepro)
+            X_train_magepro, X_test_magepro = geno_magepro[train_index_magepro], geno_magepro[test_index_magepro]
+            #lasso for afronly weights
+            lasso = lm.Lasso(fit_intercept=True)
+            lasso.set_params(alpha=best_penalty,tol=1e-4,max_iter=1000)
+            lasso.fit(X_train_magepro, y_train_std_magepro)
+            coef_magepro = lasso.coef_
+            if np.all(coef_magepro == 0):
+                wgts = weights_marginal_FUSION(X_train_magepro, y_train_magepro, beta = True)
+                coef_magepro, r2_top1 = top1(y_test_std_magepro, X_test_magepro, wgts)
+            #prepare for ridge regression to find optimal combination of AFR gene model and EUR sumstat
+            X_train_magepro2 = np.dot(X_train_magepro, coef_magepro.reshape(-1, 1))
+            X_test_magepro2 = np.dot(X_test_magepro, coef_magepro.reshape(-1, 1))
+            for ancestry, weights in susie_weights.items():
+                X_train_magepro2 = np.hstack((X_train_magepro2, np.dot(X_train_magepro, weights.reshape(-1, 1))))
+                X_test_magepro2 = np.hstack((X_test_magepro2, np.dot(X_test_magepro, weights.reshape(-1, 1))))
+            ridge = Ridge(alpha=penalty_magepro) #now finding best penalty for ridge regression 
+            ridge.fit(X_train_magepro2,y_train_std_magepro)
+            ridge_coef = ridge.coef_
+            #predict on testing
+            predicted_expressions[test_index_magepro] = np.dot(X_test_magepro2, ridge_coef)
+        #record r2 from lm
+        lreg = LinearRegression().fit(np.array(predicted_expressions).reshape(-1, 1), pheno_magepro)
+        r2_cv_penalty = lreg.score(np.array(predicted_expressions).reshape(-1, 1), pheno_magepro)
+        lm_r2_allpenalty.append(r2_cv_penalty) 
+    besti_magepro=np.argmax(lm_r2_allpenalty)
+    bestalpha_magepro=alphas_magepro[besti_magepro]
+    magepro_r2 = lm_r2_allpenalty[besti_magepro] # returning this for cv r2
+
+    # full model for training r2 and full coef
+    lasso = lm.Lasso(fit_intercept=True)
+    lasso.set_params(alpha=best_penalty,tol=1e-4,max_iter=1000)
+    lasso.fit(geno_magepro, pheno_magepro)
+    coef_magepro = lasso.coef_
+    if np.all(coef_magepro == 0):
+        wgts = weights_marginal_FUSION(geno_magepro, pheno_magepro, beta = True)
+        coef_magepro, r2_top1 = top1(pheno_magepro, geno_magepro, wgts)
+    X_magepro = np.dot(geno_magepro, coef_magepro.reshape(-1, 1))
+    for ancestry, weights in susie_weights.items():
+        X_magepro = np.hstack((X_magepro, np.dot(geno_magepro, weights.reshape(-1, 1))))
+    ridge = Ridge(alpha=bestalpha_magepro)
+    ridge.fit(X_magepro, pheno_magepro)
+    wgts_sep = coef_magepro.reshape(-1, 1)
+    for ancestry, weights in susie_weights.items():
+        wgts_sep = np.hstack((wgts_sep, weights.reshape(-1, 1)))
+    magepro_coef = np.dot(wgts_sep, ridge.coef_) #magepro coef
+
+    return magepro_r2, magepro_coef
 
 args = sys.argv
 plink_file = args[1] # path to plink files of simulated gene
@@ -240,11 +358,15 @@ samplesizes = int(args[2]) # number of people
 pop = args[3] #population
 genotype_file = args[4] #path to simulated genotypes
 sumstats_file = args[5] #path to sumstats created in other poputation
-set_num_causal = int(args[6]) #number of causal snps
-CAUSAL = int(args[7]) # index of causal snp
-sim = int(args[8]) #iteration of simulation
-set_h2 = float(args[9]) #predetermiend h2g
-temp_dir = args[10] #temporary directory for gcta
+sumstats_files = sumstats_file.split(',')
+population_sumstat = args[6]
+populations_sumstat = population_sumstat.split(',') # comma separated list of ancestries of sumstats
+set_num_causal = int(args[7]) #number of causal snps
+CAUSAL = int(args[8]) # index of causal snp
+sim = int(args[9]) #iteration of simulation
+set_h2 = float(args[10]) #predetermiend h2g
+temp_dir = args[11] #temporary directory for gcta
+out_results = args[12]
 
 # --- READ IN SIMULATED GENE PLINK FILES
 bim, fam, G_all = read_plink(plink_file, verbose=False)  
@@ -265,127 +387,31 @@ b_qtls = np.array(betas)
 b_qtls = np.reshape(b_qtls.T, (bim.shape[0], 1))
 #print(b_qtls.shape)
 
-# --- SIMULATE GENE MODEL
+# --- SIMULATE LASSO GENE MODEL
 best_penalty, coef, h2g, hsq_p, r2all, gexpr = sim_eqtl(z_eqtl, samplesizes, b_qtls, float(set_h2), temp_dir) #this runs gcta and lasso 
-coef_split = coef.copy()
 #gexpr already standardized
 
 # --- if the best lasso model with the best penalty gives coef of all 0, we have to use top1 to compute r2 afr
 if np.all(coef == 0):
     print("using top1 backup")
-
-    # call function for marginal weights using all 80 individuals
-    effect_sizes_marginal = weights_marginal_FUSION(z_eqtl, gexpr, beta = True)
-    effect_sizes_marginal = np.array(effect_sizes_marginal)
-    z_scores = (effect_sizes_marginal - np.mean(effect_sizes_marginal))/ np.std(effect_sizes_marginal)
-    nominally_sig = np.where(abs(z_scores) > 1.96)[0]
-    coef_split = effect_sizes_marginal.copy()
-    coef_split[~np.isin(np.arange(len(coef_split)), nominally_sig)] = 0 # coef_split is used later to split sumstats into two vectors : nonzero vs zero snps
-    
-    #r2all also has to be reassigned - have to perform 5-fold cross validation again using top1 model
-    predicted_expressions = np.zeros(samplesizes)
-    kf_top1=KFold(n_splits=5)
-    for train_i_top1, test_i_top1 in kf_top1.split(z_eqtl):
-        X_train_top1, X_test_top1 = z_eqtl[train_i_top1], z_eqtl[test_i_top1]
-        y_train_top1, y_test_top1 = gexpr[train_i_top1], gexpr[test_i_top1] 
-        y_train_std_top1=(y_train_top1-np.mean(y_train_top1))/np.std(y_train_top1)
-        y_test_std_top1=(y_test_top1-np.mean(y_test_top1))/np.std(y_test_top1)
-        wgts = weights_marginal_FUSION(X_train_top1, y_train_std_top1, beta = True)
-        top1_wgts, r2_top1 = top1(y_test_std_top1, X_test_top1, wgts)
-        top1_wgts_train, r2_top1_train = top1(y_train_std_top1, X_train_top1, wgts)
-        predicted_expressions[test_i_top1] = np.dot(X_test_top1, top1_wgts)
-    lreg = LinearRegression().fit(np.array(predicted_expressions).reshape(-1, 1), gexpr)
-    r2all = lreg.score(np.array(predicted_expressions).reshape(-1, 1), gexpr) 
-    #full model 
-    wgts_full = weights_marginal_FUSION(z_eqtl, gexpr, beta = True)
-    coef, r2_top1 = top1(gexpr, z_eqtl, wgts_full)
+    r2all, r2_top1, coef = top1_cv(samplesizes, z_eqtl, gexpr)
 
 print(("heritability " + pop + ": "))
 print(h2g)
 
-# --- LOAD IN SUM STATS EUR
-sumstats = pd.read_csv(sumstats_file, sep = "\t")
-
-# --- FLIP SIGNS, SUBSET SUM STATS TO SNPS IN COMMON
-# match snps, flip signs? - unfortunately the snps present in one population isn't always present in the other
-for index, row in sumstats.iterrows():
-    matched = np.where(bim[:,1] == row['snp'])
-    if len(matched[0]) > 0:
-        if bim[matched, 4] != row['effect_A'] or bim[matched,5] != row['alt_A']:
-            if bim[matched, 5] == row['effect_A'] and bim[matched,4] == row['alt_A']:
-                sumstats.loc[index, 'beta'] = row['beta'] * -1
-            else:
-                sumstats.loc[index,'beta'] = 0
-
-# get snps in common
-snps_bim = pd.DataFrame(bim[:, 1], columns=['snp'])
-merged = sumstats.merge(snps_bim, on='snp', how = 'inner')
-merged = merged.set_index('snp')
-merged = merged.reindex(bim[:, 1])
-merged = merged.fillna(0)
-sumstats = merged.reset_index()
-wgt = np.array(sumstats['beta'])
-
-# --- SPLIT SUMSTATS INTO TWO VECTORS
-# look at coef variable above -> result of lasso -> use this to split sumstats into two groups
-nonzero = np.nonzero(coef_split)[0]
-wgt_zero = wgt.copy()
-wgt[~np.isin(np.arange(len(wgt)), nonzero)] = 0
-wgt_zero[nonzero] = 0
+# --- PROCESS SUMMARY STATISTICS
+num_causal_susie = 0
+sumstats_weights = {}
+for i in range(0,len(sumstats_files)):
+    varname = populations_sumstat[i]+'weights'
+    weights, pips = load_process_sumstats(sumstats_files[i], bim)
+    sumstats_weights[varname] = weights
+    if pips[CAUSAL] >= 0.95:
+        num_causal_susie = num_causal_susie + 1
 
 
 # --- RUN CV MAGEPRO 
-geno_magepro=z_eqtl
-alphas_magepro=np.logspace(-2,1.2,50,base=10)
-kf_magepro=KFold(n_splits=5)
-#store r2 from lm for each penalty
-lm_r2_allpenalty=[] 
-for penalty_magepro in alphas_magepro:
-    #everyfold record predicted expression on testing set
-    predicted_expressions = np.zeros(samplesizes)
-    for train_index_magepro, test_index_magepro in kf_magepro.split(geno_magepro):
-        y_train_magepro, y_test_magepro = gexpr[train_index_magepro], gexpr[test_index_magepro]
-        y_train_std_magepro=(y_train_magepro-np.mean(y_train_magepro))/np.std(y_train_magepro)
-        y_test_std_magepro=(y_test_magepro-np.mean(y_test_magepro))/np.std(y_test_magepro)
-        X_train_magepro, X_test_magepro = geno_magepro[train_index_magepro], geno_magepro[test_index_magepro]
-        #lasso for afronly weights
-        lasso = lm.Lasso(fit_intercept=True)
-        lasso.set_params(alpha=best_penalty,tol=1e-4,max_iter=1000)
-        lasso.fit(X_train_magepro, y_train_std_magepro)
-        coef_magepro = lasso.coef_
-        if np.all(coef_magepro == 0):
-            wgts = weights_marginal_FUSION(X_train_magepro, y_train_magepro, beta = True)
-            coef_magepro, r2_top1 = top1(y_test_std_magepro, X_test_magepro, wgts)
-        
-        #prepare for ridge regression to find optimal combination of AFR gene model and EUR sumstat
-        X_train_magepro2 = np.hstack(( np.dot(X_train_magepro, coef_magepro.reshape(-1, 1)), np.dot(X_train_magepro, wgt.reshape(-1, 1)), np.dot(X_train_magepro, wgt_zero.reshape(-1, 1)) ))
-        X_test_magepro2 = np.hstack(( np.dot(X_test_magepro, coef_magepro.reshape(-1, 1)), np.dot(X_test_magepro, wgt.reshape(-1, 1)), np.dot(X_test_magepro, wgt_zero.reshape(-1, 1)) ))
-        ridge = Ridge(alpha=penalty_magepro) #now finding best penalty for ridge regression 
-        ridge.fit(X_train_magepro2,y_train_std_magepro)
-        ridge_coef = ridge.coef_
-        #predict on testing
-        predicted_expressions[test_index_magepro] = np.dot(X_test_magepro2, ridge_coef)
-    #record r2 from lm
-    lreg = LinearRegression().fit(np.array(predicted_expressions).reshape(-1, 1), gexpr)
-    r2_cv_penalty = lreg.score(np.array(predicted_expressions).reshape(-1, 1), gexpr)
-    lm_r2_allpenalty.append(r2_cv_penalty) 
-besti_magepro=np.argmax(lm_r2_allpenalty)
-bestalpha_magepro=alphas_magepro[besti_magepro]
-magepro_r2 = lm_r2_allpenalty[besti_magepro]
-
-#full model
-lasso = lm.Lasso(fit_intercept=True)
-lasso.set_params(alpha=best_penalty,tol=1e-4,max_iter=1000)
-lasso.fit(geno_magepro, gexpr)
-coef_magepro = lasso.coef_
-if np.all(coef_magepro == 0):
-    wgts = weights_marginal_FUSION(geno_magepro, gexpr, beta = True)
-    coef_magepro, r2_top1 = top1(gexpr, geno_magepro, wgts)
-X_magepro = np.hstack(( np.dot(geno_magepro, coef_magepro.reshape(-1, 1)), np.dot(geno_magepro, wgt.reshape(-1, 1)), np.dot(geno_magepro, wgt_zero.reshape(-1, 1)) ))
-ridge = Ridge(alpha=bestalpha_magepro)
-ridge.fit(X_magepro, gexpr)
-wgts_sep = np.hstack(( coef_magepro.reshape(-1, 1), wgt.reshape(-1, 1), wgt_zero.reshape(-1, 1) ))
-magepro_coef = np.dot(wgts_sep, ridge.coef_) #magepro coef
+magepro_r2, magepro_coef = magepro_cv(samplesizes, z_eqtl, gexpr, sumstats_weights)
 
 print("magepro: ")
 print(magepro_r2)
@@ -413,9 +439,9 @@ true_B_causal = beta_causal
 #r2all = afronly magepro cv r2
 
 #filename = "results/magepro_results_" + str(samplesizes) + "_h" + str(set_h2) + ".csv"
-filename = "results_try/magepro_results_" + str(samplesizes) + "_h" + str(set_h2) + ".csv"
+filename = out_results + "/magepro_results_" + str(samplesizes) + "_h" + str(set_h2) + ".csv"
 
-output = pd.DataFrame({'sim': sim, 'afr_h2': h2g, 'lasso_causal': lasso_causal_nonzero, 'magepro_causal': magepro_causal_nonzero, 'afr_beta_causal': afr_B_causal, 'magepro_beta_causal': magepro_B_causal, 'true_B_causal': true_B_causal, 'afr_r2': r2all, 'magepro_r2': magepro_r2}, index=[0])
+output = pd.DataFrame({'sim': sim, 'afr_h2': h2g, 'lasso_causal': lasso_causal_nonzero, 'magepro_causal': magepro_causal_nonzero, 'afr_beta_causal': afr_B_causal, 'magepro_beta_causal': magepro_B_causal, 'true_B_causal': true_B_causal, 'afr_r2': r2all, 'magepro_r2': magepro_r2, 'causal_susie': num_causal_susie}, index=[0])
 if sim == 1:
     output.to_csv(filename, sep="\t", index=False, header = True)
 else:

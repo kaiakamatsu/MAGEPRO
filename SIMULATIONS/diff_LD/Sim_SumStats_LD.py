@@ -206,6 +206,7 @@ set_h2 = float(args[8])
 samplesize_target = int(args[9])
 out_sumstat = args[10]
 temp_dir = args[11]
+out_results = args[12]
 
 nGenesTot = 1 # simulate with just 1 gene
 
@@ -246,6 +247,7 @@ ge_regression = gexpr #already standardized
 
 betas = []
 pvals = []
+std_errs = []
 
 for i in range(z_eqtl.shape[1]):
     x = sm.add_constant(z_eqtl[:, i].reshape(-1,1))
@@ -253,9 +255,10 @@ for i in range(z_eqtl.shape[1]):
     results = mod.fit()
     betas.append(results.params[1])
     pvals.append(results.pvalues[1])
+    std_errs.append(results.bse[1])
 
-sumstats = pd.DataFrame({'snp':bim[:,1], 'beta':betas, 'p':pvals, 'effect_A': bim[:,4], 'alt_A': bim[:,5]})
-#print(sumstats)
+sumstats = pd.DataFrame({'SNP':bim[:,1], 'A1': bim[:,4], 'A2': bim[:,5], 'BETA':betas, 'SE':std_errs, 'P': pvals})
+
 
 filename = out_sumstat + "/sumstats_" + pop + ".csv"
 sumstats.to_csv(filename, sep="\t", index=False, header = True)
@@ -267,7 +270,7 @@ if coef[CAUSAL] != 0:
 
 
 #write results
-filename = "results_LD/eur_h2_causal_" + str(samplesize_target) + "_h" + str(set_h2) + ".csv"
+filename = out_results + "/eur_h2_causal_" + str(samplesize_target) + "_h" + str(set_h2) + ".csv"
 eur_h2_causal = pd.DataFrame({'sim': sim, 'eur_h2': h2g, 'eur_lasso_casual': lasso_causal_nonzero, 'eur_r2': r2all}, index=[0])
 if sim == 1:
     eur_h2_causal.to_csv(filename, sep="\t", index=False, header = True)

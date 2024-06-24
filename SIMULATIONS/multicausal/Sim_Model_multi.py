@@ -240,11 +240,13 @@ samplesizes = int(args[2]) # number of people
 pop = args[3] #population
 genotype_file = args[4] #path to simulated genotypes
 sumstats_file = args[5] #path to sumstats created in other poputation
+sumstats_files = sumstats_file.split(',')
 set_num_causal = int(args[6]) #number of causal snps
 CAUSAL = [ int(index) for index in args[7].split(',') ]
 sim = int(args[8]) #iteration of simulation
 set_h2 = float(args[9]) #predetermiend h2g
 temp_dir = args[10] #temporary directory for gcta
+out_results = args[11]
 
 # --- READ IN SIMULATED GENE PLINK FILES
 bim, fam, G_all = read_plink(plink_file, verbose=False)  
@@ -268,8 +270,9 @@ b_qtls = np.reshape(b_qtls.T, (bim.shape[0], 1))
 
 # --- SIMULATE GENE MODEL
 best_penalty, coef, h2g, hsq_p, r2all, gexpr = sim_eqtl(z_eqtl, samplesizes, b_qtls, float(set_h2), temp_dir) #this runs gcta and lasso 
-coef_split = coef.copy()
 #gexpr already standardized
+
+# ------ START EDITTING HERE
 
 # --- if the best lasso model with the best penalty gives coef of all 0, we have to use top1 to compute r2 afr
 if np.all(coef == 0):
@@ -411,7 +414,7 @@ true_B_causal = beta_causal
 #magepro_r2 = magepro cv r2 
 #r2all = afronly magepro cv r2
 
-filename = "results_multicausal/magepro_results_" + str(samplesizes) + "_h" + str(set_h2) + ".csv"
+filename = out_results + "/magepro_results_" + str(samplesizes) + "_h" + str(set_h2) + ".csv"
 
 output = pd.DataFrame({'sim': sim, 'afr_h2': h2g, 'lasso_causal': lasso_causal_nonzero, 'magepro_causal': magepro_causal_nonzero, 'afr_beta_causal': afr_B_causal, 'magepro_beta_causal': magepro_B_causal, 'true_B_causal': true_B_causal, 'afr_r2': r2all, 'magepro_r2': magepro_r2}, index=[0])
 if sim == 1:

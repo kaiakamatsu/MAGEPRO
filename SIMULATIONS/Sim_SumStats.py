@@ -114,7 +114,7 @@ def sim_eqtl(Z_qtl, nqtl, b_qtls, eqtl_h2, temp):
     allqtlshape = b_qtls.shape
     n, p = [float(x) for x in Z_qtl.shape]
 
-    tempdir = "/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/simulations/" + temp + "/temp"
+    tempdir = temp + "/temp"
     b = b_qtls[:,0]
     nonzeroindex = np.where(b != 0)[0]
     gexpr = sim_trait(np.dot(Z_qtl,b), eqtl_h2)[0]
@@ -130,7 +130,7 @@ def sim_eqtl(Z_qtl, nqtl, b_qtls, eqtl_h2, temp):
 # -- SIMULATE CAUSAL EFFECT SIZES
 def sim_effect_sizes(h2g, num_causal, num_snps, causal_index):
     mean = 0
-    variance = h2g/np.sqrt(num_causal)
+    variance = h2g/num_causal
     effect_sizes = np.zeros(num_snps)
     if isinstance(causal_index, list):
         for index in causal_index:
@@ -204,6 +204,7 @@ set_h2 = float(args[8]) #predetermined h2g
 samplesize_target = int(args[9]) #sample size
 out_sumstat = args[10] #output dir for sumstats
 temp_dir = args[11] #dir for temporary files for gcta
+out_results = args[12]
 
 # --- READ IN SIMULATED GENE PLINK FILES
 bim, fam, G_all = read_plink(plink_file, verbose=False)  
@@ -233,6 +234,7 @@ ge_regression = gexpr #already standardized
 
 betas = []
 pvals = []
+std_errs = []
 
 for i in range(z_eqtl.shape[1]):
     x = sm.add_constant(z_eqtl[:, i].reshape(-1,1))
@@ -240,13 +242,12 @@ for i in range(z_eqtl.shape[1]):
     results = mod.fit()
     betas.append(results.params[1])
     pvals.append(results.pvalues[1])
+    std_errs.append(results.bse[1])
 
-sumstats = pd.DataFrame({'snp':bim[:,1], 'beta':betas, 'p':pvals, 'effect_A': bim[:,4], 'alt_A': bim[:,5]})
+# PRSCSx format
+    # SNP A1 A2 BETA SE
 
-#filter for significant eqtl (fdr < 0.05)
-#fdr = multipletests(sumstats['p'], method='fdr_bh')[1]
-#sumstats['fdr'] = fdr
-#sumstats = sumstats[sumstats['fdr'] < 0.05]
+sumstats = pd.DataFrame({'SNP':bim[:,1], 'A1': bim[:,4], 'A2': bim[:,5], 'BETA':betas, 'SE':std_errs, 'P': pvals})
 
 filename = out_sumstat + "/sumstats_" + pop + ".csv"
 sumstats.to_csv(filename, sep="\t", index=False, header = True)
@@ -257,7 +258,7 @@ if coef[CAUSAL] != 0:
 
 
 #write results
-filename = "results/eur_h2_causal_" + str(samplesize_target) + "_h" + str(set_h2) + ".csv"
+filename = out_results + "/eur_h2_causal_" + str(samplesize_target) + "_h" + str(set_h2) + ".csv"
 eur_h2_causal = pd.DataFrame({'sim': sim, 'eur_h2': h2g, 'eur_lasso_casual': lasso_causal_nonzero, 'eur_r2': r2all}, index=[0])
 if sim == 1:
     eur_h2_causal.to_csv(filename, sep="\t", index=False, header = True)
