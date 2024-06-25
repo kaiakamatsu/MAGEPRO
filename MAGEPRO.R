@@ -517,7 +517,7 @@ weights.magepro = function(basemodel, wgts, geno, pheno, save_alphas) {
 	eq <- matrix(0, nrow = nrow(geno), ncol = ext+1)
 	eq[,1] <- geno %*% basemodel
 	print(paste0("weights vector: ", length(wgts), " ", wgts))
-	print(paste0("weights vector: ", length(wgts), wgts))
+	print(paste0("geno vector: ", geno))
 	
 	for (c in 1:length(wgts)){
 		eq[,(c+1)] <- geno %*%  eval(parse(text = wgts[c])) 
@@ -1196,8 +1196,9 @@ if ( ("MAGEPRO" %in% model) & (ext > 0) ){
 		if (path_to_fine_mapping_output == "Error") {
 			next
 		}
+		print(paste0("path_to_fine_mapping_output: ", path_to_fine_mapping_output))
 		fine_mapping_df <- fread(path_to_fine_mapping_output, header=TRUE, sep=" ", dec=".")
-		wgt_magepro <- datasets_process_susie(cohort, fine_mapping_df, wgt_magepro)
+		wgt_magepro <- datasets_process_susie(cohort, eval(parse(text=fine_mapping_df)), wgt_magepro)
 	}
 
 	ext_magepro <- length(wgt_magepro)
