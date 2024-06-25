@@ -1,8 +1,9 @@
 expected_header <- "Gene SNP A1 A2 b SE P"
+suppressMessages(library('tools'))
 
 gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, plink, cl_thresh, out) {
-
-	if (trimws(readLines(gene_txt, n = 1)) != expected_header) {
+	file_path <- file.path(cohort_path, gene_txt)
+	if (trimws(readLines(file_path, n = 1)) != expected_header) {
 		stop(paste0("Error: Header in", file.path(cohort_path, gene_txt), "does not match the expected", expected_header, "format.\nMake sure all sumstat files have the expected header.\n"))
 		cleanup()
 		q()
@@ -57,9 +58,11 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 	rcommand <- paste0("Rscript SUSIE/get_pips.R -g ", cohort_path, "/",
 	" -c ", gene_txt, 
 	" -l ", file.path(cohort_ld_directory, paste0(gene, ".ld")),
-	" -n ", cohort_data$cohort_size,
-	" -o ", file.path(out, cohort, gene_txt)
+	" -n ", cohort_data$sample_size,
+	" -o ", file.path(out, gene_txt)
 	)
+
+	print(paste0("rcommand: ", rcommand))
 
 	tryCatch({
 		system(rcommand, wait = TRUE)
@@ -68,5 +71,9 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 		return("Error")
 	})
 
-	return file.path(out, cohort, gene_txt)
+	cat("finished running gene_fine_mapping\n")
+
+	to_return <- file.path(out, gene_txt)
+
+	return(to_return)
 }

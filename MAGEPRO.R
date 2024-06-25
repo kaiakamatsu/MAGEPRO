@@ -86,7 +86,7 @@ option_list = list(
   make_option("--susie_cs", action="store", default=10, type='numeric',                                             
 	      help="Column number in external datasets where susie credible set groups are stored"),
   make_option("--impact_path", action="store", default=NA, type='character',
-	      help="path to file with IMPACT scores for each SNP")
+              help="path to file with impact scores for each snp")
 )
 
 # --- PARSE COMMAND LINE ARGS
@@ -516,6 +516,9 @@ weights.magepro = function(basemodel, wgts, geno, pheno, save_alphas) {
 	#1. format glmnet input
 	eq <- matrix(0, nrow = nrow(geno), ncol = ext+1)
 	eq[,1] <- geno %*% basemodel
+	print(paste0("weights vector: ", length(wgts), " ", wgts))
+	print(paste0("weights vector: ", length(wgts), wgts))
+	
 	for (c in 1:length(wgts)){
 		eq[,(c+1)] <- geno %*%  eval(parse(text = wgts[c])) 
 	}	
@@ -821,6 +824,8 @@ if ("MAGEPRO" %in% model) {
 }
 
 ldrefs_list <- strsplit(opt$ldrefs, ",")[[1]]
+sample_sizes <- strsplit(opt$ss, ",")[[1]]
+
 # create map with cohort as keys 
 cohort_map <- setNames(
   lapply(seq_along(sumstats), function(i) {
@@ -1073,126 +1078,132 @@ if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){
 	if ( opt$verbose >= 1 ) cat("forcing lasso heritability to ", opt$lassohsq, " \n")
 	lasso_h2 <- opt$lassohsq
 }  #when gcta does not converge or yield wild estimates
-
+cat("Line 1078")
 # --- SETUP SUMSTATS
 ext <- length(datasets)
 
-# --- READ SUMSTATS AND FLIP ALLELES AS NECESSARY
-loaded_datasets <- c()
-if (ext > 0){
-	select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
-	susie <- FALSE
-	if ( "MAGEPRO" %in% model ){
-		select_cols <- append(select_cols, c(opt$susie_pip, opt$susie_beta, opt$susie_cs))
-		susie <- TRUE
-	}
-	for (d in datasets){
-		name <- strsplit(d, split="[.]")[[1]][2]
-		loaded_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets, select_cols, susie)
-	}
-}
+# # --- READ SUMSTATS AND FLIP ALLELES AS NECESSARY
+# loaded_datasets <- c()
+# if (ext > 0){
+# 	select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
+# 	susie <- FALSE
+# 	if ( "MAGEPRO" %in% model ){
+# 		select_cols <- append(select_cols, c(opt$susie_pip, opt$susie_beta, opt$susie_cs))
+# 		susie <- TRUE
+# 	}
+# 	for (d in datasets){
+# 		name <- strsplit(d, split="[.]")[[1]][2]
+# 		loaded_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets, select_cols, susie)
+# 	}
+# }
 
 # --- PREPARE SUMMARY STATISTICS FOR META AND MAGEPRO_fullsumstats
 if ( ("META" %in% model | "MAGEPRO_fullsumstats" %in% model)  & (ext > 0) ){
 
-if ( opt$verbose >= 1){
-	cat("### PROCESSING SUMSTATS FOR META AND MAGEPRO_fullsumstats \n")
-}
+	if ( opt$verbose >= 1){
+		cat("### PROCESSING SUMSTATS FOR META AND MAGEPRO_fullsumstats \n")
+	}
 
-wgt_fullsumstats <- c() #sumstats weights before splitting (used for meta-analysis)
+	wgt_fullsumstats <- c() #sumstats weights before splitting (used for meta-analysis)
 
-for (loaded in loaded_datasets){
-	name <- strsplit(loaded, split="[.]")[[1]][2]
-	wgt_fullsumstats <- datasets_process_fullsumstats(name, eval(parse(text = loaded)), wgt_fullsumstats)
-}
+	for (loaded in loaded_datasets){
+		name <- strsplit(loaded, split="[.]")[[1]][2]
+		wgt_fullsumstats <- datasets_process_fullsumstats(name, eval(parse(text = loaded)), wgt_fullsumstats)
+	}
 
-ext_fullsumstats <- length(wgt_fullsumstats)
+	ext_fullsumstats <- length(wgt_fullsumstats)
 
-# COMPUTE TOTAL SAMPLE SIZE OF SUMSTATS -> USED LATER IN META-ANALYSIS
-total_ss_sumstats <- 0 
-for (w in wgt_fullsumstats){
-	dataset <- strsplit(w, split="[.]")[[1]][3]
-	total_ss_sumstats = total_ss_sumstats + h[[dataset]]
-}
+	# COMPUTE TOTAL SAMPLE SIZE OF SUMSTATS -> USED LATER IN META-ANALYSIS
+	total_ss_sumstats <- 0 
+	for (w in wgt_fullsumstats){
+		dataset <- strsplit(w, split="[.]")[[1]][3]
+		total_ss_sumstats = total_ss_sumstats + h[[dataset]]
+	}
 
 }else{
-ext_fullsumstats <- 0
+	ext_fullsumstats <- 0
 }
 
 # --- PREPARE SUMMARY STATISTICS FOR PRS-CSx
 if ( ("PRSCSx" %in% model) & (ext > 0) ){
 
-if ( opt$verbose >= 1){
-        cat("### PROCESSING SUMSTATS FOR PRS-CSx \n")
-}
+	if ( opt$verbose >= 1){
+			cat("### PROCESSING SUMSTATS FOR PRS-CSx \n")
+	}
 
-# process datasets 
-input <- c()
-ss <- c()
-pp <- c()
+	# process datasets 
+	input <- c()
+	ss <- c()
+	pp <- c()
 
-for (loaded in loaded_datasets){
-	name <- strsplit(loaded, split="[.]")[[1]][2]
-	datasets_process_prscsx( name, eval(parse(text = loaded)), PRS_CSx_working_dir)
-	input <- append(input, paste0(PRS_CSx_working_dir, name, ".txt"))
-	ss <- append(ss, h[[name]])
-	pp <- append(pp, pops[[name]])
-}
+	for (loaded in loaded_datasets){
+		name <- strsplit(loaded, split="[.]")[[1]][2]
+		datasets_process_prscsx( name, eval(parse(text = loaded)), PRS_CSx_working_dir)
+		input <- append(input, paste0(PRS_CSx_working_dir, name, ".txt"))
+		ss <- append(ss, h[[name]])
+		pp <- append(pp, pops[[name]])
+	}
 
-input_prs <- paste(input, collapse=',')
-ss_prs <- paste(ss, collapse=',')
-pp_prs <- paste(pp, collapse=',')
+	input_prs <- paste(input, collapse=',')
+	ss_prs <- paste(ss, collapse=',')
+	pp_prs <- paste(pp, collapse=',')
 
-# run the shrinkage 
-wgt_prscsx <- shrinkage.prscsx(opt$dir_PRSCSx, opt$ldref_PRSCSx, PRS_CSx_working_dir, opt$phi_shrinkage_PRSCSx, input_prs, ss_prs, pp_prs, genos$bim)
+	# run the shrinkage 
+	wgt_prscsx <- shrinkage.prscsx(opt$dir_PRSCSx, opt$ldref_PRSCSx, PRS_CSx_working_dir, opt$phi_shrinkage_PRSCSx, input_prs, ss_prs, pp_prs, genos$bim)
 
-ext_prscsx <- length(wgt_prscsx)
+	ext_prscsx <- length(wgt_prscsx)
 
 }else{
-ext_prscsx <- 0
+	ext_prscsx <- 0
 }
 
 # --- PREPARE SUMMARY STATISTICS FOR MAGEPRO
 if ( ("MAGEPRO" %in% model) & (ext > 0) ){
 
-if ( opt$verbose >= 1){
-        cat("### PROCESSING SUMSTATS FOR MAGEPRO \n")
-}
-
-wgt_magepro <- c() #magepro weights
-
-for (cohort in names(cohort_map)) {
-	cohort_data <- cohort_map[[cohort]]
-	cohort_path <- file.path(opt$sumstats_dir, cohort)
-	cohort_ld_directory <- file.path(opt$scratch, paste0(cohort, "ld"))
-	cohort_ldref_path <- file.path(opt$ldref_dir, cohort_data$ldref)
-
-	# create directories for output and ld_matrix_path
-	make_ld_matrix_path <- paste0(
-		"mkdir -p ", opt$scratch, "/", cohort, "ld/"
-	)
-	make_output_path <- paste0(
-		"mkdir -p ", opt$out, "/", cohort, "/"
-	)
-	
-	system(make_ld_matrix_path, wait = TRUE)
-	system(make_output_path, wait = TRUE)
-
-	gene_txt <- paste0(trimws(opt$gene), '.txt')
-	path_to_fine_mapping_output <- gene_fine_mapping(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, opt$PATH_plink, opt$cl_thresh, opt$out)
-	if (path_to_fine_mapping_output == "Error") {
-		next
+	if ( opt$verbose >= 1){
+			cat("### PROCESSING SUMSTATS FOR MAGEPRO \n")
 	}
-	fine_mapping_content <- readLines(path_to_fine_mapping_output)
-	content <- eval(parse(text = fm_content))
 
-	wgt_magepro <- datasets_process_susie(name, evaluated_content, wgt_magepro)
-}
+	wgt_magepro <- c() #magepro weights
 
-ext_magepro <- length(wgt_magepro)
+	for (cohort in names(cohort_map)) {
+		cat(paste0("Working on ", cohort, "\n"))
+		cohort_data <- cohort_map[[cohort]]
+		cohort_path <- file.path(opt$sumstats_dir, cohort)
+		tmp_path <- sub("/[^/]+/?$", "", opt$tmp)
+		cohort_ld_directory <- file.path(tmp_path, paste0(cohort, "ld"))
+		cohort_ldref_path <- file.path(opt$ldref_dir, cohort_data$ldref)
+
+		out_path <- sub("/[^/]+/?$", "", opt$out)
+
+		print(paste0("temporary path: ", tmp_path))
+		print(paste0("out path: ", out_path))
+
+		out_cohort_path <- file.path(out_path, cohort)
+		# create directories for output and ld_matrix_path
+		make_ld_matrix_path <- paste0(
+			"mkdir -p ", cohort_ld_directory
+		)
+		make_output_path <- paste0(
+			"mkdir -p ", out_cohort_path
+		)
+		
+		system(make_ld_matrix_path, wait = TRUE)
+		system(make_output_path, wait = TRUE)
+
+		gene_txt <- paste0(trimws(opt$gene), '.txt')
+		path_to_fine_mapping_output <- gene_fine_mapping(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, opt$PATH_plink, opt$cl_thresh, out_cohort_path)
+		if (path_to_fine_mapping_output == "Error") {
+			next
+		}
+		fine_mapping_df <- fread(path_to_fine_mapping_output, header=TRUE, sep=" ", dec=".")
+		wgt_magepro <- datasets_process_susie(cohort, fine_mapping_df, wgt_magepro)
+	}
+
+	ext_magepro <- length(wgt_magepro)
 
 }else{
-ext_magepro <- 0
+	ext_magepro <- 0
 }
 
 

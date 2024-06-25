@@ -14,6 +14,11 @@ genes_of_interest <- fread(file = subset, header = F)
 allgenenames <- filter(allgenenames, V1 %in% genes_of_interest$V1)
 }
 #goal: first col = gene name, second col = batch number 
-batchnum <- cut(seq(1,nrow(allgenenames)),breaks=batches,labels=FALSE) #break up genes in batches 
+
+if (batches == 1) {
+    batchnum <- rep(1, nrow(allgenenames)) # all genes in one batch
+} else {
+    batchnum <- cut(seq(1, nrow(allgenenames)), breaks = batches, labels = FALSE) # break up genes in batches
+}
 x <- cbind(allgenenames,batchnum) #each gene name has a corresponding batch number ranging from 1-20
 write.table(x, file = paste0(intermediate_dir,"/Genes_Assigned.txt"), row.names = F, col.names = F, sep = "\t", quote= F) 

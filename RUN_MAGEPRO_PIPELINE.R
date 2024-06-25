@@ -65,6 +65,12 @@ option_list = list(
   make_option("--ldref_pt", action="store", default=NA, type='character',
               help="Path to LD reference file for pruning and thresholding, prefix of plink formatted files (assumed to be split by chr) \n 
 	      ex. path/file_chr for path/file_chr1.bed/bim/fam "),
+  make_option("--ldref_dir", action="store", default=NA, type="character",
+  			  help="Directory containing ld reference files used for fine mapping"),
+  make_option("--ldrefs", action="store", default=NA, type="character",
+  			  help="Comma-separated list of ld reference files used for fine mapping"),
+  make_option("--cl_thresh", action="store", default=0.97, type="numeric",
+  			  help="Clumping threshold for plink to clump SNPs that have high R2 [optional]"),
   make_option("--prune_r2", action="store", default=NA, type='numeric',
               help="Pruning threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation"),
   make_option("--threshold_p", action="store", default=NA, type='numeric',
@@ -166,7 +172,7 @@ system( "mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRIN
 if ( opt$verbose >= 1 ) cat("### RUNNING JOBS \n")
 batches <- c(1:opt$num_batches)
 for (batch in batches){
-arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt, opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx, opt$phi_shrinkage_PRSCSx, opt$pops, opt$susie_pip, opt$susie_beta, opt$susie_cs, opt$impact_path, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
+arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt, opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx, opt$phi_shrinkage_PRSCSx, opt$pops, opt$susie_pip, opt$susie_beta, opt$susie_cs, opt$impact_path, opt$ldref_dir, opt$ldrefs, opt$cl_thresh, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 }
 
