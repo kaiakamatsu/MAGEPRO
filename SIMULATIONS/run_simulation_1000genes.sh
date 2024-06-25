@@ -13,8 +13,7 @@ mkdir $randomgenes
 
 
 #causal snp is the same 
-#for ((i=1; i<=1000; i++))
-for ((i=1; i<=1; i++))
+for ((i=1; i<=1000; i++))
 do 
 
 	rm -rf ${randomgenes}/*
@@ -101,7 +100,8 @@ do
 		if [ $i -eq 1 ]; then
 			mkdir $simgeno
 			mkdir $sumstatsdir
-			mkdir $tempdir
+			mkdir $tempdir 
+			mkdir ${tempdir}/PRSCSx # later for PRSCSx intermediate files
 			mkdir $lddir
 		else 
 			rm -rf ${simgeno}/*

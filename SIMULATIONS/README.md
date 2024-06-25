@@ -1,27 +1,23 @@
 # Simulating MAGEPRO
 
 loop_batch_1000genes.sh
-- loops through various sample sizes and h2g values
+- loops through various sample sizes and h2g values and calls sbatch batch_sim_1000genes.sh
 
 batch_sim_1000genes.sh
-- batch run jobs
+- for each sample size and h2g setting, runs run_simulation_1000genes.sh
 
 run_simulation_1000genes.sh
 - simulated a random gene, create plink files from 1kg, run the following three python scripts to simulate MAGEPRO
 
-Sim_geno.py
+1. Sim_geno.py
 - simulate genotypes using LD matrix from 1kg
 
-Sim_SumStats.py
-- simulate eqtl summary statistic for one population 
-- uses simulated gene expression of pre-set heritability and simualted genotypes
+2. Sim_SumStats.py
+- simulate eqtl summary statistic for EUR and AMR. These become our external summary statistics
+- uses simulated gene expression with pre-set heritability and simualted genotypes
 
-Sim_Model.py
-- simulate MAGEPRO 
-- uses simulated gene expression, genotypes, summary statistics
-
-diff_LD 
-- directory for similar files, but to simulate a situation where the causal snp is different in two populations 
+3. Sim_Model.py
+- simulate MAGEPRO = run susie on external datasets, ridge regression combination
 
 ## Many functions used in our simulations are from the twas_sim tool 
 - https://github.com/mancusolab/twas_sim

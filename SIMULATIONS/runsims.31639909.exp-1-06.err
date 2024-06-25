@@ -1,0 +1,27 @@
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/simulated_genotypes_80_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.03/PRSCSx’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_80_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/simulated_genotypes_160_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.03/PRSCSx’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_160_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/simulated_genotypes_240_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.03/PRSCSx’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_240_h0.03’: File exists
+/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/sklearn/linear_model/_coordinate_descent.py:628: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations, check the scale of the features or consider increasing regularisation. Duality gap: 1.315e-01, tolerance: 4.000e-02
+  model = cd_fast.enet_coordinate_descent(
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/simulated_genotypes_400_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_400_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.03/PRSCSx’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_400_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/simulated_genotypes_500_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_500_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.03’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.03/PRSCSx’: File exists
+mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_500_h0.03’: File exists

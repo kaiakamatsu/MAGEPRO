@@ -2,16 +2,15 @@ library(data.table)
 library(stringr)
 library(dplyr)
 
-base <- "/expanse/lustre/projects/ddp412/kakamatsu/GENE_MODELS/<path to gene models>/"
+args <- commandArgs(trailingOnly = TRUE)
+base <- args[1]
+weights_name <- args[2]
 files <- list.files(base)
 len <- length(files)
-print(paste0("number of wgt files: ", len))
 
 output <- matrix(0, nrow = len, ncol = 1)
-
 for (f in 1:len){
 	path <- paste0(base, files[f])
 	output[f,1] <- path 
 }
-
-write.table(output, file = "/expanse/lustre/projects/ddp412/kakamatsu/fusion_multipop/magepro_weights_paths.txt", row.names = F, col.names = F, sep = "\t", quote = F)
+write.table(output, file = paste0("magepro_weights_paths_", weights_name,".txt"), row.names = F, col.names = F, sep = "\t", quote = F)

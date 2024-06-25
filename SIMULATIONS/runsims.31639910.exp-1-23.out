@@ -1,0 +1,1694 @@
+running simulations with 80,160,240,400,500 AFR individuals and a gene with heritability 0.05
+18
+1700233
+2700233
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/ldref/eur/1000G_eur_chr18
+  --chr 18
+  --from-bp 1700233
+  --make-bed
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233
+  --to-bp 2700233
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 out of 30379 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+485 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--make-bed to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233.bed
++
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233.bim
++
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233.fam
+... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AFR_1KG_chr18_2200233.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/ldref/afr/1000G_afr_chr18
+  --chr 18
+  --from-bp 1700233
+  --make-bed
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AFR_1KG_chr18_2200233
+  --to-bp 2700233
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 out of 30379 variants loaded from .bim file.
+661 people (319 males, 342 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 661 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is exactly 1.
+485 variants and 661 people pass filters and QC.
+Note: No phenotypes present.
+--make-bed to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AFR_1KG_chr18_2200233.bed
++
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AFR_1KG_chr18_2200233.bim
++
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AFR_1KG_chr18_2200233.fam
+... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/ldref/amr/1000G_amr_chr18
+  --chr 18
+  --from-bp 1700233
+  --make-bed
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233
+  --to-bp 2700233
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 out of 30379 variants loaded from .bim file.
+347 people (170 males, 177 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 347 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+485 variants and 347 people pass filters and QC.
+Note: No phenotypes present.
+--make-bed to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233.bed
++
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233.bim
++
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233.fam
+... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+successfully picked a random gene
+193
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Tue Jun 25 10:07:24 2024
+
+Options:
+--grm-gz /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp
+--pheno /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp
+
+Note: the program will be running on 4 threads.
+
+Reading IDs of the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.grm.id].
+500 IDs read from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.grm.id].
+Reading the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.grm.gz].
+Pairwise genetic relationships between 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.grm.gz].
+Reading phenotypes from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.phen].
+Nonmissing phenotypes of 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.phen].
+
+500 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+500 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:     0 1.002
+logL: -253.107
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-253.11	0.00000	1.00200	
+trying          0.00258 0.99840 using real Hessian (succeeded)
+2	-252.99	0.00258	0.99840	
+trying          0.01047 0.98833 using real Hessian (succeeded)
+3	-252.74	0.01047	0.98833	
+trying          0.01690 0.98220 using real Hessian (succeeded)
+4	-252.62	0.01690	0.98220	
+trying          0.02152 0.97856 using real Hessian (succeeded)
+5	-252.57	0.02152	0.97856	
+trying          0.02448 0.97651 using real Hessian (succeeded)
+6	-252.55	0.02448	0.97651	
+trying          0.02620 0.97539 using real Hessian (succeeded)
+7	-252.55	0.02620	0.97539	
+trying          0.02714 0.97481 using real Hessian (succeeded)
+8	-252.55	0.02714	0.97481	
+trying          0.02763 0.97451 using real Hessian (succeeded)
+9	-252.55	0.02763	0.97451	
+trying          0.02788 0.97436 using real Hessian (succeeded)
+10	-252.55	0.02788	0.97436	
+trying          0.02801 0.97428 using real Hessian (succeeded)
+11	-252.55	0.02801	0.97428	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00200
+logL: -253.10730
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-253.11	1.00200	
+trying          1.00200 using real Hessian (succeeded)
+2	-253.11	1.00200	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.028071	0.022472
+V(e)	0.974243	0.047454
+Vp	1.002314	0.045023
+V(G)/Vp	0.028007	0.022281
+
+Covariance/Variance/Correlation Matrix:
+0.000504992	
+-0.000364915	0.00225186	
+
+Summary result of REML analysis has been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.hsq].
+
+Analysis finished: Tue Jun 25 10:07:25 2024
+Computational time: 0:0:1
+heritability EUR: 
+0.028071
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Tue Jun 25 10:07:28 2024
+
+Options:
+--grm-gz /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp
+--pheno /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp
+
+Note: the program will be running on 4 threads.
+
+Reading IDs of the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.grm.id].
+500 IDs read from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.grm.id].
+Reading the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.grm.gz].
+Pairwise genetic relationships between 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.grm.gz].
+Reading phenotypes from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.phen].
+Nonmissing phenotypes of 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.phen].
+
+500 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+500 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:     0 1.002
+logL: -253.107
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-253.11	0.00000	1.00200	
+trying          -0.00526 1.00609 using real Hessian (succeeded)
+2	-252.97	-0.00526	1.00609	
+trying          -0.01704 1.01685 using real Hessian (succeeded)
+3	-252.77	-0.01704	1.01685	
+trying          -0.02309 1.02614 using real Hessian (step did not increase log likelihood)
+trying          -0.01922 1.01889 using real Hessian (succeeded)
+4	-252.75	-0.01922	1.01889	
+trying          -0.01974 1.02174 using real Hessian (succeeded)
+5	-252.74	-0.01974	1.02174	
+trying          -0.01986 1.02299 using real Hessian (succeeded)
+6	-252.74	-0.01986	1.02299	
+trying          -0.01991 1.02361 using real Hessian (succeeded)
+7	-252.74	-0.01991	1.02361	
+trying          -0.01994 1.02392 using real Hessian (succeeded)
+8	-252.74	-0.01994	1.02392	
+trying          -0.01995 1.02408 using real Hessian (succeeded)
+9	-252.74	-0.01995	1.02408	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00200
+logL: -253.10730
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-253.11	1.00200	
+trying          1.00200 using real Hessian (succeeded)
+2	-253.11	1.00200	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	-0.019953	0.006067
+V(e)	1.024152	0.046893
+Vp	1.004199	0.045113
+V(G)/Vp	-0.019870	0.005899
+
+Covariance/Variance/Correlation Matrix:
+3.68115e-05	
+-0.000100292	0.00219895	
+
+Summary result of REML analysis has been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.hsq].
+
+Analysis finished: Tue Jun 25 10:07:29 2024
+Computational time: 0:0:1
+heritability AMR: 
+-0.019953
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/EUR_1KG_chr18_2200233_pruned.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233
+  --clump /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/sumstats_EUR.csv
+  --clump-p1 1
+  --clump-r2 0.97
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/EUR_1KG_chr18_2200233_pruned
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+485 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--clump: 392 clumps formed from 485 top variants.
+Results written to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/EUR_1KG_chr18_2200233_pruned.clumped
+.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_80_h0.05/EUR_1KG_chr18_2200233.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233
+  --extract /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/EUR_1KG_chr18_2200233_pruned.clumped
+  --ld-window-r2 0
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_80_h0.05/EUR_1KG_chr18_2200233
+  --r2 inter-chr
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+--extract: 392 variants remaining.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+392 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--r2 inter-chr to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_80_h0.05/EUR_1KG_chr18_2200233.ld
+... 0% [processing]writing]             done.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/AMR_1KG_chr18_2200233_pruned.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233
+  --clump /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/sumstats_AMR.csv
+  --clump-p1 1
+  --clump-r2 0.97
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/AMR_1KG_chr18_2200233_pruned
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+347 people (170 males, 177 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 347 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+485 variants and 347 people pass filters and QC.
+Note: No phenotypes present.
+--clump: 420 clumps formed from 485 top variants.
+Results written to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/AMR_1KG_chr18_2200233_pruned.clumped
+.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_80_h0.05/AMR_1KG_chr18_2200233.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233
+  --extract /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/AMR_1KG_chr18_2200233_pruned.clumped
+  --ld-window-r2 0
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_80_h0.05/AMR_1KG_chr18_2200233
+  --r2 inter-chr
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+347 people (170 males, 177 females) loaded from .fam.
+--extract: 420 variants remaining.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 347 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+420 variants and 347 people pass filters and QC.
+Note: No phenotypes present.
+--r2 inter-chr to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_80_h0.05/AMR_1KG_chr18_2200233.ld
+... 0% [processing]writing]             done.
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Tue Jun 25 10:07:35 2024
+
+Options:
+--grm-gz /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp
+--pheno /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp
+
+Note: the program will be running on 4 threads.
+
+Reading IDs of the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.grm.id].
+80 IDs read from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.grm.id].
+Reading the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.grm.gz].
+Pairwise genetic relationships between 80 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.grm.gz].
+Reading phenotypes from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.phen].
+Nonmissing phenotypes of 80 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.phen].
+
+80 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+80 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:      0 1.0125
+logL: -42.191
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-42.19	0.00000	1.01250	
+trying          -0.00738 1.01932 using real Hessian (succeeded)
+2	-42.18	-0.00738	1.01932	
+trying          -0.02605 1.03718 using real Hessian (succeeded)
+3	-42.16	-0.02605	1.03718	
+trying          -0.03384 1.04560 using real Hessian (succeeded)
+4	-42.15	-0.03384	1.04560	
+trying          -0.03748 1.04974 using real Hessian (succeeded)
+5	-42.15	-0.03748	1.04974	
+trying          -0.03925 1.05180 using real Hessian (succeeded)
+6	-42.15	-0.03925	1.05180	
+trying          -0.04012 1.05283 using real Hessian (succeeded)
+7	-42.15	-0.04012	1.05283	
+trying          -0.04055 1.05335 using real Hessian (succeeded)
+8	-42.15	-0.04055	1.05335	
+trying          -0.04077 1.05360 using real Hessian (succeeded)
+9	-42.15	-0.04077	1.05360	
+trying          -0.04087 1.05373 using real Hessian (succeeded)
+10	-42.15	-0.04087	1.05373	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.01250
+logL: -42.19101
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-42.19	1.01250	
+trying          1.01252 using real Hessian (succeeded)
+2	-42.19	1.01252	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	-0.040926	0.101142
+V(e)	1.053795	0.158800
+Vp	1.012868	0.114047
+V(G)/Vp	-0.040406	0.099569
+
+Covariance/Variance/Correlation Matrix:
+0.0102296	
+-0.0112201	0.0252174	
+
+Summary result of REML analysis has been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/temp.hsq].
+
+Analysis finished: Tue Jun 25 10:07:35 2024
+Computational time: 0:0:0
+
+
+--ref_dir=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref
+--bim_prefix=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/PRSCSx/snps
+--sst_file=['/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/sumstats_EUR_susie.csv', '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/sumstats_AMR_susie.csv']
+--a=1
+--b=0.5
+--phi=1e-07
+--n_gwas=[500, 500]
+--pop=['EUR', 'AMR']
+--n_iter=2000
+--n_burnin=1000
+--thin=5
+--out_dir=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/PRSCSx/
+--out_name=results
+--chrom=['18']
+--meta=FALSE
+--seed=None
+
+
+*** 2 discovery populations detected ***
+
+##### process chromosome 18 #####
+... parse reference file: /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref/snpinfo_mult_1kg_hm3 ...
+... 38591 SNPs on chromosome 18 read from /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref/snpinfo_mult_1kg_hm3 ...
+... parse bim file: /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/PRSCSx/snps.bim ...
+... 485 SNPs on chromosome 18 read from /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.05/PRSCSx/snps.bim ...
+... parse EUR sumstats file: /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/sumstats_EUR_susie.csv ...
+... 392 SNPs read from /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/sumstats_EUR_susie.csv ...
+... 386 common SNPs in the EUR reference, EUR sumstats, and validation set ...
+... parse AMR sumstats file: /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/sumstats_AMR_susie.csv ...
+... 420 SNPs read from /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_80_h0.05/sumstats_AMR_susie.csv ...
+... 417 common SNPs in the AMR reference, AMR sumstats, and validation set ...
+... parse EUR reference LD on chromosome 18 ...
+... parse AMR reference LD on chromosome 18 ...
+... align reference LD on chromosome 18 across populations ...
+... 441 valid SNPs across populations ...
+... MCMC ...
+--- iter-100 ---
+--- iter-200 ---
+--- iter-300 ---
+--- iter-400 ---
+--- iter-500 ---
+--- iter-600 ---
+--- iter-700 ---
+--- iter-800 ---
+--- iter-900 ---
+--- iter-1000 ---
+--- iter-1100 ---
+--- iter-1200 ---
+--- iter-1300 ---
+--- iter-1400 ---
+--- iter-1500 ---
+--- iter-1600 ---
+--- iter-1700 ---
+--- iter-1800 ---
+--- iter-1900 ---
+--- iter-2000 ---
+... Done ...
+
+
+heritability AFR: 
+-0.040926
+magepro: 
+0.01718796023965652
+prscsx: 
+0.017155061383623993
+afronly: 
+0.017092056407155054
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Tue Jun 25 10:08:35 2024
+
+Options:
+--grm-gz /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp
+--pheno /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp
+
+Note: the program will be running on 4 threads.
+
+Reading IDs of the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.grm.id].
+500 IDs read from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.grm.id].
+Reading the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.grm.gz].
+Pairwise genetic relationships between 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.grm.gz].
+Reading phenotypes from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.phen].
+Nonmissing phenotypes of 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.phen].
+
+500 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+500 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:     0 1.002
+logL: -253.107
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-253.11	0.00000	1.00200	
+trying          0.00498 0.99106 using real Hessian (succeeded)
+2	-252.42	0.00498	0.99106	
+trying          0.02171 0.95959 using real Hessian (succeeded)
+3	-250.73	0.02171	0.95959	
+trying          0.04064 0.93773 using real Hessian (succeeded)
+4	-249.52	0.04064	0.93773	
+trying          0.04692 0.93265 using real Hessian (succeeded)
+5	-249.23	0.04692	0.93265	
+trying          0.05319 0.92795 using real Hessian (succeeded)
+6	-248.98	0.05319	0.92795	
+trying          0.07272 0.91429 using real Hessian (succeeded)
+7	-248.42	0.07272	0.91429	
+trying          0.08983 0.90482 using real Hessian (succeeded)
+8	-248.13	0.08983	0.90482	
+trying          0.10301 0.89866 using real Hessian (succeeded)
+9	-248.01	0.10301	0.89866	
+trying          0.11197 0.89493 using real Hessian (succeeded)
+10	-247.96	0.11197	0.89493	
+trying          0.11743 0.89280 using real Hessian (succeeded)
+11	-247.95	0.11743	0.89280	
+trying          0.12049 0.89166 using real Hessian (succeeded)
+12	-247.94	0.12049	0.89166	
+trying          0.12213 0.89106 using real Hessian (succeeded)
+13	-247.94	0.12213	0.89106	
+trying          0.12298 0.89075 using real Hessian (succeeded)
+14	-247.94	0.12298	0.89075	
+trying          0.12341 0.89060 using real Hessian (succeeded)
+15	-247.94	0.12341	0.89060	
+trying          0.12363 0.89052 using real Hessian (succeeded)
+16	-247.94	0.12363	0.89052	
+trying          0.12374 0.89048 using real Hessian (succeeded)
+17	-247.94	0.12374	0.89048	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00200
+logL: -253.10730
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-253.11	1.00200	
+trying          1.00200 using real Hessian (succeeded)
+2	-253.11	1.00200	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.123792	0.041959
+V(e)	0.890464	0.046660
+Vp	1.014255	0.048600
+V(G)/Vp	0.122052	0.038920
+
+Covariance/Variance/Correlation Matrix:
+0.00176052	
+-0.000787851	0.00217715	
+
+Summary result of REML analysis has been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.hsq].
+
+Analysis finished: Tue Jun 25 10:08:36 2024
+Computational time: 0:0:1
+heritability EUR: 
+0.123792
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Tue Jun 25 10:08:39 2024
+
+Options:
+--grm-gz /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp
+--pheno /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp
+
+Note: the program will be running on 4 threads.
+
+Reading IDs of the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.grm.id].
+500 IDs read from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.grm.id].
+Reading the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.grm.gz].
+Pairwise genetic relationships between 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.grm.gz].
+Reading phenotypes from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.phen].
+Nonmissing phenotypes of 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.phen].
+
+500 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+500 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:     0 1.002
+logL: -253.107
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-253.11	0.00000	1.00200	
+trying          0.00481 0.99504 using real Hessian (succeeded)
+2	-252.86	0.00481	0.99504	
+trying          0.01940 0.97617 using real Hessian (succeeded)
+3	-252.32	0.01940	0.97617	
+trying          0.03096 0.96612 using real Hessian (succeeded)
+4	-252.08	0.03096	0.96612	
+trying          0.03923 0.96062 using real Hessian (succeeded)
+5	-251.98	0.03923	0.96062	
+trying          0.04453 0.95764 using real Hessian (succeeded)
+6	-251.95	0.04453	0.95764	
+trying          0.04764 0.95606 using real Hessian (succeeded)
+7	-251.94	0.04764	0.95606	
+trying          0.04934 0.95524 using real Hessian (succeeded)
+8	-251.94	0.04934	0.95524	
+trying          0.05024 0.95482 using real Hessian (succeeded)
+9	-251.94	0.05024	0.95482	
+trying          0.05070 0.95461 using real Hessian (succeeded)
+10	-251.94	0.05070	0.95461	
+trying          0.05093 0.95451 using real Hessian (succeeded)
+11	-251.94	0.05093	0.95451	
+trying          0.05105 0.95446 using real Hessian (succeeded)
+12	-251.94	0.05105	0.95446	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00200
+logL: -253.10730
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-253.11	1.00200	
+trying          1.00200 using real Hessian (succeeded)
+2	-253.11	1.00200	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.051107	0.028367
+V(e)	0.954428	0.047439
+Vp	1.005536	0.045658
+V(G)/Vp	0.050826	0.027732
+
+Covariance/Variance/Correlation Matrix:
+0.000804671	
+-0.000485261	0.0022505	
+
+Summary result of REML analysis has been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.hsq].
+
+Analysis finished: Tue Jun 25 10:08:40 2024
+Computational time: 0:0:1
+heritability AMR: 
+0.051107
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/EUR_1KG_chr18_2200233_pruned.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233
+  --clump /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/sumstats_EUR.csv
+  --clump-p1 1
+  --clump-r2 0.97
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/EUR_1KG_chr18_2200233_pruned
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+485 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--clump: 392 clumps formed from 485 top variants.
+Results written to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/EUR_1KG_chr18_2200233_pruned.clumped
+.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_160_h0.05/EUR_1KG_chr18_2200233.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233
+  --extract /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/EUR_1KG_chr18_2200233_pruned.clumped
+  --ld-window-r2 0
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_160_h0.05/EUR_1KG_chr18_2200233
+  --r2 inter-chr
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+--extract: 392 variants remaining.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+392 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--r2 inter-chr to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_160_h0.05/EUR_1KG_chr18_2200233.ld
+... 0% [processing]writing]             done.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/AMR_1KG_chr18_2200233_pruned.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233
+  --clump /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/sumstats_AMR.csv
+  --clump-p1 1
+  --clump-r2 0.97
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/AMR_1KG_chr18_2200233_pruned
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+347 people (170 males, 177 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 347 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+485 variants and 347 people pass filters and QC.
+Note: No phenotypes present.
+--clump: 420 clumps formed from 485 top variants.
+Results written to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/AMR_1KG_chr18_2200233_pruned.clumped
+.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_160_h0.05/AMR_1KG_chr18_2200233.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233
+  --extract /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/AMR_1KG_chr18_2200233_pruned.clumped
+  --ld-window-r2 0
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_160_h0.05/AMR_1KG_chr18_2200233
+  --r2 inter-chr
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+347 people (170 males, 177 females) loaded from .fam.
+--extract: 420 variants remaining.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 347 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+420 variants and 347 people pass filters and QC.
+Note: No phenotypes present.
+--r2 inter-chr to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_160_h0.05/AMR_1KG_chr18_2200233.ld
+... 0% [processing]writing]             done.
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Tue Jun 25 10:08:46 2024
+
+Options:
+--grm-gz /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp
+--pheno /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp
+
+Note: the program will be running on 4 threads.
+
+Reading IDs of the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.grm.id].
+160 IDs read from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.grm.id].
+Reading the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.grm.gz].
+Pairwise genetic relationships between 160 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.grm.gz].
+Reading phenotypes from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.phen].
+Nonmissing phenotypes of 160 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.phen].
+
+160 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+160 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:       0 1.00625
+logL: -82.5376
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-82.54	0.00000	1.00625	
+trying          0.01384 0.98816 using real Hessian (succeeded)
+2	-82.38	0.01384	0.98816	
+trying          0.05439 0.93906 using real Hessian (succeeded)
+3	-82.07	0.05439	0.93906	
+trying          0.08389 0.91167 using real Hessian (succeeded)
+4	-81.94	0.08389	0.91167	
+trying          0.10392 0.89576 using real Hessian (succeeded)
+5	-81.89	0.10392	0.89576	
+trying          0.11633 0.88676 using real Hessian (succeeded)
+6	-81.87	0.11633	0.88676	
+trying          0.12342 0.88187 using real Hessian (succeeded)
+7	-81.87	0.12342	0.88187	
+trying          0.12726 0.87930 using real Hessian (succeeded)
+8	-81.87	0.12726	0.87930	
+trying          0.12925 0.87798 using real Hessian (succeeded)
+9	-81.87	0.12925	0.87798	
+trying          0.13028 0.87731 using real Hessian (succeeded)
+10	-81.87	0.13028	0.87731	
+trying          0.13079 0.87697 using real Hessian (succeeded)
+11	-81.87	0.13079	0.87697	
+trying          0.13105 0.87680 using real Hessian (succeeded)
+12	-81.87	0.13105	0.87680	
+trying          0.13118 0.87672 using real Hessian (succeeded)
+13	-81.87	0.13118	0.87672	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00625
+logL: -82.53759
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-82.54	1.00625	
+trying          1.00626 using real Hessian (succeeded)
+2	-82.54	1.00626	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.131246	0.093933
+V(e)	0.876675	0.105762
+Vp	1.007921	0.081088
+V(G)/Vp	0.130215	0.090857
+
+Covariance/Variance/Correlation Matrix:
+0.00882341	
+-0.00671691	0.0111856	
+
+Summary result of REML analysis has been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/temp.hsq].
+
+Analysis finished: Tue Jun 25 10:08:46 2024
+Computational time: 0:0:0
+
+
+--ref_dir=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref
+--bim_prefix=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/PRSCSx/snps
+--sst_file=['/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/sumstats_EUR_susie.csv', '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/sumstats_AMR_susie.csv']
+--a=1
+--b=0.5
+--phi=1e-07
+--n_gwas=[500, 500]
+--pop=['EUR', 'AMR']
+--n_iter=2000
+--n_burnin=1000
+--thin=5
+--out_dir=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/PRSCSx/
+--out_name=results
+--chrom=['18']
+--meta=FALSE
+--seed=None
+
+
+*** 2 discovery populations detected ***
+
+##### process chromosome 18 #####
+... parse reference file: /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref/snpinfo_mult_1kg_hm3 ...
+... 38591 SNPs on chromosome 18 read from /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref/snpinfo_mult_1kg_hm3 ...
+... parse bim file: /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/PRSCSx/snps.bim ...
+... 485 SNPs on chromosome 18 read from /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.05/PRSCSx/snps.bim ...
+... parse EUR sumstats file: /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/sumstats_EUR_susie.csv ...
+... 392 SNPs read from /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/sumstats_EUR_susie.csv ...
+... 386 common SNPs in the EUR reference, EUR sumstats, and validation set ...
+... parse AMR sumstats file: /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/sumstats_AMR_susie.csv ...
+... 420 SNPs read from /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_160_h0.05/sumstats_AMR_susie.csv ...
+... 418 common SNPs in the AMR reference, AMR sumstats, and validation set ...
+... parse EUR reference LD on chromosome 18 ...
+... parse AMR reference LD on chromosome 18 ...
+... align reference LD on chromosome 18 across populations ...
+... 450 valid SNPs across populations ...
+... MCMC ...
+--- iter-100 ---
+--- iter-200 ---
+--- iter-300 ---
+--- iter-400 ---
+--- iter-500 ---
+--- iter-600 ---
+--- iter-700 ---
+--- iter-800 ---
+--- iter-900 ---
+--- iter-1000 ---
+--- iter-1100 ---
+--- iter-1200 ---
+--- iter-1300 ---
+--- iter-1400 ---
+--- iter-1500 ---
+--- iter-1600 ---
+--- iter-1700 ---
+--- iter-1800 ---
+--- iter-1900 ---
+--- iter-2000 ---
+... Done ...
+
+
+using top1 backup
+heritability AFR: 
+0.131246
+magepro: 
+0.02680615271888842
+prscsx: 
+0.01845264849729633
+afronly: 
+0.015121429008649656
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Tue Jun 25 10:09:39 2024
+
+Options:
+--grm-gz /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp
+--pheno /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp
+
+Note: the program will be running on 4 threads.
+
+Reading IDs of the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.grm.id].
+500 IDs read from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.grm.id].
+Reading the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.grm.gz].
+Pairwise genetic relationships between 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.grm.gz].
+Reading phenotypes from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.phen].
+Nonmissing phenotypes of 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.phen].
+
+500 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+500 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:     0 1.002
+logL: -253.107
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-253.11	0.00000	1.00200	
+trying          0.00314 0.99627 using real Hessian (succeeded)
+2	-252.81	0.00314	0.99627	
+trying          0.01312 0.98019 using real Hessian (succeeded)
+3	-252.12	0.01312	0.98019	
+trying          0.02272 0.97006 using real Hessian (succeeded)
+4	-251.72	0.02272	0.97006	
+trying          0.03109 0.96350 using real Hessian (succeeded)
+5	-251.51	0.03109	0.96350	
+trying          0.03757 0.95935 using real Hessian (succeeded)
+6	-251.42	0.03757	0.95935	
+trying          0.04198 0.95686 using real Hessian (succeeded)
+7	-251.39	0.04198	0.95686	
+trying          0.04469 0.95546 using real Hessian (succeeded)
+8	-251.38	0.04469	0.95546	
+trying          0.04622 0.95470 using real Hessian (succeeded)
+9	-251.38	0.04622	0.95470	
+trying          0.04703 0.95431 using real Hessian (succeeded)
+10	-251.38	0.04703	0.95431	
+trying          0.04745 0.95411 using real Hessian (succeeded)
+11	-251.38	0.04745	0.95411	
+trying          0.04767 0.95401 using real Hessian (succeeded)
+12	-251.38	0.04767	0.95401	
+trying          0.04778 0.95395 using real Hessian (succeeded)
+13	-251.38	0.04778	0.95395	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00200
+logL: -253.10730
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-253.11	1.00200	
+trying          1.00200 using real Hessian (succeeded)
+2	-253.11	1.00200	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.047832	0.024589
+V(e)	0.953928	0.046550
+Vp	1.001760	0.045238
+V(G)/Vp	0.047748	0.024169
+
+Covariance/Variance/Correlation Matrix:
+0.000604638	
+-0.000362563	0.00216692	
+
+Summary result of REML analysis has been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.hsq].
+
+Analysis finished: Tue Jun 25 10:09:40 2024
+Computational time: 0:0:1
+heritability EUR: 
+0.047832
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Tue Jun 25 10:09:43 2024
+
+Options:
+--grm-gz /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp
+--pheno /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp
+
+Note: the program will be running on 4 threads.
+
+Reading IDs of the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.grm.id].
+500 IDs read from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.grm.id].
+Reading the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.grm.gz].
+Pairwise genetic relationships between 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.grm.gz].
+Reading phenotypes from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.phen].
+Nonmissing phenotypes of 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.phen].
+
+500 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+500 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:     0 1.002
+logL: -253.107
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-253.11	0.00000	1.00200	
+trying          0.00148 1.00013 using real Hessian (succeeded)
+2	-253.06	0.00148	1.00013	
+trying          0.00587 0.99493 using real Hessian (succeeded)
+3	-252.97	0.00587	0.99493	
+trying          0.00906 0.99190 using real Hessian (succeeded)
+4	-252.93	0.00906	0.99190	
+trying          0.01110 0.99022 using real Hessian (succeeded)
+5	-252.92	0.01110	0.99022	
+trying          0.01228 0.98933 using real Hessian (succeeded)
+6	-252.91	0.01228	0.98933	
+trying          0.01293 0.98886 using real Hessian (succeeded)
+7	-252.91	0.01293	0.98886	
+trying          0.01326 0.98862 using real Hessian (succeeded)
+8	-252.91	0.01326	0.98862	
+trying          0.01344 0.98850 using real Hessian (succeeded)
+9	-252.91	0.01344	0.98850	
+trying          0.01352 0.98844 using real Hessian (succeeded)
+10	-252.91	0.01352	0.98844	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00200
+logL: -253.10730
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-253.11	1.00200	
+trying          1.00200 using real Hessian (succeeded)
+2	-253.11	1.00200	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.013567	0.017306
+V(e)	0.988412	0.046877
+Vp	1.001978	0.044890
+V(G)/Vp	0.013540	0.017237
+
+Covariance/Variance/Correlation Matrix:
+0.000299495	
+-0.000240915	0.00219746	
+
+Summary result of REML analysis has been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.hsq].
+
+Analysis finished: Tue Jun 25 10:09:44 2024
+Computational time: 0:0:1
+heritability AMR: 
+0.013567
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/EUR_1KG_chr18_2200233_pruned.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233
+  --clump /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/sumstats_EUR.csv
+  --clump-p1 1
+  --clump-r2 0.97
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/EUR_1KG_chr18_2200233_pruned
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+485 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--clump: 391 clumps formed from 485 top variants.
+Results written to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/EUR_1KG_chr18_2200233_pruned.clumped
+.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_240_h0.05/EUR_1KG_chr18_2200233.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233
+  --extract /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/EUR_1KG_chr18_2200233_pruned.clumped
+  --ld-window-r2 0
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_240_h0.05/EUR_1KG_chr18_2200233
+  --r2 inter-chr
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+--extract: 391 variants remaining.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+391 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--r2 inter-chr to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_240_h0.05/EUR_1KG_chr18_2200233.ld
+... 0% [processing]writing]             done.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/AMR_1KG_chr18_2200233_pruned.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233
+  --clump /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/sumstats_AMR.csv
+  --clump-p1 1
+  --clump-r2 0.97
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/AMR_1KG_chr18_2200233_pruned
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+347 people (170 males, 177 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 347 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+485 variants and 347 people pass filters and QC.
+Note: No phenotypes present.
+--clump: 420 clumps formed from 485 top variants.
+Results written to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/AMR_1KG_chr18_2200233_pruned.clumped
+.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_240_h0.05/AMR_1KG_chr18_2200233.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233
+  --extract /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/AMR_1KG_chr18_2200233_pruned.clumped
+  --ld-window-r2 0
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_240_h0.05/AMR_1KG_chr18_2200233
+  --r2 inter-chr
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+347 people (170 males, 177 females) loaded from .fam.
+--extract: 420 variants remaining.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 347 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+420 variants and 347 people pass filters and QC.
+Note: No phenotypes present.
+--r2 inter-chr to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_240_h0.05/AMR_1KG_chr18_2200233.ld
+... 0% [processing]writing]             done.
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Tue Jun 25 10:09:50 2024
+
+Options:
+--grm-gz /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp
+--pheno /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp
+
+Note: the program will be running on 4 threads.
+
+Reading IDs of the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.grm.id].
+240 IDs read from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.grm.id].
+Reading the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.grm.gz].
+Pairwise genetic relationships between 240 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.grm.gz].
+Reading phenotypes from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.phen].
+Nonmissing phenotypes of 240 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.phen].
+
+240 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+240 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:       0 1.00417
+logL: -122.74
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-122.74	0.00000	1.00417	
+trying          0.00167 1.00243 using real Hessian (succeeded)
+2	-122.74	0.00167	1.00243	
+trying          0.00625 0.99773 using real Hessian (succeeded)
+3	-122.73	0.00625	0.99773	
+trying          0.00877 0.99527 using real Hessian (succeeded)
+4	-122.73	0.00877	0.99527	
+trying          0.01009 0.99401 using real Hessian (succeeded)
+5	-122.73	0.01009	0.99401	
+trying          0.01077 0.99336 using real Hessian (succeeded)
+6	-122.73	0.01077	0.99336	
+trying          0.01112 0.99304 using real Hessian (succeeded)
+7	-122.73	0.01112	0.99304	
+trying          0.01129 0.99288 using real Hessian (succeeded)
+8	-122.73	0.01129	0.99288	
+trying          0.01138 0.99280 using real Hessian (succeeded)
+9	-122.73	0.01138	0.99280	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00417
+logL: -122.74032
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-122.74	1.00417	
+trying          1.00417 using real Hessian (succeeded)
+2	-122.74	1.00417	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.011423	0.053857
+V(e)	0.992757	0.083102
+Vp	1.004179	0.064964
+V(G)/Vp	0.011375	0.053615
+
+Covariance/Variance/Correlation Matrix:
+0.00290055	
+-0.00279305	0.00690587	
+
+Summary result of REML analysis has been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/temp.hsq].
+
+Analysis finished: Tue Jun 25 10:09:50 2024
+Computational time: 0:0:0
+
+
+--ref_dir=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref
+--bim_prefix=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/PRSCSx/snps
+--sst_file=['/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/sumstats_EUR_susie.csv', '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/sumstats_AMR_susie.csv']
+--a=1
+--b=0.5
+--phi=1e-07
+--n_gwas=[500, 500]
+--pop=['EUR', 'AMR']
+--n_iter=2000
+--n_burnin=1000
+--thin=5
+--out_dir=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/PRSCSx/
+--out_name=results
+--chrom=['18']
+--meta=FALSE
+--seed=None
+
+
+*** 2 discovery populations detected ***
+
+##### process chromosome 18 #####
+... parse reference file: /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref/snpinfo_mult_1kg_hm3 ...
+... 38591 SNPs on chromosome 18 read from /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref/snpinfo_mult_1kg_hm3 ...
+... parse bim file: /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/PRSCSx/snps.bim ...
+... 485 SNPs on chromosome 18 read from /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.05/PRSCSx/snps.bim ...
+... parse EUR sumstats file: /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/sumstats_EUR_susie.csv ...
+... 391 SNPs read from /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/sumstats_EUR_susie.csv ...
+... 385 common SNPs in the EUR reference, EUR sumstats, and validation set ...
+... parse AMR sumstats file: /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/sumstats_AMR_susie.csv ...
+... 420 SNPs read from /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_240_h0.05/sumstats_AMR_susie.csv ...
+... 418 common SNPs in the AMR reference, AMR sumstats, and validation set ...
+... parse EUR reference LD on chromosome 18 ...
+... parse AMR reference LD on chromosome 18 ...
+... align reference LD on chromosome 18 across populations ...
+... 447 valid SNPs across populations ...
+... MCMC ...
+--- iter-100 ---
+--- iter-200 ---
+--- iter-300 ---
+--- iter-400 ---
+--- iter-500 ---
+--- iter-600 ---
+--- iter-700 ---
+--- iter-800 ---
+--- iter-900 ---
+--- iter-1000 ---
+--- iter-1100 ---
+--- iter-1200 ---
+--- iter-1300 ---
+--- iter-1400 ---
+--- iter-1500 ---
+--- iter-1600 ---
+--- iter-1700 ---
+--- iter-1800 ---
+--- iter-1900 ---
+--- iter-2000 ---
+... Done ...
+
+
+heritability AFR: 
+0.011423
+magepro: 
+0.011778932136723097
+prscsx: 
+0.011210030554896888
+afronly: 
+0.01162767125385078
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Tue Jun 25 10:10:45 2024
+
+Options:
+--grm-gz /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp
+--pheno /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp
+
+Note: the program will be running on 4 threads.
+
+Reading IDs of the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.grm.id].
+500 IDs read from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.grm.id].
+Reading the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.grm.gz].
+Pairwise genetic relationships between 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.grm.gz].
+Reading phenotypes from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.phen].
+Nonmissing phenotypes of 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.phen].
+
+500 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+500 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:     0 1.002
+logL: -253.107
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-253.11	0.00000	1.00200	
+trying          0.00244 0.99845 using real Hessian (succeeded)
+2	-252.98	0.00244	0.99845	
+trying          0.00974 0.98878 using real Hessian (succeeded)
+3	-252.71	0.00974	0.98878	
+trying          0.01537 0.98342 using real Hessian (succeeded)
+4	-252.59	0.01537	0.98342	
+trying          0.01926 0.98044 using real Hessian (succeeded)
+5	-252.54	0.01926	0.98044	
+trying          0.02169 0.97882 using real Hessian (succeeded)
+6	-252.53	0.02169	0.97882	
+trying          0.02307 0.97797 using real Hessian (succeeded)
+7	-252.52	0.02307	0.97797	
+trying          0.02382 0.97752 using real Hessian (succeeded)
+8	-252.52	0.02382	0.97752	
+trying          0.02421 0.97730 using real Hessian (succeeded)
+9	-252.52	0.02421	0.97730	
+trying          0.02441 0.97718 using real Hessian (succeeded)
+10	-252.52	0.02441	0.97718	
+trying          0.02451 0.97713 using real Hessian (succeeded)
+11	-252.52	0.02451	0.97713	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00200
+logL: -253.10730
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-253.11	1.00200	
+trying          1.00200 using real Hessian (succeeded)
+2	-253.11	1.00200	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.024560	0.018991
+V(e)	0.977099	0.046614
+Vp	1.001659	0.044929
+V(G)/Vp	0.024519	0.018859
+
+Covariance/Variance/Correlation Matrix:
+0.000360676	
+-0.000257477	0.00217285	
+
+Summary result of REML analysis has been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.hsq].
+
+Analysis finished: Tue Jun 25 10:10:46 2024
+Computational time: 0:0:1
+heritability EUR: 
+0.02456
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Tue Jun 25 10:10:49 2024
+
+Options:
+--grm-gz /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp
+--pheno /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp
+
+Note: the program will be running on 4 threads.
+
+Reading IDs of the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.grm.id].
+500 IDs read from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.grm.id].
+Reading the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.grm.gz].
+Pairwise genetic relationships between 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.grm.gz].
+Reading phenotypes from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.phen].
+Nonmissing phenotypes of 500 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.phen].
+
+500 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+500 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:     0 1.002
+logL: -253.107
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-253.11	0.00000	1.00200	
+trying          0.00302 0.99852 using real Hessian (succeeded)
+2	-253.06	0.00302	0.99852	
+trying          0.01104 0.98986 using real Hessian (succeeded)
+3	-252.96	0.01104	0.98986	
+trying          0.01569 0.98585 using real Hessian (succeeded)
+4	-252.93	0.01569	0.98585	
+trying          0.01835 0.98380 using real Hessian (succeeded)
+5	-252.92	0.01835	0.98380	
+trying          0.01981 0.98275 using real Hessian (succeeded)
+6	-252.92	0.01981	0.98275	
+trying          0.02057 0.98221 using real Hessian (succeeded)
+7	-252.92	0.02057	0.98221	
+trying          0.02097 0.98194 using real Hessian (succeeded)
+8	-252.92	0.02097	0.98194	
+trying          0.02116 0.98181 using real Hessian (succeeded)
+9	-252.92	0.02116	0.98181	
+trying          0.02126 0.98174 using real Hessian (succeeded)
+10	-252.92	0.02126	0.98174	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00200
+logL: -253.10730
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-253.11	1.00200	
+trying          1.00200 using real Hessian (succeeded)
+2	-253.11	1.00200	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.021315	0.026635
+V(e)	0.981704	0.049424
+Vp	1.003019	0.045078
+V(G)/Vp	0.021250	0.026453
+
+Covariance/Variance/Correlation Matrix:
+0.000709429	
+-0.000560069	0.00244274	
+
+Summary result of REML analysis has been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.hsq].
+
+Analysis finished: Tue Jun 25 10:10:50 2024
+Computational time: 0:0:1
+heritability AMR: 
+0.021315
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_400_h0.05/EUR_1KG_chr18_2200233_pruned.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233
+  --clump /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_400_h0.05/sumstats_EUR.csv
+  --clump-p1 1
+  --clump-r2 0.97
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_400_h0.05/EUR_1KG_chr18_2200233_pruned
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+485 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--clump: 391 clumps formed from 485 top variants.
+Results written to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_400_h0.05/EUR_1KG_chr18_2200233_pruned.clumped
+.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_400_h0.05/EUR_1KG_chr18_2200233.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/EUR_1KG_chr18_2200233
+  --extract /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_400_h0.05/EUR_1KG_chr18_2200233_pruned.clumped
+  --ld-window-r2 0
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_400_h0.05/EUR_1KG_chr18_2200233
+  --r2 inter-chr
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+--extract: 391 variants remaining.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+391 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--r2 inter-chr to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_400_h0.05/EUR_1KG_chr18_2200233.ld
+... 0% [processing]writing]             done.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_400_h0.05/AMR_1KG_chr18_2200233_pruned.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233
+  --clump /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_400_h0.05/sumstats_AMR.csv
+  --clump-p1 1
+  --clump-r2 0.97
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_400_h0.05/AMR_1KG_chr18_2200233_pruned
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+347 people (170 males, 177 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 347 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+485 variants and 347 people pass filters and QC.
+Note: No phenotypes present.
+--clump: 420 clumps formed from 485 top variants.
+Results written to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_400_h0.05/AMR_1KG_chr18_2200233_pruned.clumped
+.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_400_h0.05/AMR_1KG_chr18_2200233.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/random_genes_h0.05/AMR_1KG_chr18_2200233
+  --extract /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/sumstats_400_h0.05/AMR_1KG_chr18_2200233_pruned.clumped
+  --ld-window-r2 0
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_400_h0.05/AMR_1KG_chr18_2200233
+  --r2 inter-chr
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+485 variants loaded from .bim file.
+347 people (170 males, 177 females) loaded from .fam.
+--extract: 420 variants remaining.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 347 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+420 variants and 347 people pass filters and QC.
+Note: No phenotypes present.
+--r2 inter-chr to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_400_h0.05/AMR_1KG_chr18_2200233.ld
+... 0% [processing]writing]             done.
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Tue Jun 25 10:10:57 2024
+
+Options:
+--grm-gz /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp
+--pheno /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 4
+--out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp
+
+Note: the program will be running on 4 threads.
+
+Reading IDs of the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.grm.id].
+400 IDs read from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.grm.id].
+Reading the GRM from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.grm.gz].
+Pairwise genetic relationships between 400 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.grm.gz].
+Reading phenotypes from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.phen].
+Nonmissing phenotypes of 400 individuals are included from [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.phen].
+
+400 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+400 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:      0 1.0025
+logL: -202.996
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-203.00	0.00000	1.00250	
+trying          0.00206 1.00015 using real Hessian (succeeded)
+2	-202.97	0.00206	1.00015	
+trying          0.00790 0.99373 using real Hessian (succeeded)
+3	-202.92	0.00790	0.99373	
+trying          0.01159 0.99019 using real Hessian (succeeded)
+4	-202.90	0.01159	0.99019	
+trying          0.01371 0.98830 using real Hessian (succeeded)
+5	-202.89	0.01371	0.98830	
+trying          0.01487 0.98732 using real Hessian (succeeded)
+6	-202.89	0.01487	0.98732	
+trying          0.01547 0.98682 using real Hessian (succeeded)
+7	-202.89	0.01547	0.98682	
+trying          0.01578 0.98657 using real Hessian (succeeded)
+8	-202.89	0.01578	0.98657	
+trying          0.01594 0.98644 using real Hessian (succeeded)
+9	-202.89	0.01594	0.98644	
+trying          0.01601 0.98637 using real Hessian (succeeded)
+10	-202.89	0.01601	0.98637	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00250
+logL: -202.99573
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-203.00	1.00250	
+trying          1.00250 using real Hessian (succeeded)
+2	-203.00	1.00250	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.016054	0.026717
+V(e)	0.986342	0.055486
+Vp	1.002396	0.050201
+V(G)/Vp	0.016016	0.026618
+
+Covariance/Variance/Correlation Matrix:
+0.000713777	
+-0.000636159	0.0030787	
+
+Summary result of REML analysis has been saved in the file [/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.05/temp.hsq].
+
+Analysis finished: Tue Jun 25 10:10:58 2024
+Computational time: 0:0:1

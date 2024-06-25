@@ -174,8 +174,8 @@ for ( w in 1:nrow(wgtlist) ) {
 	print("loaded wgt file")
 
 	#remove META wgts ----
-	wgt.matrix = wgt.matrix[, -2]
-	cv.performance = cv.performance[, -2]
+	#wgt.matrix = wgt.matrix[, -c(2,3,4)]
+	#cv.performance = cv.performance[, -c(2,3,4)]
 	#----
 
 	# Remove NAs (these should not be here)

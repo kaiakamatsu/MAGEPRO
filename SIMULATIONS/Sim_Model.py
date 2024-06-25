@@ -25,6 +25,7 @@ from sklearn.metrics import r2_score
 import statsmodels.api as sm
 from statsmodels.stats.multitest import multipletests
 from sklearn.linear_model import LinearRegression
+import os
 
 mvn = stats.multivariate_normal
 
@@ -352,6 +353,110 @@ def magepro_cv(N, geno_magepro, pheno_magepro, susie_weights):
 
     return magepro_r2, magepro_coef
 
+
+def PRSCSx_shrinkage(exec_dir, ldref_dir, working_dir, input, ss, pp, BIM, phi, n_threads = 4):
+    # exec_dir = directory where PRSCSx executable is located 
+    # ldref_dir = directory with ld reference files from PRSCSx github 
+    # working_dir = directory to write intermediate files for PRSCSx
+    # input = comma separated list of input sumstats 
+    # ss = comma separated list of input sumstats sample sizes 
+    # pp = comma separated list of input sumstats ancestries 
+    # BIM = target population bim file 
+    # phi = shrinkage parameter 
+
+    os.environ['MKL_NUM_THREADS'] = str(n_threads)
+    os.environ['NUMEXPR_NUM_THREADS'] = str(n_threads)
+    os.environ['OMP_NUM_THREADS'] = str(n_threads)
+
+    # run PRSCSx tool
+    BIM = pd.DataFrame(BIM)
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+    arg = f"python {exec_dir}/PRScsx.py --ref_dir={ldref_dir} --bim_prefix={working_dir}snps --sst_file={input} --n_gwas={ss} --pop={pp} --chrom={BIM.iloc[0, 0]} --phi={phi} --out_dir={working_dir} --out_name=results"
+    subprocess.run(arg, shell=True, check=True)
+
+    # collect PRSCSx results
+    formatted_shrinkage = "{:.2e}".format(phi).replace(".00e", "e")
+    BIM.set_index(1, inplace=True)
+    prscsx_sumstats_weights = {}
+    populations = pp.split(',')
+    for i in range(0,len(populations)):
+        varname = populations[i]+'weights_prscsx'
+        file_path = os.path.join(working_dir, f"results_{populations[i]}_pst_eff_a1_b0.5_phi{formatted_shrinkage}_chr{BIM.iloc[0, 0]}.txt")
+        table = pd.read_csv(file_path, sep='\t', header=None)
+        table.set_index(1, inplace=True)
+        table = table.reindex(BIM.index, fill_value=0)
+        prscsx_sumstats_weights[varname] = np.array(table[5])
+
+    return prscsx_sumstats_weights
+
+
+def prscsx_cv(N, geno_prscsx, pheno_prscsx, prscsx_weights):
+    # N = sample size 
+    # geno_prscsx = genotypes
+    # pheno_prscsx = gene expression or phenotype data 
+    # prscsx_weights = dictionary of external datasets to use from prscsx shrinkage 
+        # Ancestry : Array of weights
+    alphas_prscsx=np.logspace(-2,1.2,50,base=10)
+    kf_prscsx=KFold(n_splits=5)
+    #store r2 from lm for each penalty
+    lm_r2_allpenalty=[] 
+    for penalty_prscsx in alphas_prscsx:
+        #everyfold record predicted expression on testing set
+        predicted_expressions = np.zeros(N)
+        for train_index_prscsx, test_index_prscsx in kf_prscsx.split(geno_prscsx):
+            y_train_prscsx, y_test_prscsx = pheno_prscsx[train_index_prscsx], pheno_prscsx[test_index_prscsx]
+            y_train_std_prscsx=(y_train_prscsx-np.mean(y_train_prscsx))/np.std(y_train_prscsx)
+            y_test_std_prscsx=(y_test_prscsx-np.mean(y_test_prscsx))/np.std(y_test_prscsx)
+            X_train_prscsx, X_test_prscsx = geno_prscsx[train_index_prscsx], geno_prscsx[test_index_prscsx]
+            #lasso for afronly weights
+            lasso = lm.Lasso(fit_intercept=True)
+            lasso.set_params(alpha=best_penalty,tol=1e-4,max_iter=1000)
+            lasso.fit(X_train_prscsx, y_train_std_prscsx)
+            coef_prscsx = lasso.coef_
+            if np.all(coef_prscsx == 0):
+                wgts = weights_marginal_FUSION(X_train_prscsx, y_train_prscsx, beta = True)
+                coef_prscsx, r2_top1 = top1(y_test_std_prscsx, X_test_prscsx, wgts)
+            #prepare for ridge regression to find optimal combination of AFR gene model and EUR sumstat
+            X_train_prscsx2 = np.dot(X_train_prscsx, coef_prscsx.reshape(-1, 1))
+            X_test_prscsx2 = np.dot(X_test_prscsx, coef_prscsx.reshape(-1, 1))
+            for ancestry, weights in prscsx_weights.items():
+                X_train_prscsx2 = np.hstack((X_train_prscsx2, np.dot(X_train_prscsx, weights.reshape(-1, 1))))
+                X_test_prscsx2 = np.hstack((X_test_prscsx2, np.dot(X_test_prscsx, weights.reshape(-1, 1))))
+            linear_regression = LinearRegression()
+            linear_regression.fit(X_train_prscsx2, y_train_std_prscsx)
+            linear_coef = linear_regression.coef_
+            #predict on testing
+            predicted_expressions[test_index_prscsx] = np.dot(X_test_prscsx2, linear_coef)
+        #record r2 from lm
+        lreg = LinearRegression().fit(np.array(predicted_expressions).reshape(-1, 1), pheno_prscsx)
+        r2_cv_penalty = lreg.score(np.array(predicted_expressions).reshape(-1, 1), pheno_prscsx)
+        lm_r2_allpenalty.append(r2_cv_penalty) 
+    besti_prscsx=np.argmax(lm_r2_allpenalty)
+    bestalpha_prscsx=alphas_prscsx[besti_prscsx]
+    prscsx_r2 = lm_r2_allpenalty[besti_prscsx] # returning this for cv r2
+
+    # full model for training r2 and full coef
+    lasso = lm.Lasso(fit_intercept=True)
+    lasso.set_params(alpha=best_penalty,tol=1e-4,max_iter=1000)
+    lasso.fit(geno_prscsx, pheno_prscsx)
+    coef_prscsx = lasso.coef_
+    if np.all(coef_prscsx == 0):
+        wgts = weights_marginal_FUSION(geno_prscsx, pheno_prscsx, beta = True)
+        coef_prscsx, r2_top1 = top1(pheno_prscsx, geno_prscsx, wgts)
+    X_prscsx = np.dot(geno_prscsx, coef_prscsx.reshape(-1, 1))
+    for ancestry, weights in prscsx_weights.items():
+        X_prscsx = np.hstack((X_prscsx, np.dot(geno_prscsx, weights.reshape(-1, 1))))
+    linear_regression = LinearRegression()
+    linear_regression.fit(X_prscsx, pheno_prscsx)
+    linear_coef = linear_regression.coef_
+    wgts_sep = coef_prscsx.reshape(-1, 1)
+    for ancestry, weights in prscsx_weights.items():
+        wgts_sep = np.hstack((wgts_sep, weights.reshape(-1, 1)))
+    prscsx_coef = np.dot(wgts_sep, linear_coef)
+
+    return prscsx_r2, prscsx_coef
+
+
 args = sys.argv
 plink_file = args[1] # path to plink files of simulated gene
 samplesizes = int(args[2]) # number of people
@@ -396,8 +501,18 @@ if np.all(coef == 0):
     print("using top1 backup")
     r2all, r2_top1, coef = top1_cv(samplesizes, z_eqtl, gexpr)
 
+# --- PRINT HERITABILITY ESTIMATE FROM sim_eqtl() function 
 print(("heritability " + pop + ": "))
 print(h2g)
+
+# --- PRSCSx SHRINKAGE 
+executable_dir="/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/BENCHMARK/PRScsx"
+ld_reference_dir="/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref"
+prscsx_working_dir=temp_dir+"/PRSCSx/"
+prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+prscsx_r2, prscsx_coef = prscsx_cv(samplesizes, z_eqtl, gexpr, prscsx_weights)
+
+
 
 # --- PROCESS SUMMARY STATISTICS
 num_causal_susie = 0
@@ -415,6 +530,8 @@ magepro_r2, magepro_coef = magepro_cv(samplesizes, z_eqtl, gexpr, sumstats_weigh
 
 print("magepro: ")
 print(magepro_r2)
+print("prscsx: ")
+print(prscsx_r2)
 print("afronly: ")
 print(r2all)
 
@@ -427,10 +544,16 @@ if coef[CAUSAL] != 0:
 magepro_causal_nonzero = 0 # 0 for causal has 0 weight in magepro gene model. 1 for nonzero
 if magepro_coef[CAUSAL] != 0:
     magepro_causal_nonzero = 1
+#prscsx_coef = prscsx gene model
+prscsx_causal_nonzero = 0 # 0 for causal has 0 weight in magepro gene model. 1 for nonzero
+if prscsx_coef[CAUSAL] != 0:
+    prscsx_causal_nonzero = 1
 #beta of causal snp from afr lasso
 afr_B_causal = (coef[CAUSAL])
 #beta of causal snp from magepro
 magepro_B_causal = (magepro_coef[CAUSAL])
+#beta of causal snp from prscsx
+prscsx_B_causal = (prscsx_coef[CAUSAL])
 #actual beta
 true_B_causal = beta_causal
 
@@ -441,7 +564,7 @@ true_B_causal = beta_causal
 #filename = "results/magepro_results_" + str(samplesizes) + "_h" + str(set_h2) + ".csv"
 filename = out_results + "/magepro_results_" + str(samplesizes) + "_h" + str(set_h2) + ".csv"
 
-output = pd.DataFrame({'sim': sim, 'afr_h2': h2g, 'lasso_causal': lasso_causal_nonzero, 'magepro_causal': magepro_causal_nonzero, 'afr_beta_causal': afr_B_causal, 'magepro_beta_causal': magepro_B_causal, 'true_B_causal': true_B_causal, 'afr_r2': r2all, 'magepro_r2': magepro_r2, 'causal_susie': num_causal_susie}, index=[0])
+output = pd.DataFrame({'sim': sim, 'afr_h2': h2g, 'lasso_causal': lasso_causal_nonzero, 'magepro_causal': magepro_causal_nonzero, 'prscsx_causal': prscsx_causal_nonzero, 'afr_beta_causal': afr_B_causal, 'magepro_beta_causal': magepro_B_causal, 'prscsx_beta_causal': prscsx_B_causal, 'true_B_causal': true_B_causal, 'afr_r2': r2all, 'magepro_r2': magepro_r2, 'prscsx_r2': prscsx_r2, 'causal_susie': num_causal_susie}, index=[0])
 if sim == 1:
     output.to_csv(filename, sep="\t", index=False, header = True)
 else:
