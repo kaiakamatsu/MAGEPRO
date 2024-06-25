@@ -42,6 +42,7 @@ do
 		echo $start_pos
 		echo $end_pos
 
+		#extract genes for each population
 
 		#EUR 
 		/expanse/lustre/projects/ddp412/kakamatsu/plink --bfile ${eur_geno_prefix}${chr} --chr $chr --from-bp $start_pos --to-bp $end_pos --make-bed --out ${randomgenes}/EUR_1KG_chr${chr}_${random_position}
@@ -52,6 +53,7 @@ do
 		#AMR
 		/expanse/lustre/projects/ddp412/kakamatsu/plink --bfile ${amr_geno_prefix}${chr} --chr $chr --from-bp $start_pos --to-bp $end_pos --make-bed --out ${randomgenes}/AMR_1KG_chr${chr}_${random_position}
 
+		#below we are making sure that the chosen region we call a "gene" contains enough snps 
 
 		if [ ! -e ${randomgenes}/EUR_1KG_chr${chr}_${random_position}.bim ] || [ ! -e ${randomgenes}/AFR_1KG_chr${chr}_${random_position}.bim ] || [ ! -e ${randomgenes}/AMR_1KG_chr${chr}_${random_position}.bim ]; then
     			echo "no snps remaining, pick another gene"
@@ -81,6 +83,7 @@ do
 		fi
 	done	
 	
+	#choose a snp randomly as causal 
 	small_snps=$((EUR_variants_random_gene < AFR_variants_random_gene ? EUR_variants_random_gene : AFR_variants_random_gene))
 	min_snps=$((AMR_variants_random_gene < small_snps ? AMR_variants_random_gene : small_snps))
 	#echo $min_snps

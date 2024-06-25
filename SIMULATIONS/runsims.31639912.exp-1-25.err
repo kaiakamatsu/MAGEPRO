@@ -23,3 +23,867 @@ mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGE
 mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.2’: File exists
 mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.2/PRSCSx’: File exists
 mkdir: cannot create directory ‘/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/ld_500_h0.2’: File exists
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.2/PRSCSx'
+Warning message:
+In susie_suff_stat(XtX = XtX, Xty = Xty, n = n, yty = (n - 1) *  :
+  IBSS algorithm did not converge in 250 iterations!
+                  Please check consistency between summary statistics and LD matrix.
+                  See https://stephenslab.github.io/susieR/articles/susierss_diagnostic.html
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.2/PRSCSx'
+/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/sklearn/linear_model/_coordinate_descent.py:628: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations, check the scale of the features or consider increasing regularisation. Duality gap: 7.600e-03, tolerance: 6.400e-03
+  model = cd_fast.enet_coordinate_descent(
+/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/sklearn/linear_model/_coordinate_descent.py:628: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations, check the scale of the features or consider increasing regularisation. Duality gap: 8.122e-03, tolerance: 6.400e-03
+  model = cd_fast.enet_coordinate_descent(
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_80_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_160_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_240_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_400_h0.2/PRSCSx'
+Traceback (most recent call last):
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 512, in <module>
+    prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/SIMULATIONS/Sim_Model.py", line 373, in PRSCSx_shrinkage
+    BIM.to_csv(os.path.join(working_dir, "snps.bim"), sep='\t', index=False, header=False, quoting=False)
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/core/generic.py", line 3772, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/format.py", line 1186, in to_csv
+    csv_formatter.save()
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/formats/csvs.py", line 240, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 737, in get_handle
+    check_parent_directory(str(handle))
+  File "/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/pandas/io/common.py", line 600, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: '/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations/temp_500_h0.2/PRSCSx'
