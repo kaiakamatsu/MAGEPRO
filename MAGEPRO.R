@@ -793,7 +793,7 @@ if ( ("META" %in% model | "PRSCSx" %in% model) ){
 	}
 }
 
-
+cohort_map <- list()
 if ("MAGEPRO" %in% model) {
 	if (!is.na(opt$ldref_dir)) {
 		if (!file.exists(opt$ldref_dir)) {
@@ -819,18 +819,18 @@ if ("MAGEPRO" %in% model) {
 				cleanup()
 				q()
 	}
+
+	ldrefs_list <- strsplit(opt$ldrefs, ",")[[1]]
+	sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
+
+	# create map with cohort as keys 
+	cohort_map <<- setNames(
+	lapply(seq_along(sumstats), function(i) {
+		list(sample_size = sample_sizes[i], ldref = ldrefs_list[i])
+	}),
+	sumstats
+	)
 }
-
-ldrefs_list <- strsplit(opt$ldrefs, ",")[[1]]
-sample_sizes <- strsplit(opt$ss, ",")[[1]]
-
-# create map with cohort as keys 
-cohort_map <- setNames(
-  lapply(seq_along(sumstats), function(i) {
-    list(sample_size = sample_sizes[i], ldref = ldrefs_list[i])
-  }),
-  sumstats
-)
 
 
 
@@ -1081,21 +1081,20 @@ cat("Line 1078")
 ext <- length(datasets)
 
 # --- READ SUMSTATS AND FLIP ALLELES AS NECESSARY
-# loaded_datasets <- c()
-# if (ext > 0){
-# 	select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
-# 	susie <- FALSE
-# 	if ( "MAGEPRO" %in% model ){
-# 		select_cols <- append(select_cols, c(opt$susie_pip, opt$susie_beta, opt$susie_cs))
-# 		susie <- TRUE
-# 	}
-# 	for (d in datasets){
-# 		name <- strsplit(d, split="[.]")[[1]][2]
-# 		print(paste0("load_flip_dataset name: ", name))
-# 		print(paste0("load_flip_dataset d: ", d))
-# 		loaded_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets, select_cols, susie)
-# 	}
-# }
+loaded_datasets <- c()
+if (ext > 0){
+	select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
+	susie <- FALSE
+	if ( "MAGEPRO" %in% model ){
+		select_cols <- append(select_cols, c(8, 9, 10))
+		susie <- TRUE
+		cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out, opt$gene, opt$PATH_plink, opt$cl_thresh, opt$verbose)
+	}
+	for (d in datasets) {
+		name <- strsplit(d, split="[.]")[[1]][2]
+		loaded_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets, select_cols, susie)
+	}
+}
 
 # --- PREPARE SUMMARY STATISTICS FOR META AND MAGEPRO_fullsumstats
 if ( ("META" %in% model | "MAGEPRO_fullsumstats" %in% model)  & (ext > 0) ){
@@ -1164,58 +1163,8 @@ if ( ("MAGEPRO" %in% model) & (ext > 0) ){
 			cat("### PROCESSING SUMSTATS FOR MAGEPRO \n")
 	}
 
-	susie_datasets <- c()
-	for (cohort in names(cohort_map)) {
-		cohort_data <- cohort_map[[cohort]]
-		cohort_path <- file.path(opt$sumstats_dir, cohort)
-		tmp_path <- sub("/[^/]+/?$", "", opt$tmp)
-		cohort_ld_directory <- file.path(tmp_path, paste0(cohort, "ld"))
-		cohort_ldref_path <- file.path(opt$ldref_dir, cohort_data$ldref)
-
-		out_path <- sub("/[^/]+/?$", "", opt$out)
-		out_cohort_path <- file.path(out_path, cohort)
-		# create directories for output and ld_matrix_path
-		make_ld_matrix_path <- paste0(
-			"mkdir -p ", cohort_ld_directory
-		)
-		make_output_path <- paste0(
-			"mkdir -p ", out_cohort_path
-		)
-		
-		system(make_ld_matrix_path, wait = TRUE)
-		system(make_output_path, wait = TRUE)
-
-		gene_txt <- paste0(trimws(opt$gene), '.txt')
-
-		check <- file.path(cohort_path, gene_txt)
-		if (!file.exists(check)){
-			if ( opt$verbose == 2 ) {
-				cat("skipping sumstat", cohort, "for this gene\n")
-			}
-			next
-		}
-		path_to_fine_mapping_output <- gene_fine_mapping(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, opt$PATH_plink, opt$cl_thresh, out_cohort_path)
-		if (path_to_fine_mapping_output == "Error") {
-			next
-		}
-		assign(paste0("susie_file.", cohort), path_to_fine_mapping_output, envir = .GlobalEnv)
-		susie_datasets <- append(susie_datasets, paste0("susie_file.", cohort))
-		cat("successfully fine mapped ", gene, " for ", cohort, "\n")
-	}
-
-	select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
-	select_cols <- append(select_cols, c(opt$susie_pip, opt$susie_beta, opt$susie_cs))
-	susie <- TRUE
-
-	loaded_susie_datasets <- c()
-	for (sd in susie_datasets) {
-		name <- strsplit(sd, split="[.]")[[1]][2]
-		loaded_susie_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = sd)), loaded_susie_datasets, select_cols, susie)
-	}
-
-
 	wgt_magepro <- c() #magepro weights
-	for (loaded in loaded_susie_datasets){
+	for (loaded in loaded_datasets){
         name <- strsplit(loaded, split="[.]")[[1]][2]
         wgt_magepro <- datasets_process_susie(name, eval(parse(text = loaded)), wgt_magepro)
 	}
