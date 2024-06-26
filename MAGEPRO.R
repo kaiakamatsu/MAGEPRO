@@ -1166,7 +1166,6 @@ if ( ("MAGEPRO" %in% model) & (ext > 0) ){
 
 	susie_datasets <- c()
 	for (cohort in names(cohort_map)) {
-		cat(paste0("Working on ", cohort, "\n"))
 		cohort_data <- cohort_map[[cohort]]
 		cohort_path <- file.path(opt$sumstats_dir, cohort)
 		tmp_path <- sub("/[^/]+/?$", "", opt$tmp)
@@ -1188,7 +1187,8 @@ if ( ("MAGEPRO" %in% model) & (ext > 0) ){
 
 		gene_txt <- paste0(trimws(opt$gene), '.txt')
 
-		if (!file.exists(gene_txt)){
+		check <- file.path(cohort_path, gene_txt)
+		if (!file.exists(check)){
 			if ( opt$verbose == 2 ) {
 				cat("skipping sumstat", cohort, "for this gene\n")
 			}
@@ -1198,9 +1198,11 @@ if ( ("MAGEPRO" %in% model) & (ext > 0) ){
 		if (path_to_fine_mapping_output == "Error") {
 			next
 		}
-		susie_datasets <- append(susie_datasets, path_to_fine_mapping_output)
+		assign(paste0("susie_file.", cohort), path_to_fine_mapping_output, envir = .GlobalEnv)
+		susie_datasets <- append(susie_datasets, paste0("susie_file.", cohort))
+		cat("successfully fine mapped ", gene, " for ", cohort, "\n")
 	}
-	
+
 	select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
 	select_cols <- append(select_cols, c(opt$susie_pip, opt$susie_beta, opt$susie_cs))
 	susie <- TRUE

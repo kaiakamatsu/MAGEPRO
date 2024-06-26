@@ -62,16 +62,12 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 	" -o ", file.path(out, gene_txt)
 	)
 
-	print(paste0("rcommand: ", rcommand))
-
 	tryCatch({
 		system(rcommand, wait = TRUE)
 	}, error = function(e) {
 		cat("Error in R script command:", e$message, "\n")
 		return("Error")
 	})
-
-	cat("finished running gene_fine_mapping\n")
 
 	to_return <- file.path(out, gene_txt)
 
