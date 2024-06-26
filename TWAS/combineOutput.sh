@@ -22,17 +22,17 @@ dataset=$1
 anc=$2
 anc_gbmi=$3
 
-#phenos="BAS HGB MCHC MPV RBC EOS LYM MCV NEU RDW HCT MCH MON PLT WBC"
-phenos="LYM"
+phenos="BAS HGB MCHC MPV RBC EOS LYM MCV NEU RDW HCT MCH MON PLT WBC"
+#phenos="LYM"
 
 for pheno in $phenos; do
 	echo $pheno
 	Rscript combineOutput.R $pheno LETTER $anc $dataset
 done
 
-#phenos_gbmi="Asthma COPD Gout HF IPF Stroke VTE"
+phenos_gbmi="Asthma COPD Gout HF IPF Stroke VTE"
 
-#for pheno in $phenos_gbmi; do
-#	echo $pheno
-#	Rscript combineOutput.R $pheno GBMI $anc_gbmi $dataset
-#done
+for pheno in $phenos_gbmi; do
+	echo $pheno
+	Rscript combineOutput.R $pheno GBMI $anc_gbmi $dataset
+done

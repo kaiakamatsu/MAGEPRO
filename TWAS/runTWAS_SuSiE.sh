@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=2G
-#SBATCH -t 05:00:00
+#SBATCH -t 17:00:00
 #SBATCH -J RUNTWAS
 #SBATCH -A csd832
 #SBATCH -o ../working_err/RUNTWAS.%j.%N.out
@@ -29,8 +29,8 @@ mkdir ${outbase}
 out=${outbase}/${pheno}
 #mkdir ${out}
 
-#for chr in {1..22}; do \
-#	Rscript ${home}/fusion_multipop/FUSION.assoc_test_multipop.R --force_model SuSiE --chr $chr --ref_ld_chr $ld --sumstats $gwas --weights $wgt --weights_dir $wgtdir --out ${out}.${chr}.dat; \
-#done
+for chr in {1..22}; do \
+	Rscript ${home}/fusion_multipop/FUSION.assoc_test_multipop.R --force_model SuSiE --chr $chr --ref_ld_chr $ld --sumstats $gwas --weights $wgt --weights_dir $wgtdir --out ${out}.${chr}.dat; \
+done
 
-Rscript ${home}/fusion_multipop/FUSION.assoc_test_multipop.R --force_model SuSiE --chr 22 --ref_ld_chr $ld --sumstats $gwas --weights $wgt --weights_dir $wgtdir --out ${out}.22.dat; \
+#Rscript ${home}/fusion_multipop/FUSION.assoc_test_multipop.R --force_model SuSiE --chr 22 --ref_ld_chr $ld --sumstats $gwas --weights $wgt --weights_dir $wgtdir --out ${out}.22.dat; \

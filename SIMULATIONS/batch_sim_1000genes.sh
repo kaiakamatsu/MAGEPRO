@@ -6,8 +6,8 @@
 #SBATCH -t 20:00:00
 #SBATCH -J runsims
 #SBATCH -A csd832
-#SBATCH -o runsims.%j.%N.out
-#SBATCH -e runsims.%j.%N.err
+#SBATCH -o ../../working_err/runsims.%j.%N.out
+#SBATCH -e ../../working_err/runsims.%j.%N.err
 #SBATCH --export=ALL
 #SBATCH --constraint="lustre"
 

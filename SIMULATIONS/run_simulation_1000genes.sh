@@ -13,8 +13,7 @@ mkdir $randomgenes
 
 
 #causal snp is the same 
-for ((i=1; i<=1000; i++))
-do 
+for ((i=1; i<=1000; i++));do 
 
 	rm -rf ${randomgenes}/*
 
@@ -110,6 +109,7 @@ do
 			rm -rf ${simgeno}/*
 			rm -rf ${sumstatsdir}/*
 			rm -rf ${tempdir}/*
+			mkdir ${tempdir}/PRSCSx # later for PRSCSx intermediate files
 			rm -rf ${lddir}/*
 		fi
 
@@ -121,7 +121,7 @@ do
 		# for both AFR and EUR with the same causal variant for now
 
 		# simulate eqtl analysis to produce EUR and AMR full sum stats 
-		#python3 Sim_SumStats.py <path to plink files> <sample size> <population> <simulated genotypes> <number of causal snps> <index of causal> <simulation number> <heritability of gene> <sample size of target pop> <sumstats dir> <tempdir>
+		#python3 Sim_SumStats.py <path to plink files> <sample size> <population> <simulated genotypes> <number of causal snps> <index of causal> <simulation number> <heritability of gene> <sample size of target pop> <sumstats dir> <tempdir> <outdir>
 		python3 Sim_SumStats.py ${randomgenes}/EUR_1KG_chr${chr}_${random_position} 500 EUR ${simgeno}/simulated_genotypes_EUR.csv 1 $index_causal $i $heritability $numafr $sumstatsdir $tempdir ${out}/results
 		python3 Sim_SumStats.py ${randomgenes}/AMR_1KG_chr${chr}_${random_position} 500 AMR ${simgeno}/simulated_genotypes_AMR.csv 1 $index_causal $i $heritability $numafr $sumstatsdir $tempdir ${out}/results
 
@@ -141,7 +141,7 @@ do
 
 		# simulate AFR gene models with lasso 
 		# use MAGEPRO 
-		#python3 Sim_Model.py <path to plink files> <sample size> <population> <simulated genotypes> <sumstats> <number of causal snps> <index of causal> <simulation number> <heritability of gene> <temporary directory> 
+		#python3 Sim_Model.py <path to plink files> <sample size> <population> <simulated genotypes> <sumstats> <populations> <number of causal snps> <index of causal> <simulation number> <heritability of gene> <temporary directory> <output directory>
 		python3 Sim_Model.py ${randomgenes}/AFR_1KG_chr${chr}_${random_position} $numafr AFR ${simgeno}/simulated_genotypes_AFR.csv ${sumstatsdir}/sumstats_EUR_susie.csv,${sumstatsdir}/sumstats_AMR_susie.csv EUR,AMR 1 $index_causal $i $heritability $tempdir ${out}/results
 	done
 done

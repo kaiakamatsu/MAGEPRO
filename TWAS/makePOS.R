@@ -13,8 +13,8 @@ output <- matrix(0, nrow = nrow(paths), ncol = 5)
 colnames(output) = c("WGT", "ID", "CHR", "P0", "P1")
 
 for (n in 1:length(paths$V1)){
-	#wgt <- strsplit(paths$V1[n], "/")[[1]][10]
-	wgt <- strsplit(paths$V1[n], "/")[[1]][9] # GTEx EUR LUNG path structure is different 
+	wgt <- strsplit(paths$V1[n], "/")[[1]][10]
+	#wgt <- strsplit(paths$V1[n], "/")[[1]][9] # GTEx EUR LUNG path structure is different 
 	gene <- strsplit(wgt, "[.]")[[1]][1]
 	#genever <- strsplit(wgt, "[.]")[[1]][2]
 	#gene <- paste0(genebase, ".", genever)
