@@ -95,20 +95,3 @@ then
 fi
 
 done
-
-
-
-
-
-Rscript MAGEPRO.R --gene ENSG00000000419 
---bfile /expanse/lustre/projects/ddp412/sgolzari/job_31624887/wd/ENSG00000000419 
---tmp /expanse/lustre/projects/ddp412/sgolzari/job_31624887/tmp/ENSG00000000419 
---out /expanse/lustre/projects/ddp412/sgolzari/testMAGEPRO/_weights/ENSG00000000419 
---PATH_plink /expanse/lustre/projects/ddp412/sgolzari/plink/plink 
---sumstats_dir /expanse/lustre/projects/ddp412/sgolzari/fine_mapping 
---sumstats genoa --models MAGEPRO --ss 1032 --resid FALSE --hsq_p 1 
---lassohsq 0.05 --hsq_set NA --crossval 5 --verbose 2 --noclean FALSE --save_hsq FALSE 
---ldref_pt /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/GEUVADIS/1KG_geno/plink_HM3_variants_EUR/maf_hwe_rate_relatedness_HM3_ingenoa_b38_redo/GEUVADIS_EUR 
---prune_r2 NA --threshold_p NA --ldref_PRSCSx NA --dir_PRSCSx PRScsx --phi_shrinkage_PRSCSx 1e-06 
---pops EUR,EUR,AMR,AFR --susie_pip 8 --susie_beta 9 --susie_cs 10 --impact_path NA20.txt 
---ldref_dir /expanse/lustre/projects/ddp412/sgolzari/ldref --ldrefs GENOA_AA --cl_thresh 0.97
