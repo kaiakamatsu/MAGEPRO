@@ -6,7 +6,7 @@ heritability=(0.03 0.05 0.1 0.2)
 eur_geno_prefix=/expanse/lustre/projects/ddp412/kakamatsu/ldref/eur/1000G_eur_chr
 afr_geno_prefix=/expanse/lustre/projects/ddp412/kakamatsu/ldref/afr/1000G_afr_chr
 amr_geno_prefix=/expanse/lustre/projects/ddp412/kakamatsu/ldref/amr/1000G_amr_chr
-out=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations
+out=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations_faster
 
 out_results=${out}/results
 rm -rf $out_results

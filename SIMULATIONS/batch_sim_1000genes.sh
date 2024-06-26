@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -p shared
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks-per-node=32
 #SBATCH --mem=4G
 #SBATCH -t 20:00:00
 #SBATCH -J runsims
@@ -13,6 +13,10 @@
 
 source ~/.bashrc
 conda activate r_py
+
+export MKL_NUM_THREADS=32
+export NUMEXPR_NUM_THREADS=32
+export OMP_NUM_THREADS=32
 
 numafr=$1 # afr sample size to test
 heritability=$2 #preset heritability

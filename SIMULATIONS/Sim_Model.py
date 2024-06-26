@@ -163,7 +163,7 @@ def get_hsq(geno, gene_expr, out, gcta):
     return None
 
 def run_gcta(gcta, out):
-    command = '{} --grm-gz {} --pheno {} --reml --reml-no-constrain --thread-num 4 --out {}'\
+    command = '{} --grm-gz {} --pheno {} --reml --reml-no-constrain --thread-num 32 --out {}'\
         .format(gcta, out, out+'.phen', out)
     subprocess.run(command.split())
     #command = 'rm {}.log'.format(out)
@@ -354,7 +354,7 @@ def magepro_cv(N, geno_magepro, pheno_magepro, susie_weights):
     return magepro_r2, magepro_coef
 
 
-def PRSCSx_shrinkage(exec_dir, ldref_dir, working_dir, input, ss, pp, BIM, phi, n_threads = 4):
+def PRSCSx_shrinkage(exec_dir, ldref_dir, working_dir, input, ss, pp, BIM, phi):
     # exec_dir = directory where PRSCSx executable is located 
     # ldref_dir = directory with ld reference files from PRSCSx github 
     # working_dir = directory to write intermediate files for PRSCSx
@@ -363,10 +363,6 @@ def PRSCSx_shrinkage(exec_dir, ldref_dir, working_dir, input, ss, pp, BIM, phi, 
     # pp = comma separated list of input sumstats ancestries 
     # BIM = target population bim file 
     # phi = shrinkage parameter 
-
-    os.environ['MKL_NUM_THREADS'] = str(n_threads)
-    os.environ['NUMEXPR_NUM_THREADS'] = str(n_threads)
-    os.environ['OMP_NUM_THREADS'] = str(n_threads)
 
     # run PRSCSx tool
     BIM = pd.DataFrame(BIM)
@@ -509,7 +505,7 @@ print(h2g)
 executable_dir="/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/BENCHMARK/PRScsx"
 ld_reference_dir="/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref"
 prscsx_working_dir=temp_dir+"/PRSCSx/"
-prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7, 8)
+prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7)
 prscsx_r2, prscsx_coef = prscsx_cv(samplesizes, z_eqtl, gexpr, prscsx_weights)
 
 

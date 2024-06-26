@@ -160,7 +160,7 @@ def get_hsq(geno, gene_expr, out, gcta):
     return None
 
 def run_gcta(gcta, out):
-    command = '{} --grm-gz {} --pheno {} --reml --reml-no-constrain --thread-num 4 --out {}'\
+    command = '{} --grm-gz {} --pheno {} --reml --reml-no-constrain --thread-num 32 --out {}'\
         .format(gcta, out, out+'.phen', out)
     subprocess.run(command.split())
     command = 'rm {}.phen'.format(out)
