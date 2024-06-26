@@ -65,12 +65,6 @@ option_list = list(
   make_option("--ldref_pt", action="store", default=NA, type='character',
               help="Path to LD reference file for pruning and thresholding, prefix of plink formatted files (assumed to be split by chr) \n 
 	      ex. path/file_chr for path/file_chr1.bed/bim/fam "),
-  make_option("--ldref_dir", action="store", default=NA, type="character",
-  			  help="Directory containing ld reference files used for fine mapping"),
-  make_option("--ldrefs", action="store", default=NA, type="character",
-  			  help="Comma-separated list of ld reference files used for fine mapping"),
-  make_option("--cl_thresh", action="store", default=0.97, type="numeric",
-  			  help="Clumping threshold for plink to clump SNPs that have high R2 [optional]"),
   make_option("--prune_r2", action="store", default=NA, type='numeric',
               help="Pruning threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation"),
   make_option("--threshold_p", action="store", default=NA, type='numeric',
@@ -90,7 +84,13 @@ option_list = list(
   make_option("--susie_cs", action="store", default=10, type='numeric',                                             
 	      help="Column number in external datasets where susie credible set groups are stored"),
   make_option("--impact_path", action="store", default=NA, type='character',
-              help="path to file with impact scores for each snp")
+              help="path to file with impact scores for each snp"),
+  make_option("--ldref_dir", action="store", default=NA, type="character",
+  			  help="Directory containing ld reference files used for susie fine mapping"),
+  make_option("--ldrefs", action="store", default=NA, type="character",
+  			  help="Comma-separated list of ld reference files (plink prefixes) used for susie fine mapping"),
+  make_option("--cl_thresh", action="store", default=0.97, type="numeric",
+  			  help="Clumping threshold for plink to clump SNPs in summary statistics that are in high LD before running SuSiE [optional]")
 )
 
 opt = parse_args(OptionParser(option_list=option_list))

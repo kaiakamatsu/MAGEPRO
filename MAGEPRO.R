@@ -61,12 +61,6 @@ option_list = list(
   make_option("--ldref_pt", action="store", default=NA, type='character',
               help="Path to LD reference file for pruning and thresholding, prefix of plink formatted files (assumed to be split by chr) \n 
 	      ex. path/file_chr for path/file_chr1.bed/bim/fam "),
-  make_option("--ldref_dir", action="store", default=NA, type="character",
-  			  help="Directory containing ld reference files used for fine mapping"),
-  make_option("--ldrefs", action="store", default=NA, type="character",
-  			  help="Comma-separated list of ld reference files used for fine mapping"),
-  make_option("--cl_thresh", action="store", default=0.97, type="numeric",
-  			  help="Clumping threshold for plink to clump SNPs that have high R2 [optional]"),
   make_option("--prune_r2", action="store", default=NA, type='numeric',
               help="Pruning threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation"),
   make_option("--threshold_p", action="store", default=NA, type='numeric',
@@ -86,7 +80,13 @@ option_list = list(
   make_option("--susie_cs", action="store", default=10, type='numeric',                                             
 	      help="Column number in external datasets where susie credible set groups are stored"),
   make_option("--impact_path", action="store", default=NA, type='character',
-              help="path to file with impact scores for each snp")
+              help="path to file with impact scores for each snp"), 
+  make_option("--ldref_dir", action="store", default=NA, type="character",
+  			  help="Directory containing ld reference files used for susie fine mapping"),
+  make_option("--ldrefs", action="store", default=NA, type="character",
+  			  help="Comma-separated list of ld reference files (plink prefixes) used for susie fine mapping"),
+  make_option("--cl_thresh", action="store", default=0.97, type="numeric",
+  			  help="Clumping threshold for plink to clump SNPs in summary statistics that are in high LD before running SuSiE [optional]")
 )
 
 # --- PARSE COMMAND LINE ARGS
@@ -636,10 +636,6 @@ datasets_process_susie <- function(dataset, loaded, wgts){
 	# STRATEGY:
 		# SuSiE coefficients for all snps
 
-	#indices_high_pip <- which(loaded[[6]]>=0.95)
-	#if (!identical(integer(0), indices_high_pip)){
-	#	loaded[-indices_high_pip, 4] <- 0
-	#}
 	assign(paste0("pred.wgtsusie.", dataset), loaded[[7]], envir = .GlobalEnv)
 	if(sum(which(eval(parse(text = paste0("pred.wgtsusie.", dataset))) != 0)) > 0){
 		wgts <- append(wgts, paste0("pred.wgtsusie.", dataset))
@@ -660,60 +656,6 @@ datasets_process_prscsx <- function(name, loaded, working_dir){
 	f_name <- paste0(working_dir, name, ".txt")
 	write.table(df, file = f_name, sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 }
-
-# --- UNUSED FUNCTIONS BELOW
-
-# --- SS-WEIGHTED-META-ANALYZE CELL TYPES
-meta_cells <- function(dataset, result_wgts, indices){
-	# PURPOSE: meta-analyze datasets together (use-case: data from different cell types but same people)
-	# PREREQ: a hashmap (list) named "h" has to contain the sample sizes of the datasets you want to meta-analyze
-	# dataset = prefix of datasets to combine
-	# result_wgts = list to store the name of the meta-analyzed dataset
-	# indices = list to store the indices to remove from the original wgts list before combining with result_wgts
-	# RETURN: wgts_indices containing both result_wgts and indices
-	lookup <- paste0("\\.", dataset)
-	i <- grep(lookup, wgts)
-	if (!identical(i, integer(0))){
-	used <- wgts[i]
-	indices <- append(indices, i)
-	meta <- 0
-	ss <- c()
-	for (u in used){
-                name <- strsplit(u, split = "[.]")[[1]][3]
-                ss <- append(ss, h[[name]])
-        }
-	sums = sum(ss)
-	for (u in used){
-		name <- strsplit(u, split = "[.]")[[1]][3]
-		meta <- meta + (eval(parse(text=u))*(h[[name]]/sums))
-	}
-	h[[dataset]] <<- mean(ss, na.rm = T)
-	assign(paste0("pred.wgt.", dataset), meta, envir = .GlobalEnv)
-	result_wgts <- append(result_wgts, paste0("pred.wgt.", dataset))
-	}
-	wgts_indices <- list(result_wgts, indices)
-	return (wgts_indices)
-}
-
-# --- BIN SNPs BASED ON IMPACT SCORES
-IMPACT_split <- function(IMPACT_file, BIM){
-	# PURPOSE: find the indices of potentially predictive snps (used to split sumstats)
-	# IMPACT_file = path to IMPACT file 
-	# BIM = BIM matrix
-	# RETURN: groupings: vector of strings, "nonzero" stores indices of important SNPs and "zero" stored indices of unimportant ones 
-	IMPACT_scores <- as.data.frame(fread(IMPACT_file))
-	IMPACT_scores_reordered <- IMPACT_scores[match(BIM[,2], IMPACT_scores$SNP),]
-	IMPACT_threshold <<- quantile(IMPACT_scores_reordered[,5], 0.95) #CHANGE THIS TO TAKE TOP X%
-	nonzero <<- which(IMPACT_scores_reordered[,5] >= IMPACT_threshold)
-	groupings <- c()
-        if (!identical(integer(0), nonzero)){
-                groupings <- append(groupings, "nonzero")
-        }
-        return (groupings)		
-}
-
-
-# --- UNUSED FUNCTIONS END
 
 # --- I/O CHECKS
 
@@ -776,8 +718,8 @@ if ( ! is.na(opt$sumstats)){
 	}
 }
 
-h <- list() #hashmap for sample sizes per dataset
-if ( ("META" %in% model | "PRSCSx" %in% model) ){
+hashmap_ss <- list() #hashmap for sample sizes per dataset
+if ( ("META" %in% model | "PRSCSx" %in% model | "MAGEPRO" %in% model) ){
 	if (!is.na(opt$ss)){
 		sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
 		if (length(sumstats) != length(sample_sizes)){
@@ -786,7 +728,7 @@ if ( ("META" %in% model | "PRSCSx" %in% model) ){
                 	q()
 		}
 		for (i in 1:length(sumstats)){
-			h[[sumstats[i]]] <- as.numeric(sample_sizes[i])
+			hashmap_ss[[sumstats[i]]] <- as.numeric(sample_sizes[i])
 		}
 	}else{
 		cat( "ERROR: Cannot perform sample-size weighted meta-analysis or PRS-CSx without the --ss flag\n" , sep='', file=stderr() )
@@ -799,12 +741,12 @@ if ( ("META" %in% model | "PRSCSx" %in% model) ){
 if ("MAGEPRO" %in% model) {
 	if (!is.na(opt$ldref_dir)) {
 		if (!file.exists(opt$ldref_dir)) {
-			cat( "ERROR: in --ldref_dir directory does not exist, please check the path\n", sep='', file=stderr())
+			cat( "ERROR: --ldref_dir directory does not exist, please check the path\n", sep='', file=stderr())
 			cleanup()
 			q()
 		}
 	} else {
-		cat( "ERROR: --ldref_dir not supplied, cannot perform fine mapping and, hence, compute MAGEPRO model\n", sep='', file=stderr() )
+		cat( "ERROR: --ldref_dir not supplied, cannot perform fine mapping of sumstats for MAGEPRO model\n", sep='', file=stderr() )
 				cleanup()
 				q()
 	}
@@ -816,24 +758,19 @@ if ("MAGEPRO" %in% model) {
 				cleanup()
 				q()
 		}
+		# create map with cohort as keys 
+		cohort_map <- setNames(
+		lapply(seq_along(sumstats), function(i) {
+			list(sample_size = sample_sizes[i], ldref = ldrefs_list[i])
+		}),
+		sumstats
+		)
 	} else {
-		cat( "ERROR: --ldrefs not supplied, cannot perform fine mapping and, hence, compute MAGEPRO model\n", sep='', file=stderr() )
+		cat( "ERROR: --ldrefs not supplied, cannot perform fine mapping for MAGEPRO model\n", sep='', file=stderr() )
 				cleanup()
 				q()
 	}
 }
-
-ldrefs_list <- strsplit(opt$ldrefs, ",")[[1]]
-sample_sizes <- strsplit(opt$ss, ",")[[1]]
-
-# create map with cohort as keys 
-cohort_map <- setNames(
-  lapply(seq_along(sumstats), function(i) {
-    list(sample_size = sample_sizes[i], ldref = ldrefs_list[i])
-  }),
-  sumstats
-)
-
 
 
 if ( "PT" %in% model ){
@@ -906,7 +843,6 @@ if ( "SuSiE" %in% model | "SuSiE_IMPACT" %in% model ){
                 	q()
 		}
 	}
-
 }
 
 
@@ -1078,7 +1014,6 @@ if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){
 	if ( opt$verbose >= 1 ) cat("forcing lasso heritability to ", opt$lassohsq, " \n")
 	lasso_h2 <- opt$lassohsq
 }  #when gcta does not converge or yield wild estimates
-cat("Line 1078")
 # --- SETUP SUMSTATS
 ext <- length(datasets)
 
