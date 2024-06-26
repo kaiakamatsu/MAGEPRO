@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -p shared
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=32
+#SBATCH --ntasks-per-node=2
 #SBATCH --mem=4G
 #SBATCH -t 20:00:00
 #SBATCH -J runsims
@@ -14,17 +14,16 @@
 source ~/.bashrc
 conda activate r_py
 
-export MKL_NUM_THREADS=32
-export NUMEXPR_NUM_THREADS=32
-export OMP_NUM_THREADS=32
-
 numafr=$1 # afr sample size to test
 heritability=$2 #preset heritability
 eur_geno_prefix=$3
 afr_geno_prefix=$4
 amr_geno_prefix=$5
-out=$6
+threads=$6
+out=$7
+#temp=/scratch/$USER/job_$SLURM_JOBID
+temp=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_sims_scratch
 
 echo "running simulations with $numafr AFR individuals and a gene with heritability $heritability"
 
-bash run_simulation_1000genes.sh $numafr $heritability $eur_geno_prefix $afr_geno_prefix $amr_geno_prefix $out
+bash run_simulation_1000genes.sh $numafr $heritability $eur_geno_prefix $afr_geno_prefix $amr_geno_prefix $threads $out $temp

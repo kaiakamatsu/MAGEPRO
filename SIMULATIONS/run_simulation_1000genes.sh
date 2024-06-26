@@ -5,15 +5,22 @@ heritability=$2
 eur_geno_prefix=$3
 afr_geno_prefix=$4
 amr_geno_prefix=$5
-out=$6
+threads=$6
+out=$7
+temp=$8
 
-randomgenes=${out}/random_genes_h${heritability}
+export MKL_NUM_THREADS=$threads
+export NUMEXPR_NUM_THREADS=$threads
+export OMP_NUM_THREADS=$threads
+
+randomgenes=${temp}/random_genes_h${heritability}
 rm -rf $randomgenes
 mkdir $randomgenes
 
 
 #causal snp is the same 
 for ((i=1; i<=1000; i++));do 
+#for ((i=1; i<=1; i++));do 
 
 	rm -rf ${randomgenes}/*
 
@@ -91,13 +98,13 @@ for ((i=1; i<=1000; i++));do
 
 	for numafr in "${numsafr[@]}"; do
 
-		simgeno=${out}/simulated_genotypes_${numafr}_h${heritability}
+		simgeno=${temp}/simulated_genotypes_${numafr}_h${heritability}
 
-		lddir=${out}/ld_${numafr}_h${heritability}
+		lddir=${temp}/ld_${numafr}_h${heritability}
 
-		sumstatsdir=${out}/sumstats_${numafr}_h${heritability}
+		sumstatsdir=${temp}/sumstats_${numafr}_h${heritability}
 
-		tempdir=${out}/temp_${numafr}_h${heritability}
+		tempdir=${temp}/temp_${numafr}_h${heritability}
 
 		if [ $i -eq 1 ]; then
 			mkdir $simgeno
@@ -122,8 +129,8 @@ for ((i=1; i<=1000; i++));do
 
 		# simulate eqtl analysis to produce EUR and AMR full sum stats 
 		#python3 Sim_SumStats.py <path to plink files> <sample size> <population> <simulated genotypes> <number of causal snps> <index of causal> <simulation number> <heritability of gene> <sample size of target pop> <sumstats dir> <tempdir> <outdir>
-		python3 Sim_SumStats.py ${randomgenes}/EUR_1KG_chr${chr}_${random_position} 500 EUR ${simgeno}/simulated_genotypes_EUR.csv 1 $index_causal $i $heritability $numafr $sumstatsdir $tempdir ${out}/results
-		python3 Sim_SumStats.py ${randomgenes}/AMR_1KG_chr${chr}_${random_position} 500 AMR ${simgeno}/simulated_genotypes_AMR.csv 1 $index_causal $i $heritability $numafr $sumstatsdir $tempdir ${out}/results
+		python3 Sim_SumStats.py ${randomgenes}/EUR_1KG_chr${chr}_${random_position} 500 EUR ${simgeno}/simulated_genotypes_EUR.csv 1 $index_causal $i $heritability $numafr $sumstatsdir $tempdir ${out} $threads
+		python3 Sim_SumStats.py ${randomgenes}/AMR_1KG_chr${chr}_${random_position} 500 AMR ${simgeno}/simulated_genotypes_AMR.csv 1 $index_causal $i $heritability $numafr $sumstatsdir $tempdir ${out} $threads
 
 		# prune out high LD snps to prevent SuSiE from large effect sizes, compute LD matrix
 	
@@ -142,6 +149,6 @@ for ((i=1; i<=1000; i++));do
 		# simulate AFR gene models with lasso 
 		# use MAGEPRO 
 		#python3 Sim_Model.py <path to plink files> <sample size> <population> <simulated genotypes> <sumstats> <populations> <number of causal snps> <index of causal> <simulation number> <heritability of gene> <temporary directory> <output directory>
-		python3 Sim_Model.py ${randomgenes}/AFR_1KG_chr${chr}_${random_position} $numafr AFR ${simgeno}/simulated_genotypes_AFR.csv ${sumstatsdir}/sumstats_EUR_susie.csv,${sumstatsdir}/sumstats_AMR_susie.csv EUR,AMR 1 $index_causal $i $heritability $tempdir ${out}/results
+		python3 Sim_Model.py ${randomgenes}/AFR_1KG_chr${chr}_${random_position} $numafr AFR ${simgeno}/simulated_genotypes_AFR.csv ${sumstatsdir}/sumstats_EUR_susie.csv,${sumstatsdir}/sumstats_AMR_susie.csv EUR,AMR 1 $index_causal $i $heritability $tempdir ${out} $threads
 	done
 done

@@ -578,8 +578,8 @@ load_flip_dataset <- function(bim, dataset, file, datasets_loaded, select, susie
 			} else {
 				table[k, 4] <- 0
 				if (susie){
-                                	table[k, 7] <- 0
-                                }
+                    table[k, 7] <- 0
+                }
 			}
 		}
 	}
