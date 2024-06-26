@@ -1,6 +1,46 @@
 expected_header <- "Gene SNP A1 A2 b SE P"
 suppressMessages(library('tools'))
 
+cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, cl_thresh, verbose) {
+	for (cohort in names(cohort_map)) {
+		cohort_data <- cohort_map[[cohort]]
+		cohort_path <- file.path(sumstats_dir, cohort)
+		tmp_path <- sub("/[^/]+/?$", "", tmp)
+		cohort_ld_directory <- file.path(tmp_path, paste0(cohort, "ld"))
+		cohort_ldref_path <- file.path(ldref_dir, cohort_data$ldref)
+
+		out_path <- sub("/[^/]+/?$", "", out)
+		out_cohort_path <- file.path(out_path, cohort)
+		# create directories for output and ld_matrix_path
+		make_ld_matrix_path <- paste0(
+			"mkdir -p ", cohort_ld_directory
+		)
+		make_output_path <- paste0(
+			"mkdir -p ", out_cohort_path
+		)
+		
+		system(make_ld_matrix_path, wait = TRUE)
+		system(make_output_path, wait = TRUE)
+
+		gene_txt <- paste0(trimws(gene), '.txt')
+
+		check <- file.path(cohort_path, gene_txt)
+		if (!file.exists(check)){
+			if (verbose == 2) {
+				cat("skipping sumstat", cohort, "for this gene\n")
+			}
+			next
+		}
+		path_to_fine_mapping_output <- gene_fine_mapping(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, PATH_plink, cl_thresh, out_cohort_path)
+		if (path_to_fine_mapping_output == "Error") {
+			next
+		}
+		assign(paste0("file.", cohort), path_to_fine_mapping_output, envir = .GlobalEnv)
+		cat("successfully fine mapped ", gene, " for ", cohort, "\n")
+	}
+}
+
+
 gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, plink, cl_thresh, out) {
 	file_path <- file.path(cohort_path, gene_txt)
 	if (trimws(readLines(file_path, n = 1)) != expected_header) {
@@ -62,16 +102,12 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 	" -o ", file.path(out, gene_txt)
 	)
 
-	print(paste0("rcommand: ", rcommand))
-
 	tryCatch({
 		system(rcommand, wait = TRUE)
 	}, error = function(e) {
 		cat("Error in R script command:", e$message, "\n")
 		return("Error")
 	})
-
-	cat("finished running gene_fine_mapping\n")
 
 	to_return <- file.path(out, gene_txt)
 

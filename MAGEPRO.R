@@ -516,8 +516,6 @@ weights.magepro = function(basemodel, wgts, geno, pheno, save_alphas) {
 	#1. format glmnet input
 	eq <- matrix(0, nrow = nrow(geno), ncol = ext+1)
 	eq[,1] <- geno %*% basemodel
-	print(paste0("weights vector: ", length(wgts), " ", wgts))
-	print(paste0("geno vector: ", geno))
 	
 	for (c in 1:length(wgts)){
 		eq[,(c+1)] <- geno %*%  eval(parse(text = wgts[c])) 
@@ -737,7 +735,7 @@ if ( ("META" %in% model | "PRSCSx" %in% model | "MAGEPRO" %in% model) ){
 	}
 }
 
-
+cohort_map <- list()
 if ("MAGEPRO" %in% model) {
 	if (!is.na(opt$ldref_dir)) {
 		if (!file.exists(opt$ldref_dir)) {
@@ -770,6 +768,17 @@ if ("MAGEPRO" %in% model) {
 				cleanup()
 				q()
 	}
+
+	ldrefs_list <- strsplit(opt$ldrefs, ",")[[1]]
+	sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
+
+	# create map with cohort as keys 
+	cohort_map <<- setNames(
+	lapply(seq_along(sumstats), function(i) {
+		list(sample_size = sample_sizes[i], ldref = ldrefs_list[i])
+	}),
+	sumstats
+	)
 }
 
 
@@ -1017,20 +1026,21 @@ if( (lasso_h2 < 0) | (is.na(lasso_h2)) ){
 # --- SETUP SUMSTATS
 ext <- length(datasets)
 
-# # --- READ SUMSTATS AND FLIP ALLELES AS NECESSARY
-# loaded_datasets <- c()
-# if (ext > 0){
-# 	select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
-# 	susie <- FALSE
-# 	if ( "MAGEPRO" %in% model ){
-# 		select_cols <- append(select_cols, c(opt$susie_pip, opt$susie_beta, opt$susie_cs))
-# 		susie <- TRUE
-# 	}
-# 	for (d in datasets){
-# 		name <- strsplit(d, split="[.]")[[1]][2]
-# 		loaded_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets, select_cols, susie)
-# 	}
-# }
+# --- READ SUMSTATS AND FLIP ALLELES AS NECESSARY
+loaded_datasets <- c()
+if (ext > 0){
+	select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
+	susie <- FALSE
+	if ( "MAGEPRO" %in% model ){
+		select_cols <- append(select_cols, c(8, 9, 10))
+		susie <- TRUE
+		cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out, opt$gene, opt$PATH_plink, opt$cl_thresh, opt$verbose)
+	}
+	for (d in datasets) {
+		name <- strsplit(d, split="[.]")[[1]][2]
+		loaded_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets, select_cols, susie)
+	}
+}
 
 # --- PREPARE SUMMARY STATISTICS FOR META AND MAGEPRO_fullsumstats
 if ( ("META" %in% model | "MAGEPRO_fullsumstats" %in% model)  & (ext > 0) ){
@@ -1100,40 +1110,9 @@ if ( ("MAGEPRO" %in% model) & (ext > 0) ){
 	}
 
 	wgt_magepro <- c() #magepro weights
-
-	for (cohort in names(cohort_map)) {
-		cat(paste0("Working on ", cohort, "\n"))
-		cohort_data <- cohort_map[[cohort]]
-		cohort_path <- file.path(opt$sumstats_dir, cohort)
-		tmp_path <- sub("/[^/]+/?$", "", opt$tmp)
-		cohort_ld_directory <- file.path(tmp_path, paste0(cohort, "ld"))
-		cohort_ldref_path <- file.path(opt$ldref_dir, cohort_data$ldref)
-
-		out_path <- sub("/[^/]+/?$", "", opt$out)
-
-		print(paste0("temporary path: ", tmp_path))
-		print(paste0("out path: ", out_path))
-
-		out_cohort_path <- file.path(out_path, cohort)
-		# create directories for output and ld_matrix_path
-		make_ld_matrix_path <- paste0(
-			"mkdir -p ", cohort_ld_directory
-		)
-		make_output_path <- paste0(
-			"mkdir -p ", out_cohort_path
-		)
-		
-		system(make_ld_matrix_path, wait = TRUE)
-		system(make_output_path, wait = TRUE)
-
-		gene_txt <- paste0(trimws(opt$gene), '.txt')
-		path_to_fine_mapping_output <- gene_fine_mapping(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, opt$PATH_plink, opt$cl_thresh, out_cohort_path)
-		if (path_to_fine_mapping_output == "Error") {
-			next
-		}
-		print(paste0("path_to_fine_mapping_output: ", path_to_fine_mapping_output))
-		fine_mapping_df <- fread(path_to_fine_mapping_output, header=TRUE, sep=" ", dec=".")
-		wgt_magepro <- datasets_process_susie(cohort, eval(parse(text=fine_mapping_df)), wgt_magepro)
+	for (loaded in loaded_datasets){
+        name <- strsplit(loaded, split="[.]")[[1]][2]
+        wgt_magepro <- datasets_process_susie(name, eval(parse(text = loaded)), wgt_magepro)
 	}
 
 	ext_magepro <- length(wgt_magepro)
