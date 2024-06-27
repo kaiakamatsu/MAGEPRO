@@ -2,12 +2,10 @@
 
 - gwas summary stats should already be processed - see GWAS_munge directory 
 
-- ld reference file are in-sample plink files
+- ld reference file used are in-sample plink-formatted genotype files
 
-- before running TWAS, run the following pipeline to get a summary of Rdat files 
-> 0_getRdatSummary.sh 
+- MAGEPRO gene model weights are made to be compatible with FUSION TWAS scripts. Please use the latest FUSION update. 
 
-- to set up weights and run TWAS 
-> 1_TWAS_main.sh
+**Main script: TWAS_pipeline.sh**
 
-- editted FUSION script to exclude META weights for our analysis 
+**Combining outputs across chromosomes and creating scp commands: combineOutput.sh**

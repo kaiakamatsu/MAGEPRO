@@ -1,7 +1,6 @@
 pop=$1
 
 pheno=(BAS HGB MCHC MPV RBC EOS LYM MCV NEU RDW HCT MCH MON PLT WBC)
-#pheno=(MCV)
 
 for c in "${pheno[@]}"; do
 	../../ldsc/munge_sumstats.py \
