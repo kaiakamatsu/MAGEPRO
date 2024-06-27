@@ -13,7 +13,7 @@
 #--- EDIT ABOVE TO SUIT YOUR HPC CLUSTER
 
 source ~/.bashrc
-conda activate r_py
+conda activate r_env
 
 #--- read command line arguments
 batch=$1
@@ -42,10 +42,13 @@ ldref_PRSCSx=${23}
 dir_PRSCSx=${24}
 phi_shrinkage_PRSCSx=${25}
 pops=${26}
-susie_pip=${27}
-susie_beta=${28}
-susie_cs=${29}
-impact_path=${30}
+impact_path=${27}
+ldref_dir=${28}
+ldrefs=${29}
+cl_thresh=${30}
+out_susie=${31}
+skip_susie=$(32)
+
 
 #--- create directory for temporary/working files 
 #--- NOTE: create "tmp" and "wd" where your system can write/delete files efficiently (EDIT TO SUIT YOUR HPC CLUSTER)
@@ -84,12 +87,10 @@ then
     mv $wd/$gene.mod.fam $wd/$gene.fam 
     TMP=$tmpdir/${gene}
     OUT=$weights/${gene}
-    Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq --ldref_pt $ldref_pt --prune_r2 $prune_r2 --threshold_p $threshold_p --ldref_PRSCSx $ldref_PRSCSx --dir_PRSCSx $dir_PRSCSx --phi_shrinkage_PRSCSx $phi_shrinkage_PRSCSx --pops $pops --susie_pip $susie_pip --susie_beta $susie_beta --susie_cs $susie_cs --impact_path ${impact_path}${chr}.txt
+    cmd="Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq --ldref_pt $ldref_pt --prune_r2 $prune_r2 --threshold_p $threshold_p --ldref_PRSCSx $ldref_PRSCSx --dir_PRSCSx $dir_PRSCSx --phi_shrinkage_PRSCSx $phi_shrinkage_PRSCSx --pops $pops --impact_path ${impact_path}${chr}.txt --ldref_dir ${ldref_dir} --ldrefs ${ldrefs} --cl_thresh ${cl_thresh} --out_susie ${out_susie} --skip_susie ${skip_susie}"
+    echo $cmd
+    $cmd
     rm $wd/$gene.* 
 fi
 
 done
-
-
-
-

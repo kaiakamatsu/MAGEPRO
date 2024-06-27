@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=2G
-#SBATCH -t 03:00:00
+#SBATCH -t 06:00:00
 #SBATCH -J MAGEPROsubmit
 #SBATCH -A csd832
 #SBATCH -o ../../working_err/MAGEPROsubmit.%j.%N.out
