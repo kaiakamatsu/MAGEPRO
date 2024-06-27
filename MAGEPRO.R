@@ -73,12 +73,6 @@ option_list = list(
               help="Shrinkage parameter for PRS-CSx"),
   make_option("--pops", action="store", default=NA, type='character',                               
 	      help="Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR)"),
-  make_option("--susie_pip", action="store", default=8, type='numeric',
-	      help="Column number in external datasets where susie pips are stored"),
-  make_option("--susie_beta", action="store", default=9, type='numeric',
-              help="Column number in external datasets where susie coefs are stored"),
-  make_option("--susie_cs", action="store", default=10, type='numeric',                                             
-	      help="Column number in external datasets where susie credible set groups are stored"),
   make_option("--impact_path", action="store", default=NA, type='character',
               help="path to file with impact scores for each snp"), 
   make_option("--ldref_dir", action="store", default=NA, type="character",
@@ -86,7 +80,9 @@ option_list = list(
   make_option("--ldrefs", action="store", default=NA, type="character",
   			  help="Comma-separated list of ld reference files (plink prefixes) used for susie fine mapping"),
   make_option("--cl_thresh", action="store", default=0.97, type="numeric",
-  			  help="Clumping threshold for plink to clump SNPs in summary statistics that are in high LD before running SuSiE [optional]")
+  			  help="Clumping threshold for plink to clump SNPs in summary statistics that are in high LD before running SuSiE [optional]"), 
+  make_option("--out_susie", action="store", default=NA, type='character',
+              help="Path to susie output directory [required if using MAGEPRO]")
 )
 
 # --- PARSE COMMAND LINE ARGS
@@ -526,13 +522,6 @@ weights.magepro = function(basemodel, wgts, geno, pheno, save_alphas) {
 	predtext <- "cf[1]*basemodel"
 	for (i in 2:(length(cf))){
 		predtext <- paste0(predtext, " + cf[", i, "]*", wgts[(i-1)])
-		#--- check why effect sizes are sometimes massive
-		if(save_alphas){
-			print(wgts[(i-1)])
-			print(max(abs(eval(parse(text = wgts[(i-1)])))))
-			print(cf[i])
-		}
-		#---
 	}
 	pred.wgt.magepro <- eval(parse(text = predtext))
 	if(length(pred.wgt.magepro) == 1){
@@ -725,9 +714,7 @@ if ( ("META" %in% model | "PRSCSx" %in% model | "MAGEPRO" %in% model) ){
                 	cleanup()
                 	q()
 		}
-		for (i in 1:length(sumstats)){
-			hashmap_ss[[sumstats[i]]] <- as.numeric(sample_sizes[i])
-		}
+		hashmap_ss <<- setNames(as.numeric(sample_sizes), sumstats)
 	}else{
 		cat( "ERROR: Cannot perform sample-size weighted meta-analysis or PRS-CSx without the --ss flag\n" , sep='', file=stderr() )
                 cleanup()
@@ -769,16 +756,18 @@ if ("MAGEPRO" %in% model) {
 				q()
 	}
 
-	ldrefs_list <- strsplit(opt$ldrefs, ",")[[1]]
-	sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
-
-	# create map with cohort as keys 
-	cohort_map <<- setNames(
-	lapply(seq_along(sumstats), function(i) {
-		list(sample_size = sample_sizes[i], ldref = ldrefs_list[i])
-	}),
-	sumstats
-	)
+	if (!is.na(opt$out_susie)) {
+		if (!file.exists(opt$out_susie)) {
+			cat( "ERROR: --out_susie directory does not exist, please check the path\n", sep='', file=stderr())
+			cleanup()
+			q()
+		}
+	} else {
+		cat( "ERROR: --out_susie not supplied, necessary to store susie outputs from MAGEPRO\n", sep='', file=stderr() )
+		cleanup()
+		q()
+	}
+	
 }
 
 
@@ -1034,7 +1023,7 @@ if (ext > 0){
 	if ( "MAGEPRO" %in% model ){
 		select_cols <- append(select_cols, c(8, 9, 10))
 		susie <- TRUE
-		cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out, opt$gene, opt$PATH_plink, opt$cl_thresh, opt$verbose)
+		cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out_susie, opt$gene, opt$PATH_plink, opt$cl_thresh, opt$verbose)
 	}
 	for (d in datasets) {
 		name <- strsplit(d, split="[.]")[[1]][2]
@@ -1062,7 +1051,7 @@ if ( ("META" %in% model | "MAGEPRO_fullsumstats" %in% model)  & (ext > 0) ){
 	total_ss_sumstats <- 0 
 	for (w in wgt_fullsumstats){
 		dataset <- strsplit(w, split="[.]")[[1]][3]
-		total_ss_sumstats = total_ss_sumstats + h[[dataset]]
+		total_ss_sumstats = total_ss_sumstats + hashmap_ss[[dataset]]
 	}
 
 }else{
@@ -1085,7 +1074,7 @@ if ( ("PRSCSx" %in% model) & (ext > 0) ){
 		name <- strsplit(loaded, split="[.]")[[1]][2]
 		datasets_process_prscsx( name, eval(parse(text = loaded)), PRS_CSx_working_dir)
 		input <- append(input, paste0(PRS_CSx_working_dir, name, ".txt"))
-		ss <- append(ss, h[[name]])
+		ss <- append(ss, hashmap_ss[[name]])
 		pp <- append(pp, pops[[name]])
 	}
 
@@ -1199,7 +1188,7 @@ for ( cv in 1:opt$crossval ) {
 	# SS-WEIGHTED META-ANALYSIS-------------------------------------------------------------
 	if ("META" %in% model){
 	if (ext_fullsumstats > 0){
-	pred.wgt.meta = weights.meta(pred.wgt, training_ss, wgt_fullsumstats, h, total_ss_cv)	
+	pred.wgt.meta = weights.meta(pred.wgt, training_ss, wgt_fullsumstats, hashmap_ss, total_ss_cv)	
 	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.meta 
 	pred_train_meta = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.meta))) 
         r2_training_meta = append(r2_training_meta, pred_train_meta$adj.r.sq)
@@ -1400,7 +1389,7 @@ colcount = colcount + 1
 if ("META" %in% model){
 if (ext_fullsumstats > 0){
 total_ss_full <- total_ss_sumstats + N.tot
-pred.wgt.metafull <- weights.meta(pred.wgtfull, N.tot, wgt_fullsumstats, h, total_ss_full)
+pred.wgt.metafull <- weights.meta(pred.wgtfull, N.tot, wgt_fullsumstats, hashmap_ss, total_ss_full)
 wgt.matrix[, colcount] = pred.wgt.metafull
 }else{
 wgt.matrix[, colcount] = NA

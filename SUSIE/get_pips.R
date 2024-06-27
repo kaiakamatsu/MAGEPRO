@@ -1,10 +1,8 @@
-library("optparse")
-library("susieR")
-library("data.table")
+suppressMessages(library("optparse"))
+suppressMessages(library("susieR"))
+suppressMessages(library("data.table"))
 
-suppressPackageStartupMessages({
-    library("Rfast")
-})
+suppressMessages({library("Rfast")})
 
 
 arg_parser <- function() {
@@ -48,9 +46,9 @@ R2 <- opt$l
 CGENE = paste0(GENES, opt$c)
 
 # read files
-df <- fread(CGENE, header=TRUE, sep=" ", dec=".")       # read in current gene
-colnames(df) = c("Gene", "SNP", "A1", "A2", "b", "SE", "P")
-ld_stats <- fread(R2, header=TRUE, sep=" ", dec=".")    # read in ld_stats
+df <- fread(CGENE, header=TRUE, dec=".")       # read in current gene
+colnames(df) = c("Gene", "SNP", "A1", "A2", "BETA", "SE", "P")
+ld_stats <- fread(R2, header=TRUE, dec=".")    # read in ld_stats
 
 # get unique SNPs that are both in ld matrix and gene file
 df <- df[df[[2]] %in% (union(ld_stats$SNP_A, ld_stats$SNP_B))]
@@ -86,5 +84,5 @@ df$cs <- cs
 output = opt$o
 df <- df[order(df$cs, decreasing = TRUE), ]
 
-colnames(df) = c("Gene", "SNP", "A1", "A2", "b", "SE", "P", "pip", "beta", "cs")
+colnames(df) = c("Gene", "SNP", "A1", "A2", "BETA", "SE", "P", "PIP", "POSTERIOR", "CS")
 fwrite(x=df, file=output, sep=" ", col.names=TRUE, row.names=FALSE, quote=FALSE)

@@ -1,29 +1,20 @@
-expected_header <- "Gene SNP A1 A2 b SE P"
+expected_header <- c("Gene", "SNP","A1", "A2", "BETA", "SE", "P")
 suppressMessages(library('tools'))
+suppressMessages(library('data.table'))
 
 cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, cl_thresh, verbose) {
 	for (cohort in names(cohort_map)) {
 		cohort_data <- cohort_map[[cohort]]
 		cohort_path <- file.path(sumstats_dir, cohort)
-		tmp_path <- sub("/[^/]+/?$", "", tmp)
-		cohort_ld_directory <- file.path(tmp_path, paste0(cohort, "ld"))
+		cohort_ld_directory <- file.path(tmp, paste0(cohort, "ld"))
 		cohort_ldref_path <- file.path(ldref_dir, cohort_data$ldref)
+		out_cohort_path <- file.path(out, cohort)
 
-		out_path <- sub("/[^/]+/?$", "", out)
-		out_cohort_path <- file.path(out_path, cohort)
 		# create directories for output and ld_matrix_path
-		make_ld_matrix_path <- paste0(
-			"mkdir -p ", cohort_ld_directory
-		)
-		make_output_path <- paste0(
-			"mkdir -p ", out_cohort_path
-		)
-		
-		system(make_ld_matrix_path, wait = TRUE)
-		system(make_output_path, wait = TRUE)
+		system(paste0("mkdir -p ", cohort_ld_directory), wait = TRUE)
+		system(paste0("mkdir -p ", out_cohort_path), wait = TRUE)
 
-		gene_txt <- paste0(trimws(gene), '.txt')
-
+		gene_txt <- paste0(gene, '.txt')
 		check <- file.path(cohort_path, gene_txt)
 		if (!file.exists(check)){
 			if (verbose == 2) {
@@ -35,7 +26,7 @@ cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, g
 		if (path_to_fine_mapping_output == "Error") {
 			next
 		}
-		assign(paste0("file.", cohort), path_to_fine_mapping_output, envir = .GlobalEnv)
+		assign(paste0("file.", cohort), path_to_fine_mapping_output, envir = .GlobalEnv) # reassign file path to the path to susie results
 		cat("successfully fine mapped ", gene, " for ", cohort, "\n")
 	}
 }
@@ -43,10 +34,11 @@ cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, g
 
 gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, plink, cl_thresh, out) {
 	file_path <- file.path(cohort_path, gene_txt)
-	if (trimws(readLines(file_path, n = 1)) != expected_header) {
-		stop(paste0("Error: Header in", file.path(cohort_path, gene_txt), "does not match the expected", expected_header, "format.\nMake sure all sumstat files have the expected header.\n"))
-		cleanup()
-		q()
+	if ( ! identical( colnames(fread(file_path, nrows = 0)), expected_header) ) {
+		cat( "WARNING: rewriting summary statistics file with correct headers. Dropping extra columns. Make sure statistics are in the correct order specified in README \n" , sep='', file=stderr() )
+		temp_df <- fread(file_path, select = ( c(1:length(expected_header)) ) )
+		colnames(temp_df) <- expected_header
+		write.table(temp_df, file = file_path, sep = ' ', quote = F, col.names = T, row.names = F)
 	}
 
 	gene <- file_path_sans_ext(gene_txt)
@@ -54,10 +46,9 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 	clump_cmd <- paste0(
 		plink, 
 		" --bfile ", cohort_ldref_path,
-		" --r2 inter-chr --ld-window-r2 0",
-		" --clump ", file.path(cohort_path, gene_txt),
+		" --clump ", file_path,
 		" --clump-p1 1 --clump-r2 ", cl_thresh,
-		" --extract ", file.path(cohort_path, gene_txt),
+		" --extract ", file_path,
 		" --out ", file.path(cohort_ld_directory, gene),
 		" > /dev/null 2> ", gene, "error.log"
 	)

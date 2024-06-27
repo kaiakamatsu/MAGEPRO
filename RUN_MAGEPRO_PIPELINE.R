@@ -77,12 +77,6 @@ option_list = list(
               help="Shrinkage parameter for PRS-CSx"),
   make_option("--pops", action="store", default=NA, type='character',                               
 	      help="Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR)"),
-  make_option("--susie_pip", action="store", default=8, type='numeric',
-	      help="Column number in external datasets where susie pips are stored"),
-  make_option("--susie_beta", action="store", default=9, type='numeric',
-              help="Column number in external datasets where susie coefs are stored"),
-  make_option("--susie_cs", action="store", default=10, type='numeric',                                             
-	      help="Column number in external datasets where susie credible set groups are stored"),
   make_option("--impact_path", action="store", default=NA, type='character',
               help="path to file with impact scores for each snp"),
   make_option("--ldref_dir", action="store", default=NA, type="character",
@@ -90,7 +84,9 @@ option_list = list(
   make_option("--ldrefs", action="store", default=NA, type="character",
   			  help="Comma-separated list of ld reference files (plink prefixes) used for susie fine mapping"),
   make_option("--cl_thresh", action="store", default=0.97, type="numeric",
-  			  help="Clumping threshold for plink to clump SNPs in summary statistics that are in high LD before running SuSiE [optional]")
+  			  help="Clumping threshold for plink to clump SNPs in summary statistics that are in high LD before running SuSiE [optional]"), 
+  make_option("--out_susie", action="store", default=NA, type='character',
+          help="Path to susie output directory [required if using MAGEPRO]")
 )
 
 opt = parse_args(OptionParser(option_list=option_list))
@@ -172,7 +168,7 @@ system( "mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRIN
 if ( opt$verbose >= 1 ) cat("### RUNNING JOBS \n")
 batches <- c(1:opt$num_batches)
 for (batch in batches){
-arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt, opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx, opt$phi_shrinkage_PRSCSx, opt$pops, opt$susie_pip, opt$susie_beta, opt$susie_cs, opt$impact_path, opt$ldref_dir, opt$ldrefs, opt$cl_thresh, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
+arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt, opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx, opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$ldref_dir, opt$ldrefs, opt$cl_thresh, opt$out_susie, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 }
 
