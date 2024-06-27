@@ -4,10 +4,10 @@ suppressMessages(library('plink2R'))
 suppressMessages(library('glmnet'))
 suppressMessages(library('data.table'))
 suppressMessages(library('dplyr'))
+suppressMessages(library('susieR'))
 
 source(('fine_mapping.R'), chdir = TRUE)
 
-# SuSiE R package will be loaded when we check input/outputs
 
 option_list = list(
   make_option("--gene", action="store", default=NA, type='character',
@@ -82,7 +82,9 @@ option_list = list(
   make_option("--cl_thresh", action="store", default=0.97, type="numeric",
   			  help="Clumping threshold for plink to clump SNPs in summary statistics that are in high LD before running SuSiE [optional]"), 
   make_option("--out_susie", action="store", default=NA, type='character',
-              help="Path to susie output directory [required if using MAGEPRO]")
+              help="Path to susie output directory [required if using MAGEPRO and not skipping susie]"), 
+  make_option("--skip_susie", action="store_true", default=FALSE,
+              help="Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from susie")
 )
 
 # --- PARSE COMMAND LINE ARGS
@@ -706,7 +708,7 @@ if ( ! is.na(opt$sumstats)){
 }
 
 hashmap_ss <- list() #hashmap for sample sizes per dataset
-if ( ("META" %in% model | "PRSCSx" %in% model | "MAGEPRO" %in% model) ){
+if ( ("META" %in% model | "PRSCSx" %in% model |  ("MAGEPRO" %in% model & !opt$skip_susie) ) ){
 	if (!is.na(opt$ss)){
 		sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
 		if (length(sumstats) != length(sample_sizes)){
@@ -723,8 +725,8 @@ if ( ("META" %in% model | "PRSCSx" %in% model | "MAGEPRO" %in% model) ){
 }
 
 cohort_map <- list()
-if ("MAGEPRO" %in% model) {
-	if (!is.na(opt$ldref_dir)) {
+if ("MAGEPRO" %in% model & (!opt$skip_susie) ) {
+	if ( !is.na(opt$ldref_dir) ) {
 		if (!file.exists(opt$ldref_dir)) {
 			cat( "ERROR: --ldref_dir directory does not exist, please check the path\n", sep='', file=stderr())
 			cleanup()
@@ -832,8 +834,6 @@ if ( "PRSCSx" %in% model ){
 
 
 if ( "SuSiE" %in% model | "SuSiE_IMPACT" %in% model ){
-
-	suppressMessages(library('susieR'))
 	if ( "SuSiE_IMPACT" %in% model ){
 		if(is.na(opt$impact_path)){
 			cat( "ERROR: Cannot perform SuSiE_IMPACT without the --impact_path flag\n" , sep='', file=stderr() )
@@ -1023,7 +1023,9 @@ if (ext > 0){
 	if ( "MAGEPRO" %in% model ){
 		select_cols <- append(select_cols, c(8, 9, 10))
 		susie <- TRUE
-		cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out_susie, opt$gene, opt$PATH_plink, opt$cl_thresh, opt$verbose)
+		if (!opt$skip_susie){
+			cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out_susie, opt$gene, opt$PATH_plink, opt$cl_thresh, opt$verbose)
+		}
 	}
 	for (d in datasets) {
 		name <- strsplit(d, split="[.]")[[1]][2]

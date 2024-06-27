@@ -11,6 +11,10 @@ Packages:
 - glmnet_4.1-7
 - optparse_1.7.3
 - plink2R_1.1
+- dplyr_1.1.2
+- susieR_0.12.35
+- tools_4.3.0
+- Rfast_2.1.0
   > install.packages("devtools")
   
   > library(devtools)
