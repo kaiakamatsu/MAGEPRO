@@ -92,10 +92,10 @@ if coef[CAUSAL] != 0:
 
 
 #write results
-filename = out_results + "/eur_h2_causal_" + str(samplesize_target) + "_h" + str(set_h2) + ".csv"
-eur_h2_causal = pd.DataFrame({'sim': sim, 'eur_h2': h2g, 'eur_lasso_casual': lasso_causal_nonzero, 'eur_r2': r2all}, index=[0])
+filename = out_results + "/" + pop + "_h2_causal_" + str(samplesize_target) + "_h" + str(set_h2) + ".csv"
+h2_causal = pd.DataFrame({'sim': sim, 'h2': h2g, 'lasso_casual': lasso_causal_nonzero, 'r2': r2all}, index=[0])
 if sim == 1:
-    eur_h2_causal.to_csv(filename, sep="\t", index=False, header = True)
+    h2_causal.to_csv(filename, sep="\t", index=False, header = True)
 else:
-    eur_h2_causal.to_csv(filename, sep="\t", index=False, header = False, mode='a')
+    h2_causal.to_csv(filename, sep="\t", index=False, header = False, mode='a')
 

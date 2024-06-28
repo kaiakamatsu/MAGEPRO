@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -p shared
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=2
+#SBATCH --ntasks-per-node=1
 #SBATCH --mem=4G
 #SBATCH -t 20:00:00
 #SBATCH -J runsims
@@ -21,8 +21,8 @@ afr_geno_prefix=$4
 amr_geno_prefix=$5
 threads=$6
 out=$7
-#temp=/scratch/$USER/job_$SLURM_JOBID
-temp=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_sims_scratch
+temp=/scratch/$USER/job_$SLURM_JOBID
+#temp=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_sims_scratch
 
 echo "running simulations with $numafr AFR individuals and a gene with heritability $heritability"
 
