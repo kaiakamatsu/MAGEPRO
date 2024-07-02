@@ -6,14 +6,18 @@ heritability=(0.03 0.05 0.1 0.2)
 eur_geno_prefix=/expanse/lustre/projects/ddp412/kakamatsu/ldref/eur/1000G_eur_chr
 afr_geno_prefix=/expanse/lustre/projects/ddp412/kakamatsu/ldref/afr/1000G_afr_chr
 amr_geno_prefix=/expanse/lustre/projects/ddp412/kakamatsu/ldref/amr/1000G_amr_chr
-out=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations
+threads=16
 
-out_results=${out}/results_LD
-rm -rf $out_results
-mkdir $out_results
-
-for h in "${heritability[@]}"; do
-    	
-    sbatch batch_sim_LD1000genes.sh $afr_sizes $h $eur_geno_prefix $afr_geno_prefix $amr_geno_prefix $out
-
+jobs=(1 2 3 4 5 6 7 8 9 10)
+for job in "${jobs[@]}"; do
+    out=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations_highLD${job}
+    rm -rf $out
+    mkdir $out
+    out_results=${out}/results
+    rm -rf $out_results
+    mkdir $out_results
+    for h in "${heritability[@]}"; do
+        sbatch batch_sim_LD1000genes.sh $afr_sizes $h $eur_geno_prefix $afr_geno_prefix $amr_geno_prefix $threads $out_results
+    done
 done
+

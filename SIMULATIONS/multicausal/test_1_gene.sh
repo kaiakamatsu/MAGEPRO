@@ -8,13 +8,14 @@ afr_geno_prefix=/expanse/lustre/projects/ddp412/kakamatsu/ldref/afr/1000G_afr_ch
 amr_geno_prefix=/expanse/lustre/projects/ddp412/kakamatsu/ldref/amr/1000G_amr_chr
 out=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_simulations_testing
 threads=16
+num_causal=2
 
-out_results=${out}/results
+out_results=${out}/results_multi
 rm -rf $out_results
 mkdir $out_results
 
 for h in "${heritability[@]}"; do
     	
-    bash batch_sim_1000genes.sh $afr_sizes $h $eur_geno_prefix $afr_geno_prefix $amr_geno_prefix $threads $out_results
+    bash batch_sim_multi1000genes.sh $afr_sizes $h $eur_geno_prefix $afr_geno_prefix $amr_geno_prefix $num_causal $threads $out_results
 
 done

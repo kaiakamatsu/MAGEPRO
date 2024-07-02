@@ -51,7 +51,7 @@ z_eqtl = np.array(pd.read_csv(genotype_file, sep = "\t", header = None))
 # --- SIMULATE CAUSAL EFFECT SIZES 
 #causal eqtl effect sizes; matrix dim = snps x 1 gene
 #if our sim only has 1 gene, then we just need a simple vector of mostly zeros and 1 nonzero effect size if 1 causal variant. 
-#draw from mean 0 var = 0.05 if 1 causal variant, draw from mean 0 var = h2g/sqrt(#causal sps) if more than 1 causal variant. 
+#draw from mean 0 var = 0.05 if 1 causal variant, draw from mean 0 var = h2g/#causal sps if more than 1 causal variant. 
 betas = sim_effect_sizes(set_h2, set_num_causal, bim.shape[0], CAUSAL)
 b_qtls = np.array(betas) 
 b_qtls = np.reshape(b_qtls.T, (bim.shape[0], 1))

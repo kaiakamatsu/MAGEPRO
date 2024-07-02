@@ -30,12 +30,12 @@ snp_list <- df[[1]]
 ld_matrix <- matrix(NA, nrow = length(snp_list), ncol = length(snp_list), dimnames = list(snp_list, snp_list))
 index_A <- match(ld_stats$SNP_A, snp_list)
 index_B <- match(ld_stats$SNP_B, snp_list)
-ld_matrix[cbind(index_A, index_B)] <- ld_stats$R2
-ld_matrix[cbind(index_B, index_A)] <- ld_stats$R2
+ld_matrix[cbind(index_A, index_B)] <- ld_stats$R
+ld_matrix[cbind(index_B, index_A)] <- ld_stats$R
 diag(ld_matrix) <- 1
 
 # run susie
-res <- susie_rss(bhat=df[[4]], shat=df[[5]], R=ld_matrix, n=opt$ss, max_iter=250)
+res <- susie_rss(bhat=df[[4]], shat=df[[5]], R=ld_matrix, n=opt$ss)
 
 # create credible set column
 cs <- rep(-1, length(df[[5]]))

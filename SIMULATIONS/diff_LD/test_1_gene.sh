@@ -15,6 +15,6 @@ mkdir $out_results
 
 for h in "${heritability[@]}"; do
     	
-    bash batch_sim_1000genes.sh $afr_sizes $h $eur_geno_prefix $afr_geno_prefix $amr_geno_prefix $threads $out_results
+    bash batch_sim_LD1000genes.sh $afr_sizes $h $eur_geno_prefix $afr_geno_prefix $amr_geno_prefix $threads $out_results
 
 done
