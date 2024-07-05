@@ -100,6 +100,19 @@ MAGEPRO utilizes external eQTL summary statistics to improve gene models trained
 | --verbose | How much chatter to print: 0=nothing; 1=minimal; 2=all (default 1) |
 | --noclean | Do not delete any temporary files (default FLASE) |
 | --save_hsq | Save heritability results even if weights are not computed (default FALSE) |
+| --ldref_pt | Path to LD reference file for pruning and thresholding, prefix of plink formatted files (assumed to be split by chr), ex. path/file_chr for path/file_chr1.bed/bim/fam |
+| --prune_r2 | Pruning threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation |
+| --threshold_p | p-value threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation |
+| --ldref_PRSCSx | Path to LD reference directory for PRS-CSx, made available by PRS-CSx github |
+| --dir_PRSCSx | Path to PRS-CSx directory, containing executable (github repo) (default PRScsx) |
+| --phi_shrinkage_PRSCSx | Shrinkage parameter for PRS-CSx (default 1e-6)|
+| --pops | Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR) |
+| --impact_path | path to file with impact scores for each snp |
+| --ldref_dir | Directory containing ld reference files used for SuSiE fine mapping |
+| --ldrefs | Directory containing ld reference files used for SuSiE fine mapping |
+| --out_susie   | Path to susie output directory [required if using MAGEPRO and not skipping SuSiE]|
+| --skip_susie  | Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from susie (default FALSE) |
+
 
 ## Output format
 MAGEPRO saves the output as a RData file which can be loaded into another R script with...
@@ -148,7 +161,7 @@ Example:
 - Tab-delimited matrix (.txt) with the first row containing sample IDs and all other rows for covariates
 
 | ID | SAMPLE1 | SAMPLE2 | SAMPLE3 | (the rest of the columns are sample IDs) | 
-| ---- | ----- | ---- | ----- | ---- |
+| -- | ------- | ------- | ------- | ---------------------------------------- |
 | PC1 | XXXX | XXXX | XXXX | (PC1 for rest of samples) | 
 | PC2 | XXXX | XXXX | XXXX | (PC2 for rest of samples) | 
 
@@ -159,6 +172,19 @@ Example:
 ### Genotype data format
 - plink bed/bim/fam files
 - described here: https://www.cog-genomics.org/plink/1.9/formats
+
+### eQTL Summary Statistics data format
+- Table (.txt) with the following column order:
+
+| Gene | SNP | A1 | A2 | BETA | SE | P |
+| ---- | --- | -- | -- | ---- | -- | - |
+| ENSGXXXXX | rXXXX | X | X | X | X | X |
+
+- If you wish to run `RUN_MAGEPRO_PIPELINE.R` with `--skip_susie` parameter, make sure your table follows the format below, where PIP, POSTERIOR (estimated beta) – return values from SuSiE, CS – credible set number returned by SuSiE:
+
+| Gene | SNP | A1 | A2 | BETA | SE | P | PIP | POSTERIOR | CS |
+| ---- | --- | -- | -- | ---- | -- | - | --- | --------- | -- |
+| ENSGXXXXX | rXXXX | X | X | X | X | X | X | X | X |
 
 ## QUICKSTART: Typical application of MAGEPRO on GTEx Tissues
 
@@ -247,12 +273,11 @@ If you would like to run MAGEPRO on one gene, it is possible to run MAGEPRO.R se
 | **--tmp** | Path to store temporary files |
 | --sumstats_dir | Path to external datasets (required if using MAGEPRO or META models) |
 | --sumstats | Comma-separated list of external datasets to include (required if using MAGEPRO or META models) |
-| --model | Comma-separated list of models to use. Options: "SINGLE" "META" and "MAGEPRO" (default SINGLE,META,MAGEPRO) |
+| --models | Comma-separated list of models to use. Options: "SINGLE" "META" and "MAGEPRO" (default SINGLE,META,MAGEPRO) |
 | --ss | Comma-separated list of sample sizes of sumstats in the same order as --sumstats (required if using "META" model or --cell_type_meta) |
-| --cell_meta  | Comma-separated list of prefixes of eqtl datasets to cell type meta-analyze (--ss required) |
 | --pheno | Path to molecular phenotype file in PLINK format (taken from bfile otherwise) |
 | --PATH_plink | Path to plink executable (default "plink") |
-| --PATH-gcta | Path to gcta executable (default "gcta_nr_robust") |
+| --PATH_gcta | Path to gcta executable (default "gcta_nr_robust") |
 | --covar | Path to quantitative covariates in PLINK format (optional) |
 | --resid | Also regress the covariates out of the genotypes (default FALSE) |
 | --hsq_p | Minimum heritability p-value for which to compute weights (default 0.01, significantly heritable) |
@@ -262,6 +287,18 @@ If you would like to run MAGEPRO on one gene, it is possible to run MAGEPRO.R se
 | --verbose | How much chatter to print: 0=nothing; 1=minimal; 2=all (default 1) |
 | --noclean | Do not delete any temporary files (default FLASE) |
 | --save_hsq | Save heritability results even if weights are not computed (default FALSE) |
+| --ldref_pt | Path to LD reference file for pruning and thresholding, prefix of plink formatted files (assumed to be split by chr) ex. path/file_chr for path/file_chr1.bed/bim/fam |
+| --prune_r2 | Pruning threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation |
+| --threshold_p | p-value threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation |
+| --ldref_PRSCSx | Path to LD reference directory for PRS-CSx, made available by PRS-CSx github |
+| --dir_PRSCSx | Path to PRS-CSx directory, containing executable (github repo) (default PRScsx)|
+| --phi_shrinkage_PRSCSx | Shrinkage parameter for PRS-CSx (default 1e-6)|
+| --pops | Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR)|
+| --impact_path | Path to file with impact scores for each SNP |
+| --ldref_dir | Directory containing LD reference files used for SuSiE fine mapping|
+| --ldrefs | Comma-separated list of LD reference files (plink prefixes) used for SuSiE fine mapping |
+| --out_susie | Path to SuSiE output directory [required if using MAGEPRO and not skipping SuSiE] |
+| --skip_susie | Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from SuSiE (default=FALSE) |
 
 ## Directories 
 
@@ -275,6 +312,7 @@ If you would like to run MAGEPRO on one gene, it is possible to run MAGEPRO.R se
 | PROCESS_RESULTS | Scripts to process and summarize gene model performance |
 | SIMULATIONS | Scripts for testing MAGEPRO in simulation
 | SUPPLEMENTAL_ANALYSIS | All other supplementary analysis |
+| FUNCTIONS | Contains functions used by MAGEPRO.R |
 | TWAS | Transcriptome-wide association studies using MAGEPRO gene models |
 | VALIDATE_MODELS | Validating MAGEPRO gene models | 
 | test_1gene | Scripts for testing |

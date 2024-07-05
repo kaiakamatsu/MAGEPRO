@@ -6,7 +6,7 @@ suppressMessages(library('data.table'))
 suppressMessages(library('dplyr'))
 suppressMessages(library('susieR'))
 
-source(('SUSIE/fine_mapping.R'), chdir = TRUE) # scripts to run susie on external summary statistics for MAGEPRO
+source(('FUNCTIONS/fine_mapping.R'), chdir = TRUE) # scripts to run susie on external summary statistics for MAGEPRO
 source(('FUNCTIONS/model_functions.R'), chdir = TRUE) # R functions for gene models
 source(('FUNCTIONS/dataset_processing_functions.R'), chdir = TRUE) # R functions for processing summary statistics for MAGEPRO
 
@@ -77,11 +77,9 @@ option_list = list(
   make_option("--impact_path", action="store", default=NA, type='character',
               help="path to file with impact scores for each snp"), 
   make_option("--ldref_dir", action="store", default=NA, type="character",
-  			  help="Directory containing ld reference files used for susie fine mapping"),
+  			  help="Directory containing ld reference files used for SuSiE fine mapping"),
   make_option("--ldrefs", action="store", default=NA, type="character",
-  			  help="Comma-separated list of ld reference files (plink prefixes) used for susie fine mapping"),
-  make_option("--cl_thresh", action="store", default=0.97, type="numeric",
-  			  help="Clumping threshold for plink to clump SNPs in summary statistics that are in high LD before running SuSiE [optional]"), 
+  			  help="Comma-separated list of ld reference files (plink prefixes) used for SuSiE fine mapping"),
   make_option("--out_susie", action="store", default=NA, type='character',
               help="Path to susie output directory [required if using MAGEPRO and not skipping susie]"), 
   make_option("--skip_susie", action="store_true", default=FALSE,
@@ -489,8 +487,8 @@ if (ext > 0){
 	if ( "MAGEPRO" %in% model ){
 		select_cols <- append(select_cols, c(8, 9, 10))
 		susie <- TRUE
-		if (!opt$skip_susie){
-			cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out_susie, opt$gene, opt$PATH_plink, opt$cl_thresh, opt$verbose)
+		if (!opt$skip_susie) {
+			cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out_susie, opt$gene, opt$PATH_plink, opt$verbose)
 		}
 	}
 	for (d in datasets) {

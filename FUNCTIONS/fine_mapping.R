@@ -1,0 +1,96 @@
+expected_header <- c("Gene", "SNP", "A1", "A2", "BETA", "SE", "P")
+suppressMessages(library('tools'))
+suppressMessages(library('data.table'))
+
+cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, verbose) {
+	# PURPOSE: run fine_mapping on each on a gene in specified and available cohorts
+	# PREREQ: cohort_map – map containing information about sample_size and ldref file for the cohort
+	# Every other parameter description can be found in MAGEPRO.R option_list.
+	for (cohort in names(cohort_map)) {
+		cohort_data <- cohort_map[[cohort]]
+		cohort_path <- file.path(sumstats_dir, cohort)
+		cohort_ld_directory <- file.path(tmp, paste0(cohort, "ld"))
+		cohort_ldref_path <- file.path(ldref_dir, cohort_data$ldref)
+		out_cohort_path <- file.path(out, cohort)
+
+		# create directories for output and ld_matrix_path
+		system(paste0("mkdir -p ", cohort_ld_directory), wait = TRUE)
+		system(paste0("mkdir -p ", out_cohort_path), wait = TRUE)
+
+		gene_txt <- paste0(gene, '.txt')
+		check <- file.path(cohort_path, gene_txt)
+		if (!file.exists(check)){
+			if (verbose == 2) {
+				cat("skipping sumstat", cohort, "for this gene\n")
+			}
+			next
+		}
+		path_to_fine_mapping_output <- gene_fine_mapping(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, PATH_plink, out_cohort_path, verbose)
+		if (path_to_fine_mapping_output == "Error") {
+			next
+		}
+		assign(paste0("file.", cohort), path_to_fine_mapping_output, envir = .GlobalEnv) # reassign file path to the path to susie results
+		cat("successfully fine mapped ", gene, " for ", cohort, "\n")
+	}
+}
+
+
+gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, plink, out, verbose) {
+	# PURPOSE: create correlation matrix for each gene for given cohort, then perform fine-mapping with susie_rss in get_pips.R
+	# PREREQs: 
+	# 	cohort – current cohort string;  
+	#	cohort_data – vector containing information about sample size and ldref
+	# 	cohort_path – file path containing information about curent cohort
+	# 	cohort_ld_directory – path to temporary folder storing correlation matrix information
+	#   cohort_ldref_path – path to ld reference file
+	# Every other parameter description can be found in MAGEPRO.R option_list.
+	# RETURN: file path to the gene output
+	file_path <- file.path(cohort_path, gene_txt)
+	if ( ! identical( colnames(fread(file_path, nrows = 0)), expected_header) ) {
+		cat( "WARNING: rewriting summary statistics file with correct headers. Dropping extra columns. Make sure statistics are in the correct order specified in README \n" , sep='', file=stderr() )
+		temp_df <- fread(file_path, select = ( c(1:length(expected_header)) ) )
+		colnames(temp_df) <- expected_header
+		write.table(temp_df, file = file_path, sep = ' ', quote = F, col.names = T, row.names = F)
+	}
+
+	gene <- file_path_sans_ext(gene_txt)
+	
+	is_verbose <- ifelse(verbose >= 2, "", " > /dev/null ")
+	get_ld_cmd <- paste0(
+		plink,
+		" --bfile ", cohort_ldref_path,
+		" --r inter-chr --ld-window-r2 0 --keep-allele-order",
+		" --extract ", file_path,
+		" --out ", file.path(cohort_ld_directory, gene),
+		is_verbose
+	)
+
+	to_return <- file.path(out, gene_txt)
+	exit_status <- system(get_ld_cmd, wait = TRUE, intern= !(verbose >= 2))
+
+	if (exit_status != 0) {
+		to_return <- "Error"
+		cat("Error in get_ld command for ", gene, " in ", cohort, ". Moving to next cohort...\n", file=stderr())
+
+		return(to_return)
+	}
+
+	rcommand <- paste0("Rscript FUNCTIONS/get_pips.R -g ", cohort_path, "/",
+	" -c ", gene_txt, 
+	" -l ", file.path(cohort_ld_directory, paste0(gene, ".ld")),
+	" -n ", cohort_data$sample_size,
+	" -o ", out,
+	" -b ", paste0(cohort_ldref_path, ".bim")
+	)
+
+	result <- system(rcommand, wait = TRUE)
+
+	if (result != 0) {
+		to_return <- "Error"
+		cat("Error in R script command for ", gene, " in ", cohort, ". Moving to next cohort...\n", file=stderr())
+		return(to_return)
+	}
+
+
+	return(to_return)
+}
