@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse as ap
 import sys
 import numpy as np
@@ -21,6 +22,10 @@ from os import path
 import statsmodels.api as sm
 from statsmodels.stats.multitest import multipletests
 from sklearn.linear_model import LinearRegression
+
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
 from magepro_simulations_functions import * # SEE HERE FOR ALL FUNCTION CALLS
 
 mvn = stats.multivariate_normal
@@ -31,7 +36,7 @@ samplesizes = int(args[2]) # number of people to simulated genotypes for
 pop = args[3] #population
 genotype_file = args[4] #path to simulated genotypes
 set_num_causal = int(args[5]) #how many causal variants?
-CAUSAL = int(args[6]) #index of causal variant
+CAUSAL = [ int(index) for index in args[6].split(',') ] #indices of causal variants
 sim = int(args[7]) #iteration of simulation
 set_h2 = float(args[8]) #predetermined h2g
 samplesize_target = int(args[9]) #sample size
@@ -86,10 +91,7 @@ sumstats = pd.DataFrame({'SNP':bim[:,1], 'A1': bim[:,4], 'A2': bim[:,5], 'BETA':
 filename = out_sumstat + "/sumstats_" + pop + ".csv"
 sumstats.to_csv(filename, sep="\t", index=False, header = True)
 
-lasso_causal_nonzero = 0 # 0 = causal variant has 0 weight in lasso gene model. 1 for nonzero
-if coef[CAUSAL] != 0:
-    lasso_causal_nonzero = 1
-
+lasso_causal_nonzero = len([index for index in CAUSAL if coef[index] != 0]) #number of nonzero causal variants 
 
 #write results
 filename = out_results + "/" + pop + "_h2_causal_" + str(samplesize_target) + "_h" + str(set_h2) + ".csv"
@@ -98,4 +100,3 @@ if sim == 1:
     h2_causal.to_csv(filename, sep="\t", index=False, header = True)
 else:
     h2_causal.to_csv(filename, sep="\t", index=False, header = False, mode='a')
-

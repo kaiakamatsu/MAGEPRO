@@ -87,8 +87,6 @@ do
 			break
 		fi
 	done	
-	
-	# --- NOT EDITTED BELOW
 
 	#choose a snp randomly as causal 
 	small_snps=$((EUR_variants_random_gene < AFR_variants_random_gene ? EUR_variants_random_gene : AFR_variants_random_gene))
@@ -136,8 +134,8 @@ do
 
 		# simulate eqtl analysis to produce EUR full sum stats 
 		#python3 Sim_SumStats.py <path to plink files> <sample size> <population> <simulated genotypes> <number of causal snps> <index of causal> <simulation number> <heritability of gene> <sample size of target pop> <sumstats dir> <tempdir> <outdir> <threads>
-		python3 Sim_SumStats_multi.py ${randomgenes}/EUR_1KG_chr${chr}_${random_position} 500 EUR ${simgeno}/simulated_genotypes_EUR.csv $num_causal $index_causal $i $heritability $numafr $sumstatsdir $tempdir ${out} $threads
-		python3 Sim_SumStats_multi.py ${randomgenes}/AMR_1KG_chr${chr}_${random_position} 500 AMR ${simgeno}/simulated_genotypes_AMR.csv $num_causal $index_causal $i $heritability $numafr $sumstatsdir $tempdir ${out} $threads
+		python3 ../Sim_SumStats.py ${randomgenes}/EUR_1KG_chr${chr}_${random_position} 500 EUR ${simgeno}/simulated_genotypes_EUR.csv $num_causal $causal_indices $i $heritability $numafr $sumstatsdir $tempdir ${out} $threads
+		python3 ../Sim_SumStats.py ${randomgenes}/AMR_1KG_chr${chr}_${random_position} 500 AMR ${simgeno}/simulated_genotypes_AMR.csv $num_causal $causal_indices $i $heritability $numafr $sumstatsdir $tempdir ${out} $threads
 		
 		# EUR
 		#/expanse/lustre/projects/ddp412/kakamatsu/plink --bfile ${randomgenes}/EUR_1KG_chr${chr}_${random_position} --clump ${sumstatsdir}/sumstats_EUR.csv --clump-p1 1 --clump-r2 0.97 --out ${sumstatsdir}/EUR_1KG_chr${chr}_${random_position}_pruned
@@ -159,6 +157,6 @@ do
 		# simulate AFR gene models with lasso 
 		# use MAGEPRO 
 		#python3 Sim_Model_multi.py <path to plink files> <sample size> <population> <simulated genotypes> <sumstats> <populations> <number of causal snps> <index of causal> <simulation number> <heritability of gene> <temporary directory> <output directory> <threads>
-		python3 Sim_Model_multi.py ${randomgenes}/AFR_1KG_chr${chr}_${random_position} $numafr AFR ${simgeno}/simulated_genotypes_AFR.csv ${sumstatsdir}/sumstats_EUR_susie.csv,${sumstatsdir}/sumstats_AMR_susie.csv EUR,AMR $num_causal $index_causal $i $heritability $tempdir ${out} $threads
+		python3 ../Sim_Model.py ${randomgenes}/AFR_1KG_chr${chr}_${random_position} $numafr AFR ${simgeno}/simulated_genotypes_AFR.csv ${sumstatsdir}/sumstats_EUR_susie.csv,${sumstatsdir}/sumstats_AMR_susie.csv EUR,AMR $num_causal $causal_indices $i $heritability $tempdir ${out} $threads
 	done
 done

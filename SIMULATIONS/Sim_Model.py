@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import argparse as ap
 import sys
 import numpy as np
@@ -26,7 +25,10 @@ from sklearn.metrics import r2_score
 import statsmodels.api as sm
 from statsmodels.stats.multitest import multipletests
 from sklearn.linear_model import LinearRegression
-import os
+
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
 from magepro_simulations_functions import * # SEE HERE FOR ALL FUNCTION CALLS
 
 mvn = stats.multivariate_normal
@@ -41,7 +43,7 @@ sumstats_files = sumstats_file.split(',')
 population_sumstat = args[6]
 populations_sumstat = population_sumstat.split(',') # comma separated list of ancestries of sumstats
 set_num_causal = int(args[7]) #number of causal snps
-CAUSAL = int(args[8]) # index of causal snp
+CAUSAL = [ int(index) for index in args[8].split(',') ] # indices of causal snps
 sim = int(args[9]) #iteration of simulation
 set_h2 = float(args[10]) #predetermiend h2g
 temp_dir = args[11] #temporary directory for gcta
@@ -59,10 +61,11 @@ z_eqtl = np.array(pd.read_csv(genotype_file, sep = "\t", header = None))
 # --- SIMULATE CAUSAL EFFECT SIZES 
 #causal eqtl effect sizes; matrix dim = snps x 1 gene
 #if our sim only has 1 gene, then we just need a simple vector of mostly zeros and 1 nonzero effect size if 1 causal variant. 
-#draw from mean 0 var = 0.05 if 1 causal variant, draw from mean 0 var = h2g/sqrt(#causal sps) if more than 1 causal variant. 
+#draw from mean 0 var = 0.05 if 1 causal variant, draw from mean 0 var = h2g/#causal sps if more than 1 causal variant. 
 #make sure to pick a 1 mb region with enough snps (maybe > 30?) up to you! 
 betas = sim_effect_sizes(set_h2, set_num_causal, bim.shape[0], CAUSAL)
-beta_causal = betas[CAUSAL]
+beta_causal_list = [ betas[i] for i in CAUSAL ]
+beta_causal = ','.join(map(str, beta_causal_list))
 b_qtls = np.array(betas)
 b_qtls = np.reshape(b_qtls.T, (bim.shape[0], 1))
 #print(b_qtls.shape)
@@ -87,8 +90,6 @@ prscsx_working_dir=temp_dir+"/PRSCSx/"
 prscsx_weights = PRSCSx_shrinkage(executable_dir, ld_reference_dir, prscsx_working_dir, sumstats_file, "500,500" , population_sumstat, bim, 1e-7)
 prscsx_r2, prscsx_coef = prscsx_cv(samplesizes, z_eqtl, gexpr, prscsx_weights, best_penalty)
 
-
-
 # --- PROCESS SUMMARY STATISTICS
 num_causal_susie = 0
 sumstats_weights = {}
@@ -96,9 +97,7 @@ for i in range(0,len(sumstats_files)):
     varname = populations_sumstat[i]+'weights'
     weights, pips = load_process_sumstats(sumstats_files[i], bim)
     sumstats_weights[varname] = weights
-    if pips[CAUSAL] >= 0.95:
-        num_causal_susie = num_causal_susie + 1
-
+    num_causal_susie += len([index for index in CAUSAL if pips[index] >= 0.95])
 
 # --- RUN CV MAGEPRO 
 magepro_r2, magepro_coef = magepro_cv(samplesizes, z_eqtl, gexpr, sumstats_weights, best_penalty)
@@ -112,23 +111,20 @@ print(r2all)
 
 # --- POPULATE OUTPUTS
 #coef = afr lasso model gene model 
-lasso_causal_nonzero = 0 # 0 for causal has 0 weight in lasso gene model. 1 for nonzero
-if coef[CAUSAL] != 0:
-    lasso_causal_nonzero = 1
+lasso_causal_nonzero = len([index for index in CAUSAL if coef[index] != 0])
 #magepro_coef = magepro gene model 
-magepro_causal_nonzero = 0 # 0 for causal has 0 weight in magepro gene model. 1 for nonzero
-if magepro_coef[CAUSAL] != 0:
-    magepro_causal_nonzero = 1
+magepro_causal_nonzero = len([index for index in CAUSAL if magepro_coef[index] != 0])
 #prscsx_coef = prscsx gene model
-prscsx_causal_nonzero = 0 # 0 for causal has 0 weight in magepro gene model. 1 for nonzero
-if prscsx_coef[CAUSAL] != 0:
-    prscsx_causal_nonzero = 1
+prscsx_causal_nonzero = len([index for index in CAUSAL if prscsx_coef[index] != 0])
 #beta of causal snp from afr lasso
-afr_B_causal = (coef[CAUSAL])
+afr_B_causal_list = [ coef[i] for i in CAUSAL ]
+afr_B_causal = ','.join(map(str, afr_B_causal_list))
 #beta of causal snp from magepro
-magepro_B_causal = (magepro_coef[CAUSAL])
+magepro_B_causal_list = [ magepro_coef[i] for i in CAUSAL ]
+magepro_B_causal = ','.join(map(str, magepro_B_causal_list))
 #beta of causal snp from prscsx
-prscsx_B_causal = (prscsx_coef[CAUSAL])
+prscsx_B_causal_list = [ prscsx_coef[i] for i in CAUSAL ]
+prscsx_B_causal = ','.join(map(str, prscsx_B_causal_list))
 #actual beta
 true_B_causal = beta_causal
 
@@ -136,7 +132,6 @@ true_B_causal = beta_causal
 #magepro_r2 = magepro cv r2 
 #r2all = afronly magepro cv r2
 
-#filename = "results/magepro_results_" + str(samplesizes) + "_h" + str(set_h2) + ".csv"
 filename = out_results + "/magepro_results_" + str(samplesizes) + "_h" + str(set_h2) + ".csv"
 
 output = pd.DataFrame({'sim': sim, 'afr_h2': h2g, 'lasso_causal': lasso_causal_nonzero, 'magepro_causal': magepro_causal_nonzero, 'prscsx_causal': prscsx_causal_nonzero, 'afr_beta_causal': afr_B_causal, 'magepro_beta_causal': magepro_B_causal, 'prscsx_beta_causal': prscsx_B_causal, 'true_B_causal': true_B_causal, 'afr_r2': r2all, 'magepro_r2': magepro_r2, 'prscsx_r2': prscsx_r2, 'causal_susie': num_causal_susie}, index=[0])

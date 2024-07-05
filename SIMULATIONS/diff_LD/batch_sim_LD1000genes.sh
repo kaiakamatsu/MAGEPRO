@@ -4,7 +4,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=4G
-#SBATCH -t 20:00:00
+#SBATCH -t 24:00:00
 #SBATCH -J runsims_highLD
 #SBATCH -A csd832
 #SBATCH -o ../../../working_err/runsims_highLD.%j.%N.out

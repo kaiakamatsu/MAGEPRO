@@ -86,8 +86,6 @@ do
 			break
 		fi
 	done	
-	
-	# --- NOT EDITTED BELOW
 
 	while true; do
 		#choose a snp randomly as causal 
