@@ -63,7 +63,7 @@ snp_list <- df[[2]]
 bimdf <- fread(opt$b, header=FALSE)
 colnames(bimdf) = c("CHR", "SNP", "CM", "POS", "A1", "A2")
 bimdf <- bimdf[bimdf[[2]] %in% snp_list]
-bimdf <- bimdf %>% arrange(match(bimdf[[2]], snp_list)) 
+bimdf <- bimdf %>% arrange(match(bimdf[[2]], snp_list))
 
 allele.qc = function(a1,a2,ref1,ref2) {
   a1 = toupper(a1)
@@ -99,11 +99,10 @@ allele.qc = function(a1,a2,ref1,ref2) {
 
 qc_results <- allele.qc(df[[3]], df[[4]], bimdf[[5]], bimdf[[6]])
 
-flip_indices <- which(qc_results$flip)
-df[flip_indices, 5] <- df[flip_indices, 5] * -1
-temp <- df[flip_indices, 3]
-df[flip_indices, 3] <- df[flip_indices, 4]
-df[flip_indices, 4] <- temp
+df[qc_results$flip, 5] <- df[qc_results$flip, 5] * -1
+temp <- df[qc_results$flip, 3]
+df[qc_results$flip, 3] <- df[qc_results$flip, 4]
+df[qc_results$flip, 4] <- temp
 
 df <- df[qc_results$keep, ]
 
@@ -111,7 +110,7 @@ rownames(df) <- NULL
 snp_list <- df[[2]]
 
 
-ld_stats <- ld_stats[ld_stats$SNP_A %in% snp_list] # removed snps
+ld_stats <- ld_stats[ld_stats$SNP_A %in% snp_list] # removed snps from corr matrix that are removed by QC
 ld_stats <- ld_stats[ld_stats$SNP_B %in% snp_list]
 ############################################################
 
@@ -128,7 +127,7 @@ diag(ld_matrix) <- 1
 ############################################################
 
 gene <- sub("\\.txt$", "", opt$c)
-output <- file.path(opt$o, paste0(gene, ".txt"))
+output <- file.path(opt$o, opt$c)
 
 tryCatch({
     withCallingHandlers({
@@ -144,7 +143,7 @@ tryCatch({
                 dir.create(file.path(debug_path, "img"), recursive = TRUE)
                 dir.create(file.path(debug_path, "txt"), recursive = TRUE)
             }
-            cat("WARNING MAGEPRO: IBSS algorithm did not converge in 100 iterations. Saving output to ", file.path(getwd(), "debug", opt$o), "\n")
+            cat("WARNING MAGEPRO: IBSS algorithm did not converge in 100 iterations. Saving output to ", debug_path, "\n")
             
             z_scores <- df[[5]] / df[[6]]
             condz_in <- kriging_rss(z_scores, ld_matrix, n = opt$n)
@@ -159,7 +158,6 @@ tryCatch({
             cat(w$message, "\n")
         }
     })
-
 }, error = function(e) {
     cat("In susie_rss:\n", e$message, "\n")
     return(1)

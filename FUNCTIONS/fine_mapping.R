@@ -66,12 +66,11 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 	)
 
 	to_return <- file.path(out, gene_txt)
-	exit_status <- system(get_ld_cmd, wait = TRUE, intern= !(verbose >= 2))
+	exit_status_plink <- system(get_ld_cmd, wait = TRUE, intern=FALSE)
 
-	if (exit_status != 0) {
+	if (exit_status_plink != 0) {
 		to_return <- "Error"
-		cat("Error in get_ld command for ", gene, " in ", cohort, ". Moving to next cohort...\n", file=stderr())
-
+		cat("Error in computing pairwise SNP correlation in plink for ", gene, " in ", cohort, ". Moving to next cohort...\n", file=stderr())
 		return(to_return)
 	}
 
@@ -83,11 +82,10 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 	" -b ", paste0(cohort_ldref_path, ".bim")
 	)
 
-	result <- system(rcommand, wait = TRUE)
-
-	if (result != 0) {
+	exit_status_susie <- system(rcommand, wait = TRUE, intern=FALSE)
+	if (exit_status_susie != 0) {
 		to_return <- "Error"
-		cat("Error in R script command for ", gene, " in ", cohort, ". Moving to next cohort...\n", file=stderr())
+		cat("Error in running SuSiE in R for ", gene, " in ", cohort, ". Moving to next cohort...\n", file=stderr())
 		return(to_return)
 	}
 

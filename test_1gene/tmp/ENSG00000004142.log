@@ -1,0 +1,33 @@
+PLINK v1.90b6.26 64-bit (2 Apr 2022)
+Options in effect:
+  --allow-no-sex
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/test_1gene/tmp/ENSG00000004142
+  --make-grm-bin
+  --out /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/test_1gene/tmp/ENSG00000004142
+
+Hostname: exp-9-55
+Working directory: /expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO
+Start time: Sat Jul  6 06:39:32 2024
+
+Random number seed: 1720273172
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+175 variants loaded from .bim file.
+346 people (0 males, 0 females, 346 ambiguous) loaded from .fam.
+Ambiguous sex IDs written to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/test_1gene/tmp/ENSG00000004142.nosex
+.
+346 phenotype values loaded from .fam.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 346 founders and 0 nonfounders present.
+Calculating allele frequencies... done.
+Total genotyping rate is exactly 1.
+175 variants and 346 people pass filters and QC.
+Phenotype data is quantitative.
+Relationship matrix calculation complete.
+Relationship matrix written to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/test_1gene/tmp/ENSG00000004142.grm.bin
+, and IDs written to
+/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO/test_1gene/tmp/ENSG00000004142.grm.id
+.
+
+End time: Sat Jul  6 06:39:32 2024
