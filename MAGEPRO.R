@@ -6,7 +6,7 @@ suppressMessages(library('data.table'))
 suppressMessages(library('dplyr'))
 suppressMessages(library('susieR'))
 
-source(('SUSIE/fine_mapping.R'), chdir = TRUE) # scripts to run susie on external summary statistics for MAGEPRO
+source(('FUNCTIONS/fine_mapping.R'), chdir = TRUE) # scripts to run susie on external summary statistics for MAGEPRO
 source(('FUNCTIONS/model_functions.R'), chdir = TRUE) # R functions for gene models
 source(('FUNCTIONS/dataset_processing_functions.R'), chdir = TRUE) # R functions for processing summary statistics for MAGEPRO
 
@@ -77,11 +77,9 @@ option_list = list(
   make_option("--impact_path", action="store", default=NA, type='character',
               help="path to file with impact scores for each snp"), 
   make_option("--ldref_dir", action="store", default=NA, type="character",
-  			  help="Directory containing ld reference files used for susie fine mapping"),
+  			  help="Directory containing ld reference files used for SuSiE fine mapping"),
   make_option("--ldrefs", action="store", default=NA, type="character",
-  			  help="Comma-separated list of ld reference files (plink prefixes) used for susie fine mapping"),
-  make_option("--cl_thresh", action="store", default=0.97, type="numeric",
-  			  help="Clumping threshold for plink to clump SNPs in summary statistics that are in high LD before running SuSiE [optional]"), 
+  			  help="Comma-separated list of ld reference files (plink prefixes) used for SuSiE fine mapping"),
   make_option("--out_susie", action="store", default=NA, type='character',
               help="Path to susie output directory [required if using MAGEPRO and not skipping susie]"), 
   make_option("--skip_susie", action="store_true", default=FALSE,
@@ -483,21 +481,23 @@ ext <- length(datasets)
 
 # --- READ SUMSTATS AND FLIP ALLELES AS NECESSARY
 loaded_datasets <- c()
+susie_status <- setNames(rep(FALSE, length(sumstats)), sumstats)
 if (ext > 0){
-	select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
-	susie <- FALSE
 	if ( "MAGEPRO" %in% model ){
-		select_cols <- append(select_cols, c(8, 9, 10))
-		susie <- TRUE
-		if (!opt$skip_susie){
-			cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out_susie, opt$gene, opt$PATH_plink, opt$cl_thresh, opt$verbose)
+		if (!opt$skip_susie) {
+			susie_status <<- cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out_susie, opt$gene, opt$PATH_plink, opt$verbose) # returns a list that maps dataset name -> TRUE/FALSE (indicating success running susie or not)
 		}
 	}
 	for (d in datasets) {
+		select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
 		name <- strsplit(d, split="[.]")[[1]][2]
-		loaded_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets, select_cols, susie)
+		if (susie_status[[name]]){
+			select_cols <- append(select_cols, c(8, 9, 10)) # if susie is successfully ran for this dataset, load the 8th, 9th, and 10th columns
+		}
+		loaded_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets, select_cols, susie_status[[name]])
 	}
 }
+
 
 # --- PREPARE SUMMARY STATISTICS FOR META AND MAGEPRO_fullsumstats
 if ( ("META" %in% model | "MAGEPRO_fullsumstats" %in% model)  & (ext > 0) ){
@@ -561,23 +561,20 @@ if ( ("PRSCSx" %in% model) & (ext > 0) ){
 
 # --- PREPARE SUMMARY STATISTICS FOR MAGEPRO
 if ( ("MAGEPRO" %in% model) & (ext > 0) ){
-
 	if ( opt$verbose >= 1){
 			cat("### PROCESSING SUMSTATS FOR MAGEPRO \n")
 	}
-
 	wgt_magepro <- c() #magepro weights
 	for (loaded in loaded_datasets){
         name <- strsplit(loaded, split="[.]")[[1]][2]
-        wgt_magepro <- datasets_process_susie(name, eval(parse(text = loaded)), wgt_magepro)
+		if (susie_status[[name]]){
+			wgt_magepro <- datasets_process_susie(name, eval(parse(text = loaded)), wgt_magepro)
+		}
 	}
-
 	ext_magepro <- length(wgt_magepro)
-
 }else{
 	ext_magepro <- 0
 }
-
 
 # --- CROSSVALIDATION ANALYSES
 set.seed(1)

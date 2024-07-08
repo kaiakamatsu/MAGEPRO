@@ -48,7 +48,7 @@ load_flip_dataset <- function(bim, dataset, file, datasets_loaded, select, susie
 	# select = columns numbers to extract from file 
 	# susie = true/false: using susie posterior weights? 
 	# RETURN: updated list of loaded datasets, including the one processed here
-	
+
 	# read external summary statistics table 
 	table <- fread(file, select = select) 
 	# match by snps 
@@ -57,9 +57,6 @@ load_flip_dataset <- function(bim, dataset, file, datasets_loaded, select, susie
 	w <- which(is.na(table[[1]]))
 	if(length(w) > 0){
 		table[w,] <- 0
-		if (susie){			
-			table[w,] <- 0
-		}
 	}
 	# determine effect sizes to flip, as well as those to remove (zero out)
 	qc <- allele.qc(table[[2]], table[[3]], bim[,5], bim[,6])
@@ -103,7 +100,6 @@ datasets_process_susie <- function(dataset, loaded, wgts){
 
 	# STRATEGY:
 		# SuSiE coefficients for all snps
-
 	assign(paste0("pred.wgtsusie.", dataset), loaded[[7]], envir = .GlobalEnv)
 	if(sum(which(eval(parse(text = paste0("pred.wgtsusie.", dataset))) != 0)) > 0){
 		wgts <- append(wgts, paste0("pred.wgtsusie.", dataset))
