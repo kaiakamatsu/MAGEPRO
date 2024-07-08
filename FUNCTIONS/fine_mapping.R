@@ -6,6 +6,7 @@ cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, g
 	# PURPOSE: run fine_mapping on each on a gene in specified and available cohorts
 	# PREREQ: cohort_map – map containing information about sample_size and ldref file for the cohort
 	# Every other parameter description can be found in MAGEPRO.R option_list.
+	susie_result_status <- list() # this hashmap maps dataset name to TRUE/FALSE, indicating if susie was ran successfully for that dataset
 	for (cohort in names(cohort_map)) {
 		cohort_data <- cohort_map[[cohort]]
 		cohort_path <- file.path(sumstats_dir, cohort)
@@ -27,11 +28,14 @@ cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, g
 		}
 		path_to_fine_mapping_output <- gene_fine_mapping(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, PATH_plink, out_cohort_path, verbose)
 		if (path_to_fine_mapping_output == "Error") {
+			susie_result_status[[cohort]] <- FALSE
 			next
 		}
-		assign(paste0("file.", cohort), path_to_fine_mapping_output, envir = .GlobalEnv) # reassign file path to the path to susie results
+		assign(paste0("file.", cohort), path_to_fine_mapping_output, envir = .GlobalEnv) # reassign file path to the susie results
+		susie_result_status[[cohort]] <- TRUE
 		cat("successfully fine mapped ", gene, " for ", cohort, "\n")
 	}
+	return(susie_result_status)
 }
 
 
@@ -54,6 +58,7 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 	}
 
 	gene <- file_path_sans_ext(gene_txt)
+	to_return <- file.path(out, gene_txt)
 	
 	is_verbose <- ifelse(verbose >= 2, "", " > /dev/null ")
 	get_ld_cmd <- paste0(
@@ -65,7 +70,6 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 		is_verbose
 	)
 
-	to_return <- file.path(out, gene_txt)
 	exit_status_plink <- system(get_ld_cmd, wait = TRUE, intern=FALSE)
 
 	if (exit_status_plink != 0) {

@@ -143,7 +143,7 @@ tryCatch({
                 dir.create(file.path(debug_path, "img"), recursive = TRUE)
                 dir.create(file.path(debug_path, "txt"), recursive = TRUE)
             }
-            cat("WARNING MAGEPRO: IBSS algorithm did not converge in 100 iterations. Saving output to ", debug_path, "\n")
+            cat("WARNING MAGEPRO: IBSS algorithm did not converge in 100 iterations. Saving diagnostic plot (as recommended by SuSiE) to ", debug_path, "\n")
             
             z_scores <- df[[5]] / df[[6]]
             condz_in <- kriging_rss(z_scores, ld_matrix, n = opt$n)
@@ -153,14 +153,15 @@ tryCatch({
             # print(selected_snps)
 
             ggsave(file.path(debug_path, "img", paste0(gene, ".png")), plot = condz_in$plot)
-            output <<- file.path(debug_path, "txt", paste0(gene, ".txt"))
+            # output <<- file.path(debug_path, "txt", paste0(gene, ".txt")) # reassign output file path to debug directory
+            quit(status=1)
         } else {
             cat(w$message, "\n")
         }
     })
 }, error = function(e) {
     cat("In susie_rss:\n", e$message, "\n")
-    return(1)
+    quit(status=1)
 })
 
 

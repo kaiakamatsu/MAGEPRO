@@ -481,21 +481,23 @@ ext <- length(datasets)
 
 # --- READ SUMSTATS AND FLIP ALLELES AS NECESSARY
 loaded_datasets <- c()
+susie_status <- setNames(rep(FALSE, length(sumstats)), sumstats)
 if (ext > 0){
-	select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
-	susie <- FALSE
 	if ( "MAGEPRO" %in% model ){
-		select_cols <- append(select_cols, c(8, 9, 10))
-		susie <- TRUE
 		if (!opt$skip_susie) {
-			cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out_susie, opt$gene, opt$PATH_plink, opt$verbose)
+			susie_status <<- cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out_susie, opt$gene, opt$PATH_plink, opt$verbose) # returns a list that maps dataset name -> TRUE/FALSE (indicating success running susie or not)
 		}
 	}
 	for (d in datasets) {
+		select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
 		name <- strsplit(d, split="[.]")[[1]][2]
-		loaded_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets, select_cols, susie)
+		if (susie_status[[name]]){
+			select_cols <- append(select_cols, c(8, 9, 10)) # if susie is successfully ran for this dataset, load the 8th, 9th, and 10th columns
+		}
+		loaded_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets, select_cols, susie_status[[name]])
 	}
 }
+
 
 # --- PREPARE SUMMARY STATISTICS FOR META AND MAGEPRO_fullsumstats
 if ( ("META" %in% model | "MAGEPRO_fullsumstats" %in% model)  & (ext > 0) ){
@@ -559,23 +561,20 @@ if ( ("PRSCSx" %in% model) & (ext > 0) ){
 
 # --- PREPARE SUMMARY STATISTICS FOR MAGEPRO
 if ( ("MAGEPRO" %in% model) & (ext > 0) ){
-
 	if ( opt$verbose >= 1){
 			cat("### PROCESSING SUMSTATS FOR MAGEPRO \n")
 	}
-
 	wgt_magepro <- c() #magepro weights
 	for (loaded in loaded_datasets){
         name <- strsplit(loaded, split="[.]")[[1]][2]
-        wgt_magepro <- datasets_process_susie(name, eval(parse(text = loaded)), wgt_magepro)
+		if (susie_status[[name]]){
+			wgt_magepro <- datasets_process_susie(name, eval(parse(text = loaded)), wgt_magepro)
+		}
 	}
-
 	ext_magepro <- length(wgt_magepro)
-
 }else{
 	ext_magepro <- 0
 }
-
 
 # --- CROSSVALIDATION ANALYSES
 set.seed(1)
