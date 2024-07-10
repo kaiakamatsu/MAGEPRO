@@ -299,6 +299,7 @@ If you would like to run MAGEPRO on one gene, it is possible to run MAGEPRO.R se
 | --ldrefs | Comma-separated list of LD reference files (plink prefixes) used for SuSiE fine mapping |
 | --out_susie | Path to SuSiE output directory [required if using MAGEPRO and not skipping SuSiE] |
 | --skip_susie | Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from SuSiE (default=FALSE) |
+| --n_threads | Integer value representing how many threads to be used by MAGEPRO_PIPELINE/5_RunJobs.sh (default 1) |
 
 ## Directories 
 

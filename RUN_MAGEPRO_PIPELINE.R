@@ -86,7 +86,9 @@ option_list = list(
   make_option("--out_susie", action="store", default=NA, type='character',
           help="Path to susie output directory [required if using MAGEPRO]"), 
   make_option("--skip_susie", action="store_true", default=FALSE,
-          help="Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from susie")
+          help="Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from susie"),
+  make_option("--n_threads", action="store", default=1,
+        help="Integer value representing how many threads to be used by MAGEPRO_PIPELINE/5_RunJobs.sh")
 )
 
 opt = parse_args(OptionParser(option_list=option_list))
@@ -168,7 +170,7 @@ system( "mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRIN
 if ( opt$verbose >= 1 ) cat("### RUNNING JOBS \n")
 batches <- c(1:opt$num_batches)
 for (batch in batches){
-arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt, opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx, opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$ldref_dir, opt$ldrefs, opt$out_susie, opt$skip_susie, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
+arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt, opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx, opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$ldref_dir, opt$ldrefs, opt$out_susie, opt$skip_susie, opt$n_threads, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
 system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 }
 
