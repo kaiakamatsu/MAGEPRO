@@ -1,7 +1,24 @@
 #!/bin/bash
+#SBATCH -p shared
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --mem=2G
+#SBATCH -t 10:00:00
+#SBATCH -J MAGEPRO
+#SBATCH -A csd832
+#SBATCH -o ../working_err/MAGEPRO.%j.%N.out
+#SBATCH -e ../working_err/MAGEPRO.%j.%N.err
+#SBATCH --export=ALL
+#SBATCH --constraint="lustre"
+#--- EDIT ABOVE TO SUIT YOUR HPC CLUSTER
+
+source ~/.bashrc
+conda activate r_env
+module load cpu/0.15.4 
+module load parallel/20200822 
 
 #--- read command line arguments
-input_column=$1
+batch=$1
 gefile=$2
 scratch=$3 
 intermed=$4
@@ -33,7 +50,6 @@ ldrefs=${29}
 out_susie=${30}
 skip_susie=${31}
 n_threads=${32}
-current_datetime=${33}
 
 available_threads=$(nproc)
 
@@ -83,23 +99,23 @@ export intermed=$intermed
 
 
 #--- create directory for temporary/working files 
-#--- NOTE: create "tmp" and "wd" where your system can write/delete files efficiently (EDIT TO SUIT YOUR MACHINE)
+#--- NOTE: create "tmp" and "wd" where your system can write/delete files efficiently (EDIT TO SUIT YOUR HPC CLUSTER)
 #tmpdir=$scratch/tmp
-tmpdir=/expanse/lustre/projects/ddp412/sgolzari/job_$current_datetime/tmp
-mkdir -p $tmpdir
+tmpdir=/scratch/$USER/job_$SLURM_JOBID/tmp
+mkdir $tmpdir
 #wd=$scratch/wd
-wd=/expanse/lustre/projects/ddp412/sgolzari/job_$current_datetime/wd
-mkdir -p $wd
+wd=/scratch/$USER/job_$SLURM_JOBID/wd
+mkdir $wd
 
 #--- define file paths 
 plinkdir=$scratch/plink_gene
-inputfile=$intermed/Genes_Assigned.txt 
+batchfile=$intermed/Genes_Assigned.txt 
 geneids=$intermed/All_Genes_Expressed.txt 
 ind=$intermed/All_Individuals.txt #all individuals with both genotype and ge data 
 samples=$intermed/Sample_IDs.txt 
 
 #--- get column numbers (in ge data) of individuals we are interested in
-genes=$(awk '$2 == '${input_column}' {print $1}' $inputfile) #all genes passed in to the script 
+genes=$(awk '$2 == '${batch}' {print $1}' $batchfile) #all genes with the batch number passed in to the script 
 #grabbing just the individuals we want
 alldonors=$(zcat $gefile | head -n 1)
 colind=$(echo $alldonors | sed 's| |\n|g' | nl | grep -f $samples | awk 'BEGIN {ORS=","} {print $1}') 
