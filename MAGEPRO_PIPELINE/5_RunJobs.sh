@@ -13,7 +13,7 @@
 #--- EDIT ABOVE TO SUIT YOUR HPC CLUSTER
 
 source ~/.bashrc
-conda activate r_env
+conda activate r_py
 
 #--- read command line arguments
 batch=$1

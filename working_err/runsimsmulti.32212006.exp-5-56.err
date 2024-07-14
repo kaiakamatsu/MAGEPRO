@@ -1,0 +1,4 @@
+slurmstepd: error: Unable to create TMPDIR [/scratch/kakamatsu/job_32211435]: Permission denied
+slurmstepd: error: Setting TMPDIR to /tmp
+/home/kakamatsu/.conda/envs/r_py/lib/python3.11/site-packages/sklearn/linear_model/_coordinate_descent.py:628: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations, check the scale of the features or consider increasing regularisation. Duality gap: 1.210e-02, tolerance: 6.400e-03
+  model = cd_fast.enet_coordinate_descent(

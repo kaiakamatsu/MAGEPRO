@@ -1,0 +1,796 @@
+running simulations with 80,160,240,400,500 AFR individuals and a gene with heritability 0.1 and effect size correlation 0.8
+21
+39626511
+40626511
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/EUR_1KG_chr21_40126511.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/ldref/eur/1000G_eur_chr21
+  --chr 21
+  --from-bp 39626511
+  --make-bed
+  --out /scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/EUR_1KG_chr21_40126511
+  --to-bp 40626511
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+621 out of 14348 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+621 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--make-bed to
+/scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/EUR_1KG_chr21_40126511.bed
++
+/scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/EUR_1KG_chr21_40126511.bim
++
+/scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/EUR_1KG_chr21_40126511.fam
+... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/AFR_1KG_chr21_40126511.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/ldref/afr/1000G_afr_chr21
+  --chr 21
+  --from-bp 39626511
+  --make-bed
+  --out /scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/AFR_1KG_chr21_40126511
+  --to-bp 40626511
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+621 out of 14348 variants loaded from .bim file.
+661 people (319 males, 342 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 661 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is exactly 1.
+621 variants and 661 people pass filters and QC.
+Note: No phenotypes present.
+--make-bed to
+/scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/AFR_1KG_chr21_40126511.bed
++
+/scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/AFR_1KG_chr21_40126511.bim
++
+/scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/AFR_1KG_chr21_40126511.fam
+... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/AMR_1KG_chr21_40126511.log.
+Options in effect:
+  --bfile /expanse/lustre/projects/ddp412/kakamatsu/ldref/amr/1000G_amr_chr21
+  --chr 21
+  --from-bp 39626511
+  --make-bed
+  --out /scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/AMR_1KG_chr21_40126511
+  --to-bp 40626511
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+621 out of 14348 variants loaded from .bim file.
+347 people (170 males, 177 females) loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 347 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+621 variants and 347 people pass filters and QC.
+Note: No phenotypes present.
+--make-bed to
+/scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/AMR_1KG_chr21_40126511.bed
++
+/scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/AMR_1KG_chr21_40126511.bim
++
+/scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/AMR_1KG_chr21_40126511.fam
+... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+successfully picked a random gene
+516,121
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Sun Jul 14 01:26:28 2024
+
+Options:
+--grm-gz /scratch/kakamatsu/job_32211927/temp_80_h0.1/temp
+--pheno /scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 16
+--out /scratch/kakamatsu/job_32211927/temp_80_h0.1/temp
+
+Note: the program will be running on 16 threads.
+
+Reading IDs of the GRM from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.grm.id].
+500 IDs read from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.grm.id].
+Reading the GRM from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.grm.gz].
+Pairwise genetic relationships between 500 individuals are included from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.grm.gz].
+Reading phenotypes from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.phen].
+Nonmissing phenotypes of 500 individuals are included from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.phen].
+
+500 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+500 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:     0 1.002
+logL: -253.107
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-253.11	0.00000	1.00200	
+trying          0.00447 0.99165 using real Hessian (succeeded)
+2	-252.43	0.00447	0.99165	
+trying          0.01972 0.96145 using real Hessian (succeeded)
+3	-250.72	0.01972	0.96145	
+trying          0.03741 0.94003 using real Hessian (succeeded)
+4	-249.47	0.03741	0.94003	
+trying          0.04326 0.93520 using real Hessian (succeeded)
+5	-249.17	0.04326	0.93520	
+trying          0.04905 0.93079 using real Hessian (succeeded)
+6	-248.91	0.04905	0.93079	
+trying          0.06697 0.91815 using real Hessian (succeeded)
+7	-248.35	0.06697	0.91815	
+trying          0.08222 0.90992 using real Hessian (succeeded)
+8	-248.06	0.08222	0.90992	
+trying          0.09362 0.90483 using real Hessian (succeeded)
+9	-247.94	0.09362	0.90483	
+trying          0.10116 0.90186 using real Hessian (succeeded)
+10	-247.90	0.10116	0.90186	
+trying          0.10567 0.90022 using real Hessian (succeeded)
+11	-247.89	0.10567	0.90022	
+trying          0.10818 0.89934 using real Hessian (succeeded)
+12	-247.88	0.10818	0.89934	
+trying          0.10950 0.89889 using real Hessian (succeeded)
+13	-247.88	0.10950	0.89889	
+trying          0.11019 0.89866 using real Hessian (succeeded)
+14	-247.88	0.11019	0.89866	
+trying          0.11054 0.89854 using real Hessian (succeeded)
+15	-247.88	0.11054	0.89854	
+trying          0.11071 0.89848 using real Hessian (succeeded)
+16	-247.88	0.11071	0.89848	
+trying          0.11080 0.89845 using real Hessian (succeeded)
+17	-247.88	0.11080	0.89845	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00200
+logL: -253.10730
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-253.11	1.00200	
+trying          1.00200 using real Hessian (succeeded)
+2	-253.11	1.00200	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.110842	0.036418
+V(e)	0.898439	0.045679
+Vp	1.009281	0.047426
+V(G)/Vp	0.109823	0.034178
+
+Covariance/Variance/Correlation Matrix:
+0.00132629	
+-0.000581829	0.00208656	
+
+Summary result of REML analysis has been saved in the file [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.hsq].
+
+Analysis finished: Sun Jul 14 01:26:30 2024
+Computational time: 0:0:2
+heritability EUR: 
+0.110842
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Sun Jul 14 01:26:34 2024
+
+Options:
+--grm-gz /scratch/kakamatsu/job_32211927/temp_80_h0.1/temp
+--pheno /scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 16
+--out /scratch/kakamatsu/job_32211927/temp_80_h0.1/temp
+
+Note: the program will be running on 16 threads.
+
+Reading IDs of the GRM from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.grm.id].
+500 IDs read from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.grm.id].
+Reading the GRM from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.grm.gz].
+Pairwise genetic relationships between 500 individuals are included from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.grm.gz].
+Reading phenotypes from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.phen].
+Nonmissing phenotypes of 500 individuals are included from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.phen].
+
+500 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+500 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:     0 1.002
+logL: -253.107
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-253.11	0.00000	1.00200	
+trying          0.00384 0.99457 using real Hessian (succeeded)
+2	-252.69	0.00384	0.99457	
+trying          0.01658 0.97318 using real Hessian (succeeded)
+3	-251.69	0.01658	0.97318	
+trying          0.02960 0.95951 using real Hessian (succeeded)
+4	-251.07	0.02960	0.95951	
+trying          0.03339 0.95668 using real Hessian (succeeded)
+5	-250.94	0.03339	0.95668	
+trying          0.04487 0.94864 using real Hessian (succeeded)
+6	-250.66	0.04487	0.94864	
+trying          0.05401 0.94347 using real Hessian (succeeded)
+7	-250.53	0.05401	0.94347	
+trying          0.06045 0.94031 using real Hessian (succeeded)
+8	-250.48	0.06045	0.94031	
+trying          0.06450 0.93847 using real Hessian (succeeded)
+9	-250.46	0.06450	0.93847	
+trying          0.06684 0.93747 using real Hessian (succeeded)
+10	-250.46	0.06684	0.93747	
+trying          0.06810 0.93694 using real Hessian (succeeded)
+11	-250.45	0.06810	0.93694	
+trying          0.06876 0.93667 using real Hessian (succeeded)
+12	-250.45	0.06876	0.93667	
+trying          0.06910 0.93653 using real Hessian (succeeded)
+13	-250.45	0.06910	0.93653	
+trying          0.06927 0.93646 using real Hessian (succeeded)
+14	-250.45	0.06927	0.93646	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00200
+logL: -253.10730
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-253.11	1.00200	
+trying          1.00200 using real Hessian (succeeded)
+2	-253.11	1.00200	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.069355	0.030221
+V(e)	0.936427	0.046487
+Vp	1.005782	0.046111
+V(G)/Vp	0.068956	0.029206
+
+Covariance/Variance/Correlation Matrix:
+0.000913324	
+-0.000474098	0.00216107	
+
+Summary result of REML analysis has been saved in the file [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.hsq].
+
+Analysis finished: Sun Jul 14 01:26:34 2024
+Computational time: 0:0:0
+heritability AMR: 
+0.069355
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /scratch/kakamatsu/job_32211927/ld_80_h0.1/EUR_1KG_chr21_40126511.log.
+Options in effect:
+  --bfile /scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/EUR_1KG_chr21_40126511
+  --extract /scratch/kakamatsu/job_32211927/sumstats_80_h0.1/sumstats_EUR.csv
+  --keep-allele-order
+  --ld-window-r2 0
+  --out /scratch/kakamatsu/job_32211927/ld_80_h0.1/EUR_1KG_chr21_40126511
+  --r inter-chr
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+621 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+--extract: 621 variants remaining.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+621 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--r inter-chr to
+/scratch/kakamatsu/job_32211927/ld_80_h0.1/EUR_1KG_chr21_40126511.ld ...
+0% [processing]writing]             done.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /scratch/kakamatsu/job_32211927/ld_80_h0.1/AMR_1KG_chr21_40126511.log.
+Options in effect:
+  --bfile /scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/AMR_1KG_chr21_40126511
+  --extract /scratch/kakamatsu/job_32211927/sumstats_80_h0.1/sumstats_AMR.csv
+  --keep-allele-order
+  --ld-window-r2 0
+  --out /scratch/kakamatsu/job_32211927/ld_80_h0.1/AMR_1KG_chr21_40126511
+  --r inter-chr
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+621 variants loaded from .bim file.
+347 people (170 males, 177 females) loaded from .fam.
+--extract: 621 variants remaining.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 347 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+621 variants and 347 people pass filters and QC.
+Note: No phenotypes present.
+--r inter-chr to
+/scratch/kakamatsu/job_32211927/ld_80_h0.1/AMR_1KG_chr21_40126511.ld ...
+0% [processing]writing]             done.
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Sun Jul 14 01:26:41 2024
+
+Options:
+--grm-gz /scratch/kakamatsu/job_32211927/temp_80_h0.1/temp
+--pheno /scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 16
+--out /scratch/kakamatsu/job_32211927/temp_80_h0.1/temp
+
+Note: the program will be running on 16 threads.
+
+Reading IDs of the GRM from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.grm.id].
+80 IDs read from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.grm.id].
+Reading the GRM from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.grm.gz].
+Pairwise genetic relationships between 80 individuals are included from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.grm.gz].
+Reading phenotypes from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.phen].
+Nonmissing phenotypes of 80 individuals are included from [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.phen].
+
+80 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+80 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:      0 1.0125
+logL: -42.191
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-42.19	0.00000	1.01250	
+trying          0.02008 0.98849 using real Hessian (succeeded)
+2	-42.12	0.02008	0.98849	
+trying          0.07638 0.92471 using real Hessian (succeeded)
+3	-41.99	0.07638	0.92471	
+trying          0.11058 0.89292 using real Hessian (succeeded)
+4	-41.95	0.11058	0.89292	
+trying          0.13047 0.87636 using real Hessian (succeeded)
+5	-41.94	0.13047	0.87636	
+trying          0.14141 0.86778 using real Hessian (succeeded)
+6	-41.93	0.14141	0.86778	
+trying          0.14720 0.86340 using real Hessian (succeeded)
+7	-41.93	0.14720	0.86340	
+trying          0.15018 0.86118 using real Hessian (succeeded)
+8	-41.93	0.15018	0.86118	
+trying          0.15169 0.86006 using real Hessian (succeeded)
+9	-41.93	0.15169	0.86006	
+trying          0.15245 0.85950 using real Hessian (succeeded)
+10	-41.93	0.15245	0.85950	
+trying          0.15283 0.85922 using real Hessian (succeeded)
+11	-41.93	0.15283	0.85922	
+trying          0.15302 0.85908 using real Hessian (succeeded)
+12	-41.93	0.15302	0.85908	
+trying          0.15312 0.85901 using real Hessian (succeeded)
+13	-41.93	0.15312	0.85901	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.01250
+logL: -42.19101
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-42.19	1.01250	
+trying          1.01252 using real Hessian (succeeded)
+2	-42.19	1.01252	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.153169	0.161740
+V(e)	0.858971	0.175923
+Vp	1.012140	0.114707
+V(G)/Vp	0.151332	0.156825
+
+Covariance/Variance/Correlation Matrix:
+0.0261597	
+-0.0219756	0.0309491	
+
+Summary result of REML analysis has been saved in the file [/scratch/kakamatsu/job_32211927/temp_80_h0.1/temp.hsq].
+
+Analysis finished: Sun Jul 14 01:26:42 2024
+Computational time: 0:0:1
+
+
+--ref_dir=/expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref
+--bim_prefix=/scratch/kakamatsu/job_32211927/temp_80_h0.1/PRSCSx/snps
+--sst_file=['/scratch/kakamatsu/job_32211927/sumstats_80_h0.1/sumstats_EUR_susie.csv', '/scratch/kakamatsu/job_32211927/sumstats_80_h0.1/sumstats_AMR_susie.csv']
+--a=1
+--b=0.5
+--phi=1e-07
+--n_gwas=[500, 500]
+--pop=['EUR', 'AMR']
+--n_iter=2000
+--n_burnin=1000
+--thin=5
+--out_dir=/scratch/kakamatsu/job_32211927/temp_80_h0.1/PRSCSx/
+--out_name=results
+--chrom=['21']
+--meta=FALSE
+--seed=None
+
+
+*** 2 discovery populations detected ***
+
+##### process chromosome 21 #####
+... parse reference file: /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref/snpinfo_mult_1kg_hm3 ...
+... 18073 SNPs on chromosome 21 read from /expanse/lustre/projects/ddp412/kakamatsu/eQTLsummary/multipopGE/benchmark/LD_ref/snpinfo_mult_1kg_hm3 ...
+... parse bim file: /scratch/kakamatsu/job_32211927/temp_80_h0.1/PRSCSx/snps.bim ...
+... 621 SNPs on chromosome 21 read from /scratch/kakamatsu/job_32211927/temp_80_h0.1/PRSCSx/snps.bim ...
+... parse EUR sumstats file: /scratch/kakamatsu/job_32211927/sumstats_80_h0.1/sumstats_EUR_susie.csv ...
+... 621 SNPs read from /scratch/kakamatsu/job_32211927/sumstats_80_h0.1/sumstats_EUR_susie.csv ...
+... 610 common SNPs in the EUR reference, EUR sumstats, and validation set ...
+... parse AMR sumstats file: /scratch/kakamatsu/job_32211927/sumstats_80_h0.1/sumstats_AMR_susie.csv ...
+... 621 SNPs read from /scratch/kakamatsu/job_32211927/sumstats_80_h0.1/sumstats_AMR_susie.csv ...
+... 616 common SNPs in the AMR reference, AMR sumstats, and validation set ...
+... parse EUR reference LD on chromosome 21 ...
+... parse AMR reference LD on chromosome 21 ...
+... align reference LD on chromosome 21 across populations ...
+... 616 valid SNPs across populations ...
+... MCMC ...
+--- iter-100 ---
+--- iter-200 ---
+--- iter-300 ---
+--- iter-400 ---
+--- iter-500 ---
+--- iter-600 ---
+--- iter-700 ---
+--- iter-800 ---
+--- iter-900 ---
+--- iter-1000 ---
+--- iter-1100 ---
+--- iter-1200 ---
+--- iter-1300 ---
+--- iter-1400 ---
+--- iter-1500 ---
+--- iter-1600 ---
+--- iter-1700 ---
+--- iter-1800 ---
+--- iter-1900 ---
+--- iter-2000 ---
+... Done ...
+
+
+heritability AFR: 
+0.153169
+magepro: 
+0.14388045090845036
+prscsx: 
+0.07021368865423305
+afronly: 
+0.06043679420447279
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Sun Jul 14 01:27:54 2024
+
+Options:
+--grm-gz /scratch/kakamatsu/job_32211927/temp_160_h0.1/temp
+--pheno /scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 16
+--out /scratch/kakamatsu/job_32211927/temp_160_h0.1/temp
+
+Note: the program will be running on 16 threads.
+
+Reading IDs of the GRM from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.grm.id].
+500 IDs read from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.grm.id].
+Reading the GRM from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.grm.gz].
+Pairwise genetic relationships between 500 individuals are included from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.grm.gz].
+Reading phenotypes from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.phen].
+Nonmissing phenotypes of 500 individuals are included from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.phen].
+
+500 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+500 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:     0 1.002
+logL: -253.107
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-253.11	0.00000	1.00200	
+trying          0.00496 0.99018 using real Hessian (succeeded)
+2	-252.32	0.00496	0.99018	
+trying          0.02119 0.95736 using real Hessian (succeeded)
+3	-250.42	0.02119	0.95736	
+trying          0.03822 0.93767 using real Hessian (succeeded)
+4	-249.20	0.03822	0.93767	
+trying          0.04350 0.93362 using real Hessian (succeeded)
+5	-248.92	0.04350	0.93362	
+trying          0.04867 0.92998 using real Hessian (succeeded)
+6	-248.69	0.04867	0.92998	
+trying          0.06450 0.91962 using real Hessian (succeeded)
+7	-248.19	0.06450	0.91962	
+trying          0.07770 0.91291 using real Hessian (succeeded)
+8	-247.94	0.07770	0.91291	
+trying          0.08748 0.90872 using real Hessian (succeeded)
+9	-247.84	0.08748	0.90872	
+trying          0.09392 0.90624 using real Hessian (succeeded)
+10	-247.80	0.09392	0.90624	
+trying          0.09776 0.90486 using real Hessian (succeeded)
+11	-247.79	0.09776	0.90486	
+trying          0.09990 0.90411 using real Hessian (succeeded)
+12	-247.79	0.09990	0.90411	
+trying          0.10102 0.90373 using real Hessian (succeeded)
+13	-247.79	0.10102	0.90373	
+trying          0.10161 0.90353 using real Hessian (succeeded)
+14	-247.79	0.10161	0.90353	
+trying          0.10190 0.90343 using real Hessian (succeeded)
+15	-247.79	0.10190	0.90343	
+trying          0.10205 0.90338 using real Hessian (succeeded)
+16	-247.79	0.10205	0.90338	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00200
+logL: -253.10730
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-253.11	1.00200	
+trying          1.00200 using real Hessian (succeeded)
+2	-253.11	1.00200	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.102125	0.033694
+V(e)	0.903360	0.045364
+Vp	1.005485	0.046800
+V(G)/Vp	0.101568	0.031905
+
+Covariance/Variance/Correlation Matrix:
+0.00113531	
+-0.000501464	0.00205785	
+
+Summary result of REML analysis has been saved in the file [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.hsq].
+
+Analysis finished: Sun Jul 14 01:27:55 2024
+Computational time: 0:0:1
+heritability EUR: 
+0.102125
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Sun Jul 14 01:27:59 2024
+
+Options:
+--grm-gz /scratch/kakamatsu/job_32211927/temp_160_h0.1/temp
+--pheno /scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 16
+--out /scratch/kakamatsu/job_32211927/temp_160_h0.1/temp
+
+Note: the program will be running on 16 threads.
+
+Reading IDs of the GRM from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.grm.id].
+500 IDs read from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.grm.id].
+Reading the GRM from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.grm.gz].
+Pairwise genetic relationships between 500 individuals are included from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.grm.gz].
+Reading phenotypes from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.phen].
+Nonmissing phenotypes of 500 individuals are included from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.phen].
+
+500 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+500 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:     0 1.002
+logL: -253.107
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-253.11	0.00000	1.00200	
+trying          0.00252 0.99664 using real Hessian (succeeded)
+2	-252.78	0.00252	0.99664	
+trying          0.01080 0.98140 using real Hessian (succeeded)
+3	-252.00	0.01080	0.98140	
+trying          0.01920 0.97184 using real Hessian (succeeded)
+4	-251.51	0.01920	0.97184	
+trying          0.02684 0.96577 using real Hessian (succeeded)
+5	-251.25	0.02684	0.96577	
+trying          0.03304 0.96194 using real Hessian (succeeded)
+6	-251.13	0.03304	0.96194	
+trying          0.03750 0.95960 using real Hessian (succeeded)
+7	-251.08	0.03750	0.95960	
+trying          0.04035 0.95824 using real Hessian (succeeded)
+8	-251.06	0.04035	0.95824	
+trying          0.04202 0.95749 using real Hessian (succeeded)
+9	-251.05	0.04202	0.95749	
+trying          0.04294 0.95709 using real Hessian (succeeded)
+10	-251.05	0.04294	0.95709	
+trying          0.04341 0.95689 using real Hessian (succeeded)
+11	-251.05	0.04341	0.95689	
+trying          0.04366 0.95679 using real Hessian (succeeded)
+12	-251.05	0.04366	0.95679	
+trying          0.04378 0.95673 using real Hessian (succeeded)
+13	-251.05	0.04378	0.95673	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00200
+logL: -253.10730
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-253.11	1.00200	
+trying          1.00200 using real Hessian (succeeded)
+2	-253.11	1.00200	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.043846	0.021523
+V(e)	0.956706	0.045688
+Vp	1.000553	0.045126
+V(G)/Vp	0.043822	0.021180
+
+Covariance/Variance/Correlation Matrix:
+0.000463245	
+-0.000257132	0.00208741	
+
+Summary result of REML analysis has been saved in the file [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.hsq].
+
+Analysis finished: Sun Jul 14 01:27:59 2024
+Computational time: 0:0:0
+heritability AMR: 
+0.043846
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /scratch/kakamatsu/job_32211927/ld_160_h0.1/EUR_1KG_chr21_40126511.log.
+Options in effect:
+  --bfile /scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/EUR_1KG_chr21_40126511
+  --extract /scratch/kakamatsu/job_32211927/sumstats_160_h0.1/sumstats_EUR.csv
+  --keep-allele-order
+  --ld-window-r2 0
+  --out /scratch/kakamatsu/job_32211927/ld_160_h0.1/EUR_1KG_chr21_40126511
+  --r inter-chr
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+621 variants loaded from .bim file.
+503 people (240 males, 263 females) loaded from .fam.
+--extract: 621 variants remaining.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+621 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--r inter-chr to
+/scratch/kakamatsu/job_32211927/ld_160_h0.1/EUR_1KG_chr21_40126511.ld ...
+0% [processing]writing]             done.
+PLINK v1.90b6.26 64-bit (2 Apr 2022)           www.cog-genomics.org/plink/1.9/
+(C) 2005-2022 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /scratch/kakamatsu/job_32211927/ld_160_h0.1/AMR_1KG_chr21_40126511.log.
+Options in effect:
+  --bfile /scratch/kakamatsu/job_32211927/random_genes_multi_h0.1/AMR_1KG_chr21_40126511
+  --extract /scratch/kakamatsu/job_32211927/sumstats_160_h0.1/sumstats_AMR.csv
+  --keep-allele-order
+  --ld-window-r2 0
+  --out /scratch/kakamatsu/job_32211927/ld_160_h0.1/AMR_1KG_chr21_40126511
+  --r inter-chr
+
+257485 MB RAM detected; reserving 128742 MB for main workspace.
+621 variants loaded from .bim file.
+347 people (170 males, 177 females) loaded from .fam.
+--extract: 621 variants remaining.
+Using up to 127 threads (change this with --threads).
+Before main variant filters, 347 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is in [0.9999995, 1).
+621 variants and 347 people pass filters and QC.
+Note: No phenotypes present.
+--r inter-chr to
+/scratch/kakamatsu/job_32211927/ld_160_h0.1/AMR_1KG_chr21_40126511.ld ...
+0% [processing]writing]             done.
+*******************************************************************
+* Genome-wide Complex Trait Analysis (GCTA)
+* version 1.21
+* (C) 2010 Jian Yang, Hong Lee, Michael Goddard and Peter Visscher
+* The University of Queensland
+*******************************************************************
+Analysis started: Sun Jul 14 01:28:11 2024
+
+Options:
+--grm-gz /scratch/kakamatsu/job_32211927/temp_160_h0.1/temp
+--pheno /scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.phen
+--reml
+--reml-no-constrain
+--thread-num 16
+--out /scratch/kakamatsu/job_32211927/temp_160_h0.1/temp
+
+Note: the program will be running on 16 threads.
+
+Reading IDs of the GRM from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.grm.id].
+160 IDs read from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.grm.id].
+Reading the GRM from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.grm.gz].
+Pairwise genetic relationships between 160 individuals are included from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.grm.gz].
+Reading phenotypes from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.phen].
+Nonmissing phenotypes of 160 individuals are included from [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.phen].
+
+160 individuals are in common in these files.
+
+Performing  REML analysis ... (Note: may take hours depending on sample size).
+160 observations, 1 fixed effect(s), and 2 variance component(s)(including residual variance).
+Calculating prior values of variance components by EM-REML ...
+Updated prior values:       0 1.00625
+logL: -82.5376
+Running AI-REML algorithm ...
+Iter.	logL	V(G)	V(e)	
+ using real Hessian1	-82.54	0.00000	1.00625	
+trying          0.00184 1.00430 using real Hessian (succeeded)
+2	-82.53	0.00184	1.00430	
+trying          0.00689 0.99905 using real Hessian (succeeded)
+3	-82.53	0.00689	0.99905	
+trying          0.00968 0.99631 using real Hessian (succeeded)
+4	-82.52	0.00968	0.99631	
+trying          0.01115 0.99491 using real Hessian (succeeded)
+5	-82.52	0.01115	0.99491	
+trying          0.01191 0.99420 using real Hessian (succeeded)
+6	-82.52	0.01191	0.99420	
+trying          0.01229 0.99384 using real Hessian (succeeded)
+7	-82.52	0.01229	0.99384	
+trying          0.01249 0.99366 using real Hessian (succeeded)
+8	-82.52	0.01249	0.99366	
+trying          0.01258 0.99357 using real Hessian (succeeded)
+9	-82.52	0.01258	0.99357	
+Log-likelihood ratio converged.
+
+Calculating the logLikelihood for the reduced model ...
+(variance component 1 is dropped from the model)
+Calculating prior values of variance components by EM-REML ...
+Updated prior values: 1.00625
+logL: -82.53759
+Running AI-REML algorithm ...
+Iter.	logL	V(e)	
+ using real Hessian1	-82.54	1.00625	
+trying          1.00626 using real Hessian (succeeded)
+2	-82.54	1.00626	
+Log-likelihood ratio converged.
+
+Summary result of REML analysis:
+Source	Variance	SE
+V(G)	0.012633	0.056566
+V(e)	0.993526	0.096592
+Vp	1.006160	0.079796
+V(G)/Vp	0.012556	0.056203
+
+Covariance/Variance/Correlation Matrix:
+0.00319975	
+-0.00308116	0.00932994	
+
+Summary result of REML analysis has been saved in the file [/scratch/kakamatsu/job_32211927/temp_160_h0.1/temp.hsq].
+
+Analysis finished: Sun Jul 14 01:28:16 2024
+Computational time: 0:0:5

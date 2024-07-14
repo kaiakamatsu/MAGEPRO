@@ -1,0 +1,2 @@
+slurmstepd: error: Unable to create TMPDIR [/scratch/kakamatsu/job_32211435]: Permission denied
+slurmstepd: error: Setting TMPDIR to /tmp

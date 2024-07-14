@@ -481,7 +481,7 @@ ext <- length(datasets)
 
 # --- READ SUMSTATS AND FLIP ALLELES AS NECESSARY
 loaded_datasets <- c()
-susie_status <- setNames(rep(FALSE, length(sumstats)), sumstats)
+susie_status <- setNames(rep(TRUE, length(sumstats)), sumstats) # if opt$skip_susie is true, we assume all available summary statistics files have susie data in 8/9/10 th column
 if (ext > 0){
 	if ( "MAGEPRO" %in% model ){
 		if (!opt$skip_susie) {
