@@ -13,7 +13,7 @@ num_causal=4
 jobs=(1 2 3 4 5 6 7 8 9 10)
 #jobs=(1)
 for job in "${jobs[@]}"; do
-    out=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_SIMULATIONS_DIR/MAGEPRO_simulations_multicausal_4${job}
+    out=/expanse/lustre/projects/ddp412/kakamatsu/MAGEPRO_SIMULATIONS_DIR/MAGEPRO_simulations_multicausal_four${job}
     rm -rf $out
     mkdir $out
     out_results=${out}/results

@@ -20,7 +20,7 @@ rm -rf $randomgenes
 mkdir $randomgenes
 
 #causal snp is the same 
-for ((i=1; i<=1; i++))
+for ((i=1; i<=100; i++))
 do 
 
 	rm -rf ${randomgenes}/*
