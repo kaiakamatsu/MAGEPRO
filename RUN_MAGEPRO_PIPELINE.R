@@ -19,7 +19,7 @@ option_list = list(
               help="Number of covariate to use (number of rows to extract from --covar file). 'ALL' for all covariates in the file. 
 	      Default assumes gtex covariate file (first 5 PC, first 15 inferredcov, pcr, platform, sex: ideal for N < 150) [optional]"),
   make_option("--batch", action="store_true", default=FALSE,
-              help="Boolean flag for running MAGEPRO.R scripts in parallel in batches. Note: this would only work on a slurm server [optional]"),
+              help="Boolean flag for running batches of genes in an embarrassingly parallel fashion. Note: this would only work on a slurm server [optional]"),
   make_option("--num_batches", action="store", default=20, type='double',
               help="Number of batch jobs to split the genes into. Default 20 [optional]"),
   make_option("--rerun", action="store_true", default=FALSE,
@@ -168,6 +168,7 @@ if (opt$batch) {
   if ( opt$verbose >= 1 ) cat("### CREATING DIRECTORY ../working_err FOR BATCH JOB OUT/ERROR FILES \n")
   system( "mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 
+
   # --- RUN SLURM JOBS PER BATCH 
   # read batch file and split genes per batch number 
   if ( opt$verbose >= 1 ) cat("### RUNNING JOBS \n")
@@ -188,6 +189,7 @@ if (opt$batch) {
   # --- CREATE DIRECTORY FOR STANDARD OUT AND ERROR FILES FROM JOB
   if ( opt$verbose >= 1 ) cat("### CREATING DIRECTORY ../working_err FOR OUT/ERROR FILES \n")
   system("mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT)
+  temp_dir <- "../working_err"
 
   current_datetime <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
 
@@ -202,7 +204,7 @@ if (opt$batch) {
         opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt,
         opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx,
         opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$ldref_dir,
-        opt$ldrefs, opt$out_susie, opt$skip_susie, opt$n_threads, current_datetime,
+        opt$ldrefs, opt$out_susie, opt$skip_susie, opt$n_threads, current_datetime, temp_dir,
         paste("> ", output_file, " 2> ", error_file, sep = ""),
         sep = " ")
   system(arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT)

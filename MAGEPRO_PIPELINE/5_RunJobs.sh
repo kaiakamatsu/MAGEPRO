@@ -34,6 +34,7 @@ out_susie=${30}
 skip_susie=${31}
 n_threads=${32}
 current_datetime=${33}
+temp_dir=${34}
 
 available_threads=$(nproc)
 
@@ -85,10 +86,10 @@ export intermed=$intermed
 #--- create directory for temporary/working files 
 #--- NOTE: create "tmp" and "wd" where your system can write/delete files efficiently (EDIT TO SUIT YOUR MACHINE)
 #tmpdir=$scratch/tmp
-tmpdir=/expanse/lustre/projects/ddp412/sgolzari/job_$current_datetime/tmp
+tmpdir=$temp_dir/job_$current_datetime/tmp
 mkdir -p $tmpdir
 #wd=$scratch/wd
-wd=/expanse/lustre/projects/ddp412/sgolzari/job_$current_datetime/wd
+wd=$temp_dir/job_$current_datetime/wd
 mkdir -p $wd
 
 #--- define file paths 

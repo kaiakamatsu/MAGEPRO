@@ -19,7 +19,7 @@ cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, g
 
 	susie_result_status <- list()
 	for (i in seq_along(results)) {
-		print(paste0(results[[i]], ": results[[i]]"))
+		print( paste( names(cohort_map)[i] , results[[i]]$status) )
 		cohort <- names(cohort_map)[i]
 		susie_result_status[[cohort]] <- results[[i]]$status
 		if (results[[i]]$status) {
@@ -53,7 +53,7 @@ process_cohort <- function(cohort, sumstats_dir, tmp, ldref_dir, out, gene, PATH
 
 	path_to_fine_mapping_output <- gene_fine_mapping(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, PATH_plink, out_cohort_path, verbose)
 	if (path_to_fine_mapping_output == "Error") {
-	return(list(status = FALSE, path = NULL))
+		return(list(status = FALSE, path = NULL))
 	}
 
 	cat("successfully fine mapped ", gene, " for ", cohort, "\n")
@@ -74,7 +74,7 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 	# Every other parameter description can be found in MAGEPRO.R option_list.
 	# RETURN: file path to the gene output
 	file_path <- file.path(cohort_path, gene_txt)
-	if ( ! identical( colnames(fread(file_path, nrows = 0)), expected_header) ) {
+	if ( ! identical( colnames(fread(file_path, nrows = 0))[1:7] , expected_header) ) {
 		cat( "WARNING: rewriting summary statistics file with correct headers. Dropping extra columns. Make sure statistics are in the correct order specified in README \n" , sep='', file=stderr() )
 		temp_df <- fread(file_path, select = ( c(1:length(expected_header)) ) )
 		colnames(temp_df) <- expected_header
