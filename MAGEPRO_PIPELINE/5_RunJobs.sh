@@ -30,10 +30,12 @@ pops=${26}
 impact_path=${27}
 ldref_dir=${28}
 ldrefs=${29}
-out_susie=${30}
-skip_susie=${31}
-n_threads=${32}
-current_datetime=${33}
+in_sample=${30}
+out_susie=${31}
+skip_susie=${32}
+n_threads=${33}
+current_datetime=${34}
+temp_dir=${35}
 
 available_threads=$(nproc)
 
@@ -85,10 +87,10 @@ export intermed=$intermed
 #--- create directory for temporary/working files 
 #--- NOTE: create "tmp" and "wd" where your system can write/delete files efficiently (EDIT TO SUIT YOUR MACHINE)
 #tmpdir=$scratch/tmp
-tmpdir=/expanse/lustre/projects/ddp412/sgolzari/job_$current_datetime/tmp
+tmpdir=$temp_dir/job_$current_datetime/tmp
 mkdir -p $tmpdir
 #wd=$scratch/wd
-wd=/expanse/lustre/projects/ddp412/sgolzari/job_$current_datetime/wd
+wd=$temp_dir/job_$current_datetime/wd
 mkdir -p $wd
 
 #--- define file paths 
@@ -119,7 +121,7 @@ process_gene() {
             mv $wd/$gene.mod.fam $wd/$gene.fam 
             TMP=$tmpdir/${gene}
             OUT=$weights/${gene}
-            cmd="time Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq --ldref_pt $ldref_pt --prune_r2 $prune_r2 --threshold_p $threshold_p --ldref_PRSCSx $ldref_PRSCSx --dir_PRSCSx $dir_PRSCSx --phi_shrinkage_PRSCSx $phi_shrinkage_PRSCSx --pops $pops --impact_path ${impact_path}${chr}.txt --ldref_dir ${ldref_dir} --ldrefs ${ldrefs} --out_susie ${out_susie} --skip_susie ${skip_susie}"
+            cmd="time Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq --ldref_pt $ldref_pt --prune_r2 $prune_r2 --threshold_p $threshold_p --ldref_PRSCSx $ldref_PRSCSx --dir_PRSCSx $dir_PRSCSx --phi_shrinkage_PRSCSx $phi_shrinkage_PRSCSx --pops $pops --impact_path ${impact_path}${chr}.txt --ldref_dir ${ldref_dir} --ldrefs ${ldrefs} --in_sample ${in_sample} --out_susie ${out_susie} --skip_susie ${skip_susie}"
             echo $cmd
             $cmd
             rm $wd/$gene.* 
