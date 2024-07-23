@@ -80,8 +80,10 @@ option_list = list(
   			  help="Directory containing ld reference files used for SuSiE fine mapping"),
   make_option("--ldrefs", action="store", default=NA, type="character",
   			  help="Comma-separated list of ld reference files (plink prefixes) used for SuSiE fine mapping"),
+  make_option("--in_sample", action="store", default=NA, type="character",
+                          help="Comma-separated list of TRUE/FALSE indicating whether the ld reference is in sample or not; used for susie fine mapping"),
   make_option("--out_susie", action="store", default=NA, type='character',
-              help="Path to susie output directory [required if using MAGEPRO and not skipping susie]"), 
+              help="Path to susie output directory [required if using MAGEPRO and not skipping susie]"),
   make_option("--skip_susie", action="store_true", default=FALSE,
               help="Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from susie")
 )
@@ -208,17 +210,21 @@ if ("MAGEPRO" %in% model & (!opt$skip_susie) ) {
 				cleanup()
 				q()
 		}
-		# create map with cohort as keys 
-		cohort_map <- setNames(
-		lapply(seq_along(sumstats), function(i) {
-			list(sample_size = sample_sizes[i], ldref = ldrefs_list[i])
-		}),
-		sumstats
-		)
+
 	} else {
 		cat( "ERROR: --ldrefs not supplied, cannot perform fine mapping for MAGEPRO model\n", sep='', file=stderr() )
 				cleanup()
 				q()
+	}
+
+	in_sample_list <- rep(FALSE, length(sumstats))
+	if (!is.na(opt$in_sample)) {
+		in_sample_list <<- strsplit(opt$in_sample, ",")[[1]]
+		if (length(ldrefs_list) != length(in_sample_list)) {
+			cat ("ERROR: --in_sample flag requires an entry for every dataset\n", sep='', file=stderr())
+			cleanup()
+			q()
+		}
 	}
 
 	if (!is.na(opt$out_susie)) {
@@ -232,8 +238,18 @@ if ("MAGEPRO" %in% model & (!opt$skip_susie) ) {
 		cleanup()
 		q()
 	}
+
+	# create map with cohort as keys
+	# we have checked for sample_sizes, ldrefs_list, and in_sample_list above
+	cohort_map <- setNames(
+	lapply(seq_along(sumstats), function(i) {
+		list(sample_size = sample_sizes[i],
+			ldref = ldrefs_list[i],
+			in_sample=in_sample_list[i])
+	}), sumstats)
 	
 }
+
 
 
 if ( "PT" %in% model ){

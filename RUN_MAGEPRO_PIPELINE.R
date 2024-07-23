@@ -78,19 +78,21 @@ option_list = list(
   make_option("--phi_shrinkage_PRSCSx", action="store", default=1e-6, type='numeric',
               help="Shrinkage parameter for PRS-CSx"),
   make_option("--pops", action="store", default=NA, type='character',                               
-	      help="Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR)"),
+	            help="Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR)"),
   make_option("--impact_path", action="store", default=NA, type='character',
               help="path to file with impact scores for each snp"),
   make_option("--ldref_dir", action="store", default=NA, type="character",
-  			  help="Directory containing ld reference files used for susie fine mapping"),
+  			      help="Directory containing ld reference files used for susie fine mapping"),
   make_option("--ldrefs", action="store", default=NA, type="character",
-  			  help="Comma-separated list of ld reference files (plink prefixes) used for susie fine mapping"),
+  			      help="Comma-separated list of ld reference files (plink prefixes) used for susie fine mapping"),
+  make_option("--in_sample", action="store", default=NA, type="character",
+              help="Comma-separated list of TRUE/FALSE indicating whether the ld reference is in sample or not; used for susie fine mapping"),
   make_option("--out_susie", action="store", default=NA, type='character',
-          help="Path to susie output directory [required if using MAGEPRO]"), 
+              help="Path to susie output directory [required if using MAGEPRO]"), 
   make_option("--skip_susie", action="store_true", default=FALSE,
-          help="Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from susie"),
+              help="Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from susie"),
   make_option("--n_threads", action="store", default=1,
-          help="Integer value representing how many threads to be used by MAGEPRO_PIPELINE/5_RunJobs.sh")
+              help="Integer value representing how many threads to be used by MAGEPRO_PIPELINE/5_RunJobs.sh")
 )
 
 opt = parse_args(OptionParser(option_list=option_list))
@@ -202,7 +204,7 @@ if (opt$batch) {
         opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt,
         opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx,
         opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$ldref_dir,
-        opt$ldrefs, opt$out_susie, opt$skip_susie, opt$n_threads, current_datetime,
+        opt$ldrefs, opt$in_sample, opt$out_susie, opt$skip_susie, opt$n_threads, current_datetime,
         paste("> ", output_file, " 2> ", error_file, sep = ""),
         sep = " ")
   system(arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT)
