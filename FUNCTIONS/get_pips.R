@@ -16,7 +16,9 @@ arg_parser <- function() {
         make_option(c("-n", "--n_of_people"), type = "integer",
                     help = "Number of people/sample size", metavar="NSUSIE"),
         make_option(c("-o", "--output_folder"), type="character", help="output folder name", metavar="OUTPUTFOLDER"),
-        make_option(c("-b", "--bim_file"), type="character", help="Path to file containing ld reference bim file", metavar="BIMFILE")
+        make_option(c("-b", "--bim_file"), type="character", help="Path to file containing ld reference bim file", metavar="BIMFILE"),
+        make_option(c("-v", "--variance"), type = "logical", default = FALSE,
+                    help = "Estimate residual variance: set to TRUE if in-sample LD is provided", metavar = "VARFLAG")
     )
 
     opt_parser <- OptionParser(option_list = option_list)
@@ -41,6 +43,11 @@ arg_parser <- function() {
     if (is.null(opt$bim_file)) {
         stop("bim file path (-b, --bim_file) is required", call. = FALSE)
     }
+
+    if (is.null(opt$variance)) {
+        stop("Error: Flag indicating whether in sample or out of sample LD is provided (-v, --variance) is required", call. = FALSE)
+    }
+
     return(opt)
 }
 opt <- arg_parser()
@@ -163,6 +170,44 @@ tryCatch({
     cat("In susie_rss:\n", e$message, "\n")
     quit(status=1)
 })
+
+############################################################
+# Checking whether susie_rss should be rerun with refine=TRUE
+# If sum^2 of betas is > 1, then, potentially, didnt converge properly
+betas <- coef(res)[-1]  # coef.susie – extract regression
+betas_squared <- betas^2
+total_betas_squared <- sum(betas_squared)
+
+
+if (total_betas_squared >= 1) {
+    tryCatch({
+        withCallingHandlers({
+            res <- susie_rss(bhat = df[[5]], shat = df[[6]], R = ld_matrix, n = opt$n, max_iter = 100, refine=TRUE, estimate_residual_variance=opt$v)
+        }, warning = function(w) {
+            if (grepl("IBSS algorithm did not converge", w$message)) {
+                out_dir <- dirname(opt$o)
+                debug_path <- file.path(out_dir, "debug", basename(opt$o))
+
+                if (!dir.exists(debug_path)) {
+                    dir.create(file.path(debug_path, "img"), recursive = TRUE)
+                    dir.create(file.path(debug_path, "txt"), recursive = TRUE)
+                }
+                cat("WARNING MAGEPRO: IBSS algorithm did not converge in 100 iterations. Saving diagnostic plot (as recommended by SuSiE) to ", debug_path, "\n")
+                
+                z_scores <- df[[5]] / df[[6]]
+                condz_in <- kriging_rss(z_scores, ld_matrix, n = opt$n)
+
+                ggsave(file.path(debug_path, "img", paste0(gene, ".png")), plot = condz_in$plot)
+                quit(status=1)
+            } else {
+                cat(w$message, "\n")
+            }
+        })
+    }, error = function(e) {
+        cat("In susie_rss:\n", e$message, "\n")
+        quit(status=1)
+    })
+}
 
 
 pips <- res$pip
