@@ -108,7 +108,7 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 	" -n ", cohort_data$sample_size,
 	" -o ", out,
 	" -b ", paste0(cohort_ldref_path, ".bim"),
-	' -v ', cohort$in_sample
+	' -v ', cohort_data$in_sample
 	)
 
 	exit_status_susie <- system(rcommand, wait = TRUE, intern=FALSE)

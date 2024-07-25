@@ -79,6 +79,7 @@ export pops=$pops
 export impact_path=$impact_path
 export ldref_dir=$ldref_dir
 export ldrefs=$ldrefs
+export in_sample=$in_sample
 export out_susie=$out_susie
 export skip_susie=$skip_susie
 export intermed=$intermed

@@ -81,15 +81,15 @@ MAGEPRO utilizes external eQTL summary statistics to improve gene models trained
 | **--ge** | Path to individual-level, normalized gene expression data in matrix format (see input formats below for more details) |
 | --covar | Optional path to quantitative covariates (PLINK format) |
 | --num_covar | Number of covariate to use (number of rows to extract from --covar file). "ALL" to use all covariates available. Default assumes gtex covariate file (first 5 genotype PC, first 15 gene expression inferredcov, pcr, platform, sex: ideal for N < 150, see GTEx pipeline for more information). |
+| --batch | Boolean flag for running batches (sbatch) of genes in a parallel fashion. Note: this would only work in a slurm environment |
 | --num_batches | Number of batch jobs to split the genes into. Default 20. |
 | --rerun | Boolean to indicate if the pipeline is being reran (TRUE = skip creation of plink files per gene) |
 | --intermed_dir | Directory to store intermediate files |
 | --subset_genes | Path to file with genes of interest in one column |
 | --sumstats_dir | Path to external datasets (required if using MAGEPRO or META models) |
 | --sumstats | Comma-separated list of external datasets to include (required if using MAGEPRO or META models) |
-| --model | Comma-separated list of models to use. Options: "SINGLE" "META" and "MAGEPRO" (default SINGLE,META,MAGEPRO) |
+| --models | Comma-separated list of models to use. Options: "SINGLE" "META" "PT" "SuSiE" "SuSiE_IMPACT" "PRSCSx" "MAGEPRO_fullsumstats" and "MAGEPRO" (default SINGLE,META,MAGEPRO) |
 | --ss | Comma-separated list of sample sizes of sumstats in the same order as --sumstats (required if using "META" model or --cell_type_meta) |
-| --cell_meta  | Comma-separated list of prefixes of eqtl datasets to cell type meta-analyze (--ss required) |
 | --PATH_plink | Path to plink executable (default "plink") |
 | --PATH-gcta | Path to gcta executable (default "gcta_nr_robust") |
 | --resid | Also regress the covariates out of the genotypes (default FALSE) |
@@ -109,9 +109,11 @@ MAGEPRO utilizes external eQTL summary statistics to improve gene models trained
 | --pops | Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR) |
 | --impact_path | path to file with impact scores for each snp |
 | --ldref_dir | Directory containing ld reference files used for SuSiE fine mapping |
-| --ldrefs | Directory containing ld reference files used for SuSiE fine mapping |
+| --ldrefs | Comma-separated list of ld reference files (plink prefixes) used for susie fine mapping |
+| --in_sample | Comma-separated list of TRUE/FALSE indicating whether the ld reference is in sample or not; used for susie fine mapping |
 | --out_susie   | Path to susie output directory [required if using MAGEPRO and not skipping SuSiE]|
 | --skip_susie  | Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from susie (default FALSE) |
+| --n_threads | Integer value representing how many threads to be used by 5th step of MAGEPRO_PIPELINE (5_RunJobs.sh or 5_batch_RunJobs.sh) |
 
 
 ## Output format
@@ -273,8 +275,8 @@ If you would like to run MAGEPRO on one gene, it is possible to run MAGEPRO.R se
 | **--tmp** | Path to store temporary files |
 | --sumstats_dir | Path to external datasets (required if using MAGEPRO or META models) |
 | --sumstats | Comma-separated list of external datasets to include (required if using MAGEPRO or META models) |
-| --models | Comma-separated list of models to use. Options: "SINGLE" "META" and "MAGEPRO" (default SINGLE,META,MAGEPRO) |
-| --ss | Comma-separated list of sample sizes of sumstats in the same order as --sumstats (required if using "META" model or --cell_type_meta) |
+| --models | Comma-separated list of models to use. Options: "SINGLE" "META" "PT" "SuSiE" "SuSiE_IMPACT" "PRSCSx" "MAGEPRO_fullsumstats" and "MAGEPRO" (default SINGLE,META,MAGEPRO) |
+| --ss | Comma-separated list of sample sizes of sumstats in the same order as --sumstats |
 | --pheno | Path to molecular phenotype file in PLINK format (taken from bfile otherwise) |
 | --PATH_plink | Path to plink executable (default "plink") |
 | --PATH_gcta | Path to gcta executable (default "gcta_nr_robust") |
@@ -297,6 +299,7 @@ If you would like to run MAGEPRO on one gene, it is possible to run MAGEPRO.R se
 | --impact_path | Path to file with impact scores for each SNP |
 | --ldref_dir | Directory containing LD reference files used for SuSiE fine mapping|
 | --ldrefs | Comma-separated list of LD reference files (plink prefixes) used for SuSiE fine mapping |
+| --in_sample | Comma-separated list of TRUE/FALSE indicating whether the ld reference is in sample or not; used for susie fine mapping |
 | --out_susie | Path to SuSiE output directory [required if using MAGEPRO and not skipping SuSiE] |
 | --skip_susie | Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from SuSiE (default=FALSE) |
 | --n_threads | Integer value representing how many threads to be used by MAGEPRO_PIPELINE/5_RunJobs.sh (default 1) |
