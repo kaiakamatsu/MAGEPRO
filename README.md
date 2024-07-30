@@ -42,28 +42,20 @@ Download from ...
 Our tool enables users to build predictive models of gene expression using PRS and fine-mapping methods that have not been applied to gene expression prediction before.  
 Although this may be a useful option, it require some extra dependencies:
 
-### PRS-CSx 
-> https://github.com/getian107/PRScsx  
+* PRS-CSx: https://github.com/getian107/PRScsx  
 
-**Python**
-- scipy (https://www.scipy.org/)
-- h5py (https://www.h5py.org/)
+* Python:
+  * scipy: https://www.scipy.org/
+  * h5py: https://www.h5py.org/
+  * matplotlib: https://matplotlib.org/
 
-### Bridge-PRS
-> https://www.bridgeprs.net/  
+* Bridge-PRS: https://www.bridgeprs.net/  
 
-**R**
-- BEDMatrix, boot, data.table, doMC, glmnet, MASS, optparse, parallel, and R.utils
-> install.packages(c("BEDMatrix","boot","data.table","doMC","glmnet","MASS","optparse","parallel","R.utils"))  
+* R:
+  * BEDMatrix, boot, data.table, doMC, glmnet, MASS, optparse, parallel, and R.utils
+  * `install.packages(c("BEDMatrix","boot","data.table","doMC","glmnet","MASS","optparse","parallel","R.utils"))`
 
-**Python3**
-- matplotlib
-
-### SuSiE 
-> https://stephenslab.github.io/susieR/index.html
-
-**R**  
-> install.packages("susieR")
+* SuSiE: https://stephenslab.github.io/susieR/index.html
 
 ## Preparing datasets
 
@@ -253,7 +245,8 @@ Example:
 5. run MAGEPRO
 > cd ../../MAGEPRO
 >
-> vim MAGEPRO_PIPELINE/5_RunJobs.sh # edit to prepare for job submission on your HPC cluster
+> vim MAGEPRO_PIPELINE/5_batch_RunJobs.sh # edit to prepare for job submission if using HPC cluster (--batch option in RUN_MAGEPRO_PIPELINE.R)
+> vim MAGEPRO_PIPELINE/5_RunJobs.sh # for running on a linux/macOS machine without creating batches (called through RUN_MAGEPRO_PIPELINE.R)
 > 
 > #example with whole blood below, computing models for only significantly heritable
 > 
