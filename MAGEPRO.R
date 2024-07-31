@@ -387,7 +387,7 @@ if ( !is.na(opt$covar) ) {
 	covar = ( read.table(opt$covar,as.is=T,head=T) )
 	if ( opt$verbose >= 1 ) cat("### Loaded",ncol(covar)-2,"covariates\n")
 	# Match up data
-	m = match( paste(fam[,1],fam[,2]) , paste(covar[,1],covar[,2]) )	
+	m = match( paste(fam[,1],fam[,2]) , paste(covar[,1],covar[,2]) )
 	m.keep = !is.na(m)
 	fam = fam[m.keep,]
 	pheno = pheno[m.keep,]
@@ -484,7 +484,8 @@ if ( !is.na(opt$covar) && opt$resid ) {
 }
 
 N.tot = nrow(genos$bed)
-if ( opt$verbose >= 1 ) cat(nrow(pheno),"phenotyped samples, ",nrow(genos$bed),"genotyped samples, ",ncol(genos$bed)," markers\n")
+if ( opt$verbose >= 1 ) cat(nrow(pheno),"phenotyped samples, ",nrow(genos$bed),
+							"genotyped samples, ",ncol(genos$bed)," markers\n")
 
 # --- prepare heritability value to use for LASSO in plink
 lasso_h2 <- hsq[1]
@@ -501,7 +502,14 @@ susie_status <- setNames(rep(FALSE, length(sumstats)), sumstats)
 if (ext > 0){
 	if ( "MAGEPRO" %in% model ){
 		if (!opt$skip_susie) {
-			susie_status <<- cohort_fine_mapping(cohort_map, opt$sumstats_dir, opt$tmp, opt$ldref_dir, opt$out_susie, opt$gene, opt$PATH_plink, opt$verbose) # returns a list that maps dataset name -> TRUE/FALSE (indicating success running susie or not)
+			# returns a list that maps dataset name -> TRUE/FALSE (indicating success running susie or not)
+			cat("### ABOUT TO RUN cohort_fine_mapping")
+
+			susie_status <<- cohort_fine_mapping(cohort_map, opt$sumstats_dir, 
+												 opt$tmp, opt$ldref_dir, 
+												 opt$out_susie, opt$gene, 
+												 opt$PATH_plink, 
+												 opt$impact_path, opt$verbose) 
 		}
 	}
 	for (d in datasets) {

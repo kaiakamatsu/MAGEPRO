@@ -198,7 +198,7 @@ if (opt$batch) {
   # --- CREATE DIRECTORY FOR STANDARD OUT AND ERROR FILES FROM JOB
   if ( opt$verbose >= 1 ) cat("### CREATING DIRECTORY ../working_err FOR OUT/ERROR FILES \n")
   system("mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT)
-  temp_dir <- "../"
+  temp_dir <- ".."
 
   current_datetime <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
 
