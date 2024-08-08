@@ -14,7 +14,7 @@ genes_of_interest <- fread(file = subset, header = F)
 allgenenames <- filter(allgenenames, V1 %in% genes_of_interest$V1)
 }
 #goal: first col = gene name, second col = batch number 
-
+print(paste())
 if (batches == 1) {
     batchnum <- rep(1, nrow(allgenenames)) # all genes in one batch
 } else {

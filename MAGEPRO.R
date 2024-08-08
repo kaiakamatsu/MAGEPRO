@@ -32,7 +32,9 @@ option_list = list(
 	      SuSiE_IMPACT = sum of single effect regression with IMPACT scores as prior on SNP selection \n
 	      PRSCSx = PRS-CSx multi-ancestry PRS method \n 
 	      MAGEPRO_fullsumstats = magepro model, no sparsity \n
-	      MAGEPRO = magepro model"),
+	      MAGEPRO = magepro model\n
+		  MAGEPRO_IMPACT = magepro with IMPACT data as prior weights for SuSiE\n
+		  "),
   make_option("--ss", action="store", default=NA, type='character',
               help="Comma-separated list of sample sizes of sumstats (in the same order)"), 
   make_option("--pheno", action="store", default=NA, type='character',
@@ -123,7 +125,7 @@ if (!is.na(opt$gene)){
 
 #models to use
 model <- strsplit(opt$models, ",", fixed = TRUE)[[1]]
-if ( sum(! model %in% c("SINGLE", "META", "PT", "SuSiE", "SuSiE_IMPACT","PRSCSx", "MAGEPRO_fullsumstats", "MAGEPRO")) > 0 | length(model) > 8 ){
+if ( sum(! model %in% c("SINGLE", "META", "PT", "SuSiE", "SuSiE_IMPACT","PRSCSx", "MAGEPRO_fullsumstats", "MAGEPRO", "MAGEPRO_IMPACT")) > 0 | length(model) > 9 ){
 	cat( "ERROR: Please input valid models \n" , sep='', file=stderr() )
         cleanup()
         q()
@@ -131,7 +133,7 @@ if ( sum(! model %in% c("SINGLE", "META", "PT", "SuSiE", "SuSiE_IMPACT","PRSCSx"
 
 if (opt$verbose >= 1) cat("### USING THE FOLLOWING MODELS:", opt$models, "\n")
 
-order <- c("SINGLE","META", "PT", "SuSiE", "SuSiE_IMPACT", "PRSCSx", "MAGEPRO_fullsumstats", "MAGEPRO")
+order <- c("SINGLE","META", "PT", "SuSiE", "SuSiE_IMPACT", "PRSCSx", "MAGEPRO_fullsumstats", "MAGEPRO", "MAGEPRO_IMPACT")
 types <- model[match(order, model)]
 types <- unique(types[!is.na(types)])
 
@@ -165,7 +167,7 @@ if ( ! is.na(opt$sumstats)){
 		}
 	}
 }else{
-	if ("META" %in% model | "PRSCSx" %in% model | "MAGEPRO_fullsumstats" %in% model | "MAGEPRO" %in% model){
+	if ("META" %in% model | "PRSCSx" %in% model | "MAGEPRO_fullsumstats" %in% model | "MAGEPRO" %in% model | "MAGEPRO_IMPACT" %in% model){
 		cat( "ERROR: --sumstats not supplied, cannot compute META, PRS-CSx, MAGEPRO models \n" , sep='', file=stderr() )
 		cleanup()
                 q()
@@ -173,7 +175,7 @@ if ( ! is.na(opt$sumstats)){
 }
 
 hashmap_ss <- list() #hashmap for sample sizes per dataset
-if ( ("META" %in% model | "PRSCSx" %in% model |  ("MAGEPRO" %in% model & !opt$skip_susie) ) ){
+if ( ("META" %in% model | "PRSCSx" %in% model |  ("MAGEPRO" %in% model & !opt$skip_susie) | ("MAGEPRO_IMPACT" %in% model & !opt$skip_susie)) ){
 	if (!is.na(opt$ss)){
 		sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
 		if (length(sumstats) != length(sample_sizes)){
@@ -189,8 +191,18 @@ if ( ("META" %in% model | "PRSCSx" %in% model |  ("MAGEPRO" %in% model & !opt$sk
 	}
 }
 
+
+if ("MAGEPRO_IMPACT" %in% model) {
+	if(is.na(opt$impact_path)){
+		cat( "ERROR: Cannot perform MAGEPRO_IMPACT without the --impact_path flag\n" , sep='', file=stderr() )
+		cleanup()
+		q()
+	}
+}
+
+
 cohort_map <- list()
-if ("MAGEPRO" %in% model & (!opt$skip_susie) ) {
+if ("MAGEPRO" %in% model & (!opt$skip_susie) | ("MAGEPRO_IMPACT" %in% model & !opt$skip_susie)) {
 	if ( !is.na(opt$ldref_dir) ) {
 		if (!file.exists(opt$ldref_dir)) {
 			cat( "ERROR: --ldref_dir directory does not exist, please check the path\n", sep='', file=stderr())
@@ -316,8 +328,8 @@ if ( "SuSiE" %in% model | "SuSiE_IMPACT" %in% model ){
 	if ( "SuSiE_IMPACT" %in% model ){
 		if(is.na(opt$impact_path)){
 			cat( "ERROR: Cannot perform SuSiE_IMPACT without the --impact_path flag\n" , sep='', file=stderr() )
-                	cleanup()
-                	q()
+			cleanup()
+			q()
 		}
 	}
 }
@@ -499,17 +511,18 @@ ext <- length(datasets)
 # --- READ SUMSTATS AND FLIP ALLELES AS NECESSARY
 loaded_datasets <- c()
 susie_status <- setNames(rep(FALSE, length(sumstats)), sumstats)
+
+loaded_datasets_impact <- c()
+susie_status_impact <- setNames(rep(FALSE, length(sumstats)), sumstats)
 if (ext > 0){
 	if ( "MAGEPRO" %in% model ){
 		if (!opt$skip_susie) {
 			# returns a list that maps dataset name -> TRUE/FALSE (indicating success running susie or not)
-			cat("### ABOUT TO RUN cohort_fine_mapping")
-
 			susie_status <<- cohort_fine_mapping(cohort_map, opt$sumstats_dir, 
 												 opt$tmp, opt$ldref_dir, 
 												 opt$out_susie, opt$gene, 
 												 opt$PATH_plink, 
-												 opt$impact_path, opt$verbose) 
+												 NA, opt$verbose) 
 		}
 	}
 	for (d in datasets) {
@@ -519,6 +532,25 @@ if (ext > 0){
 			select_cols <- append(select_cols, c(8, 9, 10)) # if susie is successfully ran for this dataset, load the 8th, 9th, and 10th columns
 		}
 		loaded_datasets <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets, select_cols, susie_status[[name]])
+	}
+
+	if ( "MAGEPRO_IMPACT" %in% model ){
+		if (!opt$skip_susie) {
+			# returns a list that maps dataset name -> TRUE/FALSE (indicating success running susie or not)
+			susie_status_impact <<- cohort_fine_mapping(cohort_map, opt$sumstats_dir, 
+												 opt$tmp, opt$ldref_dir, 
+												 opt$out_susie, opt$gene, 
+												 opt$PATH_plink, 
+												 opt$impact_path, opt$verbose) 
+		}
+	}
+	for (d in datasets) {
+		select_cols <- c(2,3,4,5,7) # CAN EDIT THIS LINE WITH CUSTOMIZED COL NUMBERS
+		name <- strsplit(d, split="[.]")[[1]][2]
+		if (susie_status_impact[[name]]){
+			select_cols <- append(select_cols, c(8, 9, 10)) # if susie is successfully ran for this dataset, load the 8th, 9th, and 10th columns
+		}
+		loaded_datasets_impact <- load_flip_dataset(genos$bim, name, eval(parse(text = d)), loaded_datasets_impact, select_cols, susie_status_impact[[name]])
 	}
 }
 
@@ -600,9 +632,26 @@ if ( ("MAGEPRO" %in% model) & (ext > 0) ){
 	ext_magepro <- 0
 }
 
+# --- PREPARE SUMMARY STATISTICS FOR MAGEPRO_IMPACT
+if ( ("MAGEPRO_IMPACT" %in% model) & (ext > 0) ){
+	if ( opt$verbose >= 1){
+			cat("### PROCESSING SUMSTATS FOR MAGEPRO_IMPACT \n")
+	}
+	wgt_magepro_impact <- c() #magepro_impact weights
+	for (loaded in loaded_datasets_impact){
+        name <- strsplit(loaded, split="[.]")[[1]][2]
+		if (susie_status_impact[[name]]){
+			wgt_magepro_impact <- datasets_process_susie(name, eval(parse(text = loaded)), wgt_magepro_impact)
+		}
+	}
+	ext_magepro_impact <- length(wgt_magepro_impact)
+}else{
+	ext_magepro_impact <- 0
+}
+
 # --- CROSSVALIDATION ANALYSES
 set.seed(1)
-avg_training_r2_single <- avg_training_r2_meta <- avg_training_r2_pt <- avg_training_r2_susie <- avg_training_r2_susie_impact <- avg_training_r2_prscsx <- avg_training_r2_magepro_fullsumstats <- avg_training_r2_magepro <- NA
+avg_training_r2_single <- avg_training_r2_meta <- avg_training_r2_pt <- avg_training_r2_susie <- avg_training_r2_susie_impact <- avg_training_r2_prscsx <- avg_training_r2_magepro_fullsumstats <- avg_training_r2_magepro <- avg_training_r2_magepro_impact <- NA
 #default crossval = 5 fold split
 if ( opt$crossval <= 1 ) { 
 	if ( opt$verbose >= 1 ) cat("### SKIPPING CROSS-VALIDATION\n")
@@ -632,6 +681,7 @@ if ( opt$crossval <= 1 ) {
 	r2_training_prscsx <- c()
 	r2_training_magepro_fullsumstats <- c()
 	r2_training_magepro <- c()
+	r2_training_magepro_impact <- c()
 
 	if ( ("META" %in% model) & (ext_fullsumstats > 0) ){
 		training_ss <- N.tot * ((opt$crossval - 1)/opt$crossval)
@@ -777,7 +827,6 @@ if ( opt$crossval <= 1 ) {
 
 		if ("MAGEPRO_fullsumstats" %in% model){
 			if (ext_fullsumstats > 0){
-				##pred.wgt.magepro_fullsumstats <- weights.magepro_marquezluna(pred.wgt, wgt_fullsumstats, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train, genos$bim, opt$tmp, lasso_h2, FALSE)
 				pred.wgt.magepro_fullsumstats <- weights.magepro(pred.wgt, wgt_fullsumstats, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], FALSE)
 				cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ], , drop = FALSE] %*% pred.wgt.magepro_fullsumstats
 				pred_train_magepro_fullsumstats = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.magepro_fullsumstats))) #r^2 between predicted and actual
@@ -792,6 +841,25 @@ if ( opt$crossval <= 1 ) {
 		}
 
 		#------------------------------------------------------------------------------
+
+		# MAGEPRO_IMPACT ----------------------------------------------------------------------
+		if ("MAGEPRO_IMPACT" %in% model){
+			if (ext_magepro_impact > 0){	
+				pred.wgt.magepro_impact <- weights.magepro(pred.wgt, wgt_magepro_impact, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], FALSE)
+				cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ], , drop = FALSE] %*% pred.wgt.magepro_impact
+				# --- for checking cor() of weights in CV
+				wgt.cv[,cv] = pred.wgt.magepro_impact
+				# --- 
+				#store the r2 on training set
+				pred_train_magepro_impact = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.magepro_impact))) #r^2 between predicted and actual 
+				r2_training_magepro_impact = append(r2_training_magepro_impact, pred_train_magepro_impact$adj.r.sq)	
+			}else{
+				cv.calls[ indx , colcount ] = NA
+				r2_training_magepro_impact = append(r2_training_magepro_impact, NA)
+			}
+			colcount = colcount + 1
+		}
+
 
 
 		# MAGEPRO----------------------------------------------------------------------
@@ -844,6 +912,7 @@ if ( opt$crossval <= 1 ) {
 	if ("SuSiE_IMPACT" %in% model) avg_training_r2_susie_impact <- mean(r2_training_susie_impact)
 	if ("PRSCSx" %in% model) avg_training_r2_prscsx <- mean(r2_training_prscsx)
 	if ("MAGEPRO_fullsumstats" %in% model) avg_training_r2_magepro_fullsumstats <- mean(r2_training_magepro_fullsumstats)
+	if ("MAGEPRO_IMPACT" %in% model) avg_training_r2_magepro_impact <- mean(r2_training_magepro_impact)
 	if ("MAGEPRO" %in% model) avg_training_r2_magepro <- mean(r2_training_magepro)
 
 }
@@ -939,6 +1008,16 @@ if ("MAGEPRO_fullsumstats" %in% model){
 		colcount = colcount + 1
 }
 
+if ("MAGEPRO_IMPACT" %in% model) {
+	if (ext_magepro_impact > 0){
+		pred.wgt.magepro_impact <- weights.magepro(pred.wgtfull, wgt_magepro_impact, genos$bed, pheno[,3], TRUE)
+		wgt.matrix[, colcount] = pred.wgt.magepro_impact
+	}else{
+		wgt.matrix[, colcount] = NA
+	}
+	colcount = colcount + 1
+}
+
 # --- MAGEPRO
 cf_total = NA
 if ("MAGEPRO" %in% model){
@@ -967,7 +1046,7 @@ for (i in 1:(opt$crossval-1)){
 avg_cor <- mean(cors_weights)
 # ---
 
-save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_pt, avg_training_r2_susie, avg_training_r2_susie_impact, avg_training_r2_prscsx, avg_training_r2_magepro_fullsumstats, avg_training_r2_magepro, var_cov, avg_cor, SINGLE_top1, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
+save( wgt.matrix, snps, cv.performance, hsq, hsq.pv, N.tot , wgtmagepro, cf_total, avg_training_r2_single, avg_training_r2_meta, avg_training_r2_pt, avg_training_r2_susie, avg_training_r2_susie_impact, avg_training_r2_prscsx, avg_training_r2_magepro_fullsumstats, avg_training_r2_magepro_impact, avg_training_r2_magepro, var_cov, avg_cor, SINGLE_top1, file = paste( opt$out , ".wgt.RDat" , sep='' ) )
 
 # --- CLEAN-UP
 if ( opt$verbose >= 1 ) cat("### CLEANING UP\n")

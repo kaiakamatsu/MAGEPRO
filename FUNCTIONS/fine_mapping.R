@@ -16,7 +16,6 @@ cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, g
 	results <- lapply(names(cohort_map), function(cohort) {
 		process_cohort(cohort, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, impact_path, verbose)
 	})
-	cat("Here in cohort fine_mapping")
 	susie_result_status <- list()
 	for (i in seq_along(results)) {
 		print( paste( names(cohort_map)[i] , results[[i]]$status) )
@@ -36,7 +35,13 @@ process_cohort <- function(cohort, sumstats_dir, tmp, ldref_dir, out, gene, PATH
 	cohort_path <- file.path(sumstats_dir, cohort)
 	cohort_ld_directory <- file.path(tmp, paste0(cohort, "ld"))
 	cohort_ldref_path <- file.path(ldref_dir, cohort_data$ldref)
+	
 	out_cohort_path <- file.path(out, cohort)
+	if (!is.na(impact_path)) {
+		# if impact, add _impact at the end
+		clean_path <- sub("/$", "", out)
+		out_cohort_path <- file.path(paste0(clean_path, "_impact"), cohort)
+	}
 
 	# Create directories for output and ld_matrix_path
 	dir.create(cohort_ld_directory, recursive = TRUE, showWarnings = FALSE)
@@ -64,7 +69,6 @@ process_cohort <- function(cohort, sumstats_dir, tmp, ldref_dir, out, gene, PATH
 
 
 gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, plink, out, impact_path, verbose) {
-	cat("Here in gene_fine_mapping")
 
 	# PURPOSE: create correlation matrix for each gene for given cohort, then perform fine-mapping with susie_rss in get_pips.R
 	# PREREQs: 
@@ -104,15 +108,16 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 		return(to_return)
 	}
 
+	impact_arg <- if (!is.na(impact_path)) paste("-i", impact_path) else ""
+
 	rcommand <- paste0("Rscript FUNCTIONS/get_pips.R -g ", cohort_path, "/",
-	" -c ", gene_txt, 
-	" -l ", file.path(cohort_ld_directory, paste0(gene, ".ld")),
-	" -n ", cohort_data$sample_size,
-	" -o ", out,
-	" -b ", paste0(cohort_ldref_path, ".bim"),
-	' -v ', cohort_data$in_sample,
-	" -i ", impact_path
-	)
+                   " -c ", gene_txt, 
+                   " -l ", file.path(cohort_ld_directory, paste0(gene, ".ld")),
+                   " -n ", cohort_data$sample_size,
+                   " -o ", out,
+                   " -b ", paste0(cohort_ldref_path, ".bim"),
+                   ' -v ', cohort_data$in_sample,
+                   " ", impact_arg)
 
 	exit_status_susie <- system(rcommand, wait = TRUE, intern=FALSE)
 	if (exit_status_susie != 0) {

@@ -19,7 +19,7 @@ arg_parser <- function() {
         make_option(c("-b", "--bim_file"), type="character", help="Path to file containing ld reference bim file", metavar="BIMFILE"),
         make_option(c("-v", "--variance"), type = "logical", default = FALSE,
                     help = "Estimate residual variance: set to TRUE if in-sample LD is provided", metavar = "VARFLAG"),
-        make_option(c("-i", "--impact"), type = "character", default = FALSE,
+        make_option(c("-i", "--impact"), type = "character", default = NA,
                     help = "Path to IMPACT data about variance", metavar = "IMPACT")
     )
 
@@ -48,16 +48,12 @@ arg_parser <- function() {
     if (is.null(opt$variance)) {
         stop("Error: Flag indicating whether in sample or out of sample LD is provided (-v, --variance) is required", call. = FALSE)
     }
-    if (is.null(opt$impact)) {
-        stop("Error: IMPACT variance path (-i, --impact) is required", call. = FALSE)
-    }
     return(opt)
 }
 opt <- arg_parser()
 
 GENES <- opt$g
 CGENE = paste0(GENES, opt$c)
-
 # read files
 df <- fread(CGENE, header=TRUE, dec=".")       # read in current gene
 colnames(df) = c("Gene", "SNP", "A1", "A2", "BETA", "SE", "P")
@@ -122,12 +118,15 @@ snp_list <- df[[2]]
 ld_stats <- ld_stats[ld_stats$SNP_A %in% snp_list] # removed snps from corr matrix that are removed by QC
 ld_stats <- ld_stats[ld_stats$SNP_B %in% snp_list]
 ############################################################
-# Getting Variance
-curr_chr <- ld_stats$CHR_A[1]
-var_path <- paste0(opt$i)
-impact_df <- fread(var_path, header=TRUE, sep="\t", dec=".") # read df
-impact_df <- impact_df[impact_df[[3]] %in% snp_list] # filter only the ones that we need
-impact_df <- impact_df %>% arrange(match(impact_df[[3]], snp_list))   # order df in the order that we need
+
+if (!is.na(opt$i)) {
+    # Getting Variance
+    curr_chr <- ld_stats$CHR_A[1]
+    var_path <- paste0(opt$i)
+    impact_df <- fread(var_path, header=TRUE, sep="\t", dec=".") # read df
+    impact_df <- impact_df[impact_df[[3]] %in% snp_list] # filter only the ones that we need
+    impact_df <- impact_df %>% arrange(match(impact_df[[3]], snp_list))   # order df in the order that we need
+}
 ############################################################
 
 
@@ -147,7 +146,11 @@ output <- file.path(opt$o, opt$c)
 
 tryCatch({
     withCallingHandlers({
-        res <- susie_rss(bhat = df[[5]], shat = df[[6]], R = ld_matrix, n = opt$n, max_iter = 100, prior_weights=impact_df[[5]])
+        if (!is.na(opt$i)) {
+            res <- susie_rss(bhat = df[[5]], shat = df[[6]], R = ld_matrix, n = opt$n, max_iter = 100, estimate_residual_variance=opt$v, prior_weights=impact_df[[5]])
+        } else {
+             res <- susie_rss(bhat = df[[5]], shat = df[[6]], R = ld_matrix, n = opt$n, estimate_residual_variance=opt$v, max_iter = 100)
+        }
     }, warning = function(w) {
         if (grepl("IBSS algorithm did not converge", w$message)) {
             out_dir <- dirname(opt$o)
@@ -188,7 +191,11 @@ total_betas_squared <- sum(betas_squared)
 if (total_betas_squared >= 1) {
     tryCatch({
         withCallingHandlers({
+        if (!is.na(opt$i)) {
             res <- susie_rss(bhat = df[[5]], shat = df[[6]], R = ld_matrix, n = opt$n, max_iter = 100, refine=TRUE, estimate_residual_variance=opt$v, prior_weights=impact_df[[5]])
+        } else {
+            res <- susie_rss(bhat = df[[5]], shat = df[[6]], R = ld_matrix, n = opt$n, max_iter = 100, refine=TRUE, estimate_residual_variance=opt$v)
+        }
         }, warning = function(w) {
             if (grepl("IBSS algorithm did not converge", w$message)) {
                 out_dir <- dirname(opt$o)
@@ -214,7 +221,6 @@ if (total_betas_squared >= 1) {
         quit(status=1)
     })
 }
-cat("Here in get_pips.R")
 
 pips <- res$pip
 # create credible set column

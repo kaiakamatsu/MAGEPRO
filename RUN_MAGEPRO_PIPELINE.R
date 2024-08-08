@@ -41,7 +41,9 @@ option_list = list(
 	      SuSiE_IMPACT = sum of single effects regression with IMPACT scores as priors \n
 	      PRSCSx = PRS-CSx multi-ancestry PRS method \n 
 	      MAGEPRO_fullsumstats = magepro model, no sparsity \n
-	      MAGEPRO = magepro model"),
+	      MAGEPRO = magepro model\n
+        MAGEPRO_IMPACT = magepro with IMPACT data as prior weights for SuSiE\n
+        "),
   make_option("--ss", action="store", default=NA, type='character',
               help="Comma-separated list of sample sizes of sumstats (in the same order)"), 
   make_option("--PATH_plink", action="store", default="plink", type='character',
@@ -80,7 +82,7 @@ option_list = list(
   make_option("--pops", action="store", default=NA, type='character',                               
 	            help="Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR)"),
   make_option("--impact_path", action="store", default=NA, type='character',
-              help="path to file with impact scores for each snp"),
+              help="path to file with impact scores for each snp. Required for SuSiE_IMPACT, MAGEPRO_IMPACT"),
   make_option("--ldref_dir", action="store", default=NA, type="character",
   			      help="Directory containing ld reference files used for susie fine mapping"),
   make_option("--ldrefs", action="store", default=NA, type="character",

@@ -39,6 +39,10 @@ temp_dir=${35}
 
 available_threads=$(nproc)
 
+# Change based on how your machine works! One can load these before running RUN_MAGEPRO_PIPELINE.R
+module load cpu/0.15.4 
+module load parallel/20200822 
+
 # Check if user-specified threads are greater than available threads
 if [ "$n_threads" -gt "$available_threads" ]; then
   echo "Warning: Specified number of threads ($n_threads) is greater than available threads ($available_threads)."
