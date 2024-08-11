@@ -1,12 +1,10 @@
 # MAGEPRO (Multi-Ancestry Gene Expression Prediction Regularized Optimization) <img src = IMAGES/veigar.png width="50" height="50"> <img src = IMAGES/wand.png width="50" height="50">
 MAGEPRO is a predictive genetics method to create powerful gene expression prediction models. We leverage eQTL summary statistics from diverse ancestries to optimize our gene models and enable the identification of novel gene-trait associations through transcriptome-wide association studies. 
 
-# FIXES 
+# FIXES TO BE MADE
 - in 1_CollectSamples.R, also subset to individuals in covar file, and create a set of indivdiuasl present in ge, genotype and covars
 - --num_covar flag is hard to use for gtex formatted covars with sex and age in the last row
 - --ldref_pt by default uses bfile
-- utilize multiple threads for PRSCSx shrinkage (export MKL_NUM_THREADS=$N_THREADS, export NUMEXPR_NUM_THREADS=$N_THREADS, export OMP_NUM_THREADS=$N_THREADS)
-- change flip allele function
 
 # USING MAGEPRO 
 
