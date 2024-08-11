@@ -77,11 +77,13 @@ option_list = list(
   make_option("--impact_path", action="store", default=NA, type='character',
               help="path to file with impact scores for each snp"), 
   make_option("--ldref_dir", action="store", default=NA, type="character",
-  			  help="Directory containing ld reference files used for SuSiE fine mapping"),
+  			  help="Directory containing ld reference files used in MAGEPRO for SuSiE fine mapping"),
   make_option("--ldrefs", action="store", default=NA, type="character",
-  			  help="Comma-separated list of ld reference files (plink prefixes) used for SuSiE fine mapping"),
+  			  help="Comma-separated list of ld reference files (plink prefixes) used in MAGEPRO for SuSiE fine mapping"),
+  make_option("--in_sample", action="store", default=NA, type="character",
+              help="Comma-separated list of TRUE/FALSE indicating whether the ld reference is in sample or not; used for susie fine mapping [optional]. If not provided will assume it is FALSE"),
   make_option("--out_susie", action="store", default=NA, type='character',
-              help="Path to susie output directory [required if using MAGEPRO and not skipping susie]"), 
+              help="Path to susie output directory [required if using MAGEPRO and not skipping susie]"),
   make_option("--skip_susie", action="store_true", default=FALSE,
               help="Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from susie")
 )
@@ -114,7 +116,7 @@ cleanup = function() {
 if (!is.na(opt$gene)){
 	name <- strsplit(opt$gene, ".", fixed = TRUE)[[1]][1] # find gene name without version number
 }else{
-        cat( "ERROR: --gene flag is required\n" , sep='', file=stderr() )
+    cat( "ERROR: --gene flag is required\n" , sep='', file=stderr() )
 	cleanup()
 	q()
 }
@@ -123,8 +125,8 @@ if (!is.na(opt$gene)){
 model <- strsplit(opt$models, ",", fixed = TRUE)[[1]]
 if ( sum(! model %in% c("SINGLE", "META", "PT", "SuSiE", "SuSiE_IMPACT","PRSCSx", "MAGEPRO_fullsumstats", "MAGEPRO")) > 0 | length(model) > 8 ){
 	cat( "ERROR: Please input valid models \n" , sep='', file=stderr() )
-        cleanup()
-        q()
+    cleanup()
+    q()
 }
 
 if (opt$verbose >= 1) cat("### USING THE FOLLOWING MODELS:", opt$models, "\n")
@@ -140,8 +142,8 @@ datasets <- list()
 if ( ! is.na(opt$sumstats)){
 	if ( is.na(opt$sumstats_dir) ){
 		cat( "ERROR: --sumstats supplied, but not --sumstats_dir \n" , sep='', file=stderr() )
-                cleanup()
-                q()
+        cleanup()
+        q()
 	}
 	sumstats <- strsplit(opt$sumstats, ",", fixed = TRUE)[[1]]
 	for (s in sumstats){
@@ -166,7 +168,7 @@ if ( ! is.na(opt$sumstats)){
 	if ("META" %in% model | "PRSCSx" %in% model | "MAGEPRO_fullsumstats" %in% model | "MAGEPRO" %in% model){
 		cat( "ERROR: --sumstats not supplied, cannot compute META, PRS-CSx, MAGEPRO models \n" , sep='', file=stderr() )
 		cleanup()
-                q()
+        q()
 	}
 }
 
@@ -176,14 +178,14 @@ if ( ("META" %in% model | "PRSCSx" %in% model |  ("MAGEPRO" %in% model & !opt$sk
 		sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
 		if (length(sumstats) != length(sample_sizes)){
 			cat( "ERROR: --ss flag required an entry for every dataset\n" , sep='', file=stderr() )
-                	cleanup()
-                	q()
+            cleanup()
+            q()
 		}
 		hashmap_ss <<- setNames(as.numeric(sample_sizes), sumstats)
 	}else{
 		cat( "ERROR: Cannot perform sample-size weighted meta-analysis or PRS-CSx without the --ss flag\n" , sep='', file=stderr() )
-                cleanup()
-                q()
+        cleanup()
+        q()
 	}
 }
 
@@ -197,28 +199,32 @@ if ("MAGEPRO" %in% model & (!opt$skip_susie) ) {
 		}
 	} else {
 		cat( "ERROR: --ldref_dir not supplied, cannot perform fine mapping of sumstats for MAGEPRO model\n", sep='', file=stderr() )
-				cleanup()
-				q()
+		cleanup()
+		q()
 	}
 
 	if (!is.na(opt$ldrefs)) {
 		ldrefs_list <- strsplit(opt$ldrefs, ",")[[1]]
 		if (length(sumstats) != length(ldrefs_list)) {
 			cat ("ERROR: --ldrefs flag requires an entry for every dataset\n", sep='', file=stderr())
-				cleanup()
-				q()
+			cleanup()
+			q()
 		}
-		# create map with cohort as keys 
-		cohort_map <- setNames(
-		lapply(seq_along(sumstats), function(i) {
-			list(sample_size = sample_sizes[i], ldref = ldrefs_list[i])
-		}),
-		sumstats
-		)
+
 	} else {
 		cat( "ERROR: --ldrefs not supplied, cannot perform fine mapping for MAGEPRO model\n", sep='', file=stderr() )
-				cleanup()
-				q()
+		cleanup()
+		q()
+	}
+
+	in_sample_list <- rep(FALSE, length(sumstats))
+	if (!is.na(opt$in_sample)) {
+		in_sample_list <<- strsplit(opt$in_sample, ",")[[1]]
+		if (length(sumstats) != length(in_sample_list)) {
+			cat ("ERROR: --in_sample flag requires an entry for every dataset\n", sep='', file=stderr())
+			cleanup()
+			q()
+		}
 	}
 
 	if (!is.na(opt$out_susie)) {
@@ -232,8 +238,18 @@ if ("MAGEPRO" %in% model & (!opt$skip_susie) ) {
 		cleanup()
 		q()
 	}
+
+	# create map with cohort as keys
+	# we have checked for sample_sizes, ldrefs_list, and in_sample_list above
+	cohort_map <- setNames(
+	lapply(seq_along(sumstats), function(i) {
+		list(sample_size = sample_sizes[i],
+			ldref = ldrefs_list[i],
+			in_sample=in_sample_list[i])
+	}), sumstats)
 	
 }
+
 
 
 if ( "PT" %in% model ){
@@ -581,248 +597,246 @@ set.seed(1)
 avg_training_r2_single <- avg_training_r2_meta <- avg_training_r2_pt <- avg_training_r2_susie <- avg_training_r2_susie_impact <- avg_training_r2_prscsx <- avg_training_r2_magepro_fullsumstats <- avg_training_r2_magepro <- NA
 #default crossval = 5 fold split
 if ( opt$crossval <= 1 ) { 
-if ( opt$verbose >= 1 ) cat("### SKIPPING CROSS-VALIDATION\n")
-cv.performance <- NA
+	if ( opt$verbose >= 1 ) cat("### SKIPPING CROSS-VALIDATION\n")
+	cv.performance <- NA
 } else {
-if ( opt$verbose >= 1 ) cat("### PERFORMING",opt$crossval,"FOLD CROSS-VALIDATION\n")
-cv.all = pheno 
-n = nrow(cv.all)
-cv.sample = sample(n) #sample randomly 
-cv.all = cv.all[ cv.sample , ]
-folds = cut(seq(1,n),breaks=opt$crossval,labels=FALSE) #5 fold split - split into 5 groups 
-cv.calls = matrix(NA,nrow=n,ncol=length(model)) 
+	if ( opt$verbose >= 1 ) cat("### PERFORMING",opt$crossval,"FOLD CROSS-VALIDATION\n")
+	cv.all = pheno 
+	n = nrow(cv.all)
+	cv.sample = sample(n) #sample randomly 
+	cv.all = cv.all[ cv.sample , ]
+	folds = cut(seq(1,n),breaks=opt$crossval,labels=FALSE) #5 fold split - split into 5 groups 
+	cv.calls = matrix(NA,nrow=n,ncol=length(model)) 
 
-# --- for checking cor() of weights in CV 
-wgt.cv = matrix(NA, nrow=nrow(genos$bim), ncol=opt$crossval)
-# ---
+	# --- for checking cor() of weights in CV 
+	wgt.cv = matrix(NA, nrow=nrow(genos$bim), ncol=opt$crossval)
+	# ---
 
-# --- keep track of SINGLE_model
-SINGLE_top1 <- 0
-# ---
+	# --- keep track of SINGLE_model
+	SINGLE_top1 <- 0
+	# ---
 
-r2_training_single <- c()
-r2_training_meta <- c()
-r2_training_pt <- c()
-r2_training_susie <- c()
-r2_training_susie_impact <- c()
-r2_training_prscsx <- c()
-r2_training_magepro_fullsumstats <- c()
-r2_training_magepro <- c()
+	r2_training_single <- c()
+	r2_training_meta <- c()
+	r2_training_pt <- c()
+	r2_training_susie <- c()
+	r2_training_susie_impact <- c()
+	r2_training_prscsx <- c()
+	r2_training_magepro_fullsumstats <- c()
+	r2_training_magepro <- c()
 
-if ( ("META" %in% model) & (ext_fullsumstats > 0) ){
-training_ss <- N.tot * ((opt$crossval - 1)/opt$crossval)
-total_ss_cv <- total_ss_sumstats + training_ss # total sample size in cross validation (used as denominator in ss-weighted meta-analysis)
-}
-
-# --- Cross-Validation
-for ( cv in 1:opt$crossval ) { 		
-	colcount = 1
-	if ( opt$verbose >= 1 ) cat("- Crossval fold",cv,"\n")
-	indx = which(folds==cv,arr.ind=TRUE)
-	cv.train = cv.all[-indx,] #training set is the other 4 groups 
-	intercept = mean( cv.train[,3] ) 
-	cv.train[,3] = scale(cv.train[,3]) 
-	cv.file = paste(opt$tmp,".cv",sep='')
-	write.table( cv.train , quote=F , row.names=F , col.names=F , file=paste(cv.file,".keep",sep=''))	
-	arg = paste( opt$PATH_plink ," --allow-no-sex --bfile ",opt$tmp," --keep ",cv.file,".keep --out ",cv.file," --make-bed",sep='')
-	system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
-	
-	# SINGLE ANCESTRY------------------------------------------------------------------
-	# lasso_h2 defined when we split datasets
-	pred.wgt = weights.lasso( cv.file , lasso_h2 , snp=genos$bim[,2] )	
-	if ( sum(is.na(pred.wgt)) == nrow(genos$bim)) {
-		if ( opt$verbose >= 1 ) cat("LASSO pushed all weights to 0, using top1 as backup \n")
-		SINGLE_top1 <- SINGLE_top1 + 1
-		pred.wgt = weights.marginal( genos$bed[ cv.sample[ -indx ],] , as.matrix(cv.train[,3,drop=F]) , beta=T )
-		pred.wgt[ - which.max( pred.wgt^2 ) ] = 0
-	}
-	if (length(pred.wgt) == 1){
-		pred.wgt <- t(pred.wgt) # 1 snp in the cis window -> transpose for "matrix" mult
-	}
-	assign("pred.wgt", pred.wgt, envir = .GlobalEnv)
-	if ("SINGLE" %in% model){	
-	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt
-	pred_train_single = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt)))
-	r2_training_single = append(r2_training_single, pred_train_single$adj.r.sq)
-	
-	colcount = colcount + 1
-
-	}
-	#--------------------------------------------------------------------------
-
-	# SS-WEIGHTED META-ANALYSIS-------------------------------------------------------------
-	if ("META" %in% model){
-	if (ext_fullsumstats > 0){
-	pred.wgt.meta = weights.meta(pred.wgt, training_ss, wgt_fullsumstats, hashmap_ss, total_ss_cv)	
-	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.meta 
-	pred_train_meta = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.meta))) 
-        r2_training_meta = append(r2_training_meta, pred_train_meta$adj.r.sq)
-	}else{
-	cv.calls[ indx , colcount ] = NA
-	r2_training_meta = append(r2_training_meta, NA)
+	if ( ("META" %in% model) & (ext_fullsumstats > 0) ){
+		training_ss <- N.tot * ((opt$crossval - 1)/opt$crossval)
+		total_ss_cv <- total_ss_sumstats + training_ss # total sample size in cross validation (used as denominator in ss-weighted meta-analysis)
 	}
 
-	colcount = colcount + 1
-	
+	# --- Cross-Validation
+	for ( cv in 1:opt$crossval ) { 		
+		colcount = 1
+		if ( opt$verbose >= 1 ) cat("- Crossval fold",cv,"\n")
+		indx = which(folds==cv,arr.ind=TRUE)
+		cv.train = cv.all[-indx,] #training set is the other 4 groups 
+		intercept = mean( cv.train[,3] ) 
+		cv.train[,3] = scale(cv.train[,3]) 
+		cv.file = paste(opt$tmp,".cv",sep='')
+		write.table( cv.train , quote=F , row.names=F , col.names=F , file=paste(cv.file,".keep",sep=''))	
+		arg = paste( opt$PATH_plink ," --allow-no-sex --bfile ",opt$tmp," --keep ",cv.file,".keep --out ",cv.file," --make-bed",sep='')
+		system(arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
+		
+		# SINGLE ANCESTRY------------------------------------------------------------------
+		# lasso_h2 defined when we split datasets
+		pred.wgt = weights.lasso( cv.file , lasso_h2 , snp=genos$bim[,2] )	
+		if ( sum(is.na(pred.wgt)) == nrow(genos$bim)) {
+			if ( opt$verbose >= 1 ) cat("LASSO pushed all weights to 0, using top1 as backup \n")
+			SINGLE_top1 <- SINGLE_top1 + 1
+			pred.wgt = weights.marginal( genos$bed[ cv.sample[ -indx ],] , as.matrix(cv.train[,3,drop=F]) , beta=T )
+			pred.wgt[ - which.max( pred.wgt^2 ) ] = 0
+		}
+		if (length(pred.wgt) == 1){
+			pred.wgt <- t(pred.wgt) # 1 snp in the cis window -> transpose for "matrix" mult
+		}
+		assign("pred.wgt", pred.wgt, envir = .GlobalEnv)
+		if ("SINGLE" %in% model){	
+			cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt
+			pred_train_single = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt)))
+			r2_training_single = append(r2_training_single, pred_train_single$adj.r.sq)
+			
+			colcount = colcount + 1
+
+		}
+		#--------------------------------------------------------------------------
+
+		# SS-WEIGHTED META-ANALYSIS-------------------------------------------------------------
+		if ("META" %in% model){
+			if (ext_fullsumstats > 0){
+				pred.wgt.meta = weights.meta(pred.wgt, training_ss, wgt_fullsumstats, hashmap_ss, total_ss_cv)	
+				cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.meta 
+				pred_train_meta = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.meta))) 
+					r2_training_meta = append(r2_training_meta, pred_train_meta$adj.r.sq)
+			}else{
+				cv.calls[ indx , colcount ] = NA
+				r2_training_meta = append(r2_training_meta, NA)
+			}
+
+			colcount = colcount + 1
+		
+		}
+		#-----------------------------------------------------------------------------
+
+		# P+T--------------------------------------------------------------------------
+		if ("PT" %in% model){
+			# if --prune_r2 and --threshold_p are not provided, cross validation on the training fold again to tune r2 and p values 
+			if ( is.na(opt$prune_r2) & is.na(opt$threshold_p) ){
+				tuned_pt <- tune.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train, c(0.2,0.5,0.8), c(0.001, 0.01, 0.1, 0.5), 2, opt$ldref_pt, opt$tmp)
+			}else if ( is.na(opt$prune_r2) & !is.na(opt$threshold_p) ){
+				tuned_pt <- tune.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train, c(0.2,0.5,0.8), c(opt$threshold_p), 2, opt$ldref_pt, opt$tmp)
+			}else if ( !is.na(opt$prune_r2) & is.na(opt$threshold_p) ){
+				tuned_pt <- tune.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train, c(opt$prune_r2), c(0.001, 0.01, 0.1, 0.5), 2, opt$ldref_pt, opt$tmp)
+			}else{
+				tuned_pt <- c(opt$prune_r2, opt$threshold_p)
+			}
+			pred.wgt.PT_sumstats <- weights.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train[,3], tuned_pt[1], tuned_pt[2], opt$ldref_pt, opt$tmp)
+			if (sum(is.na(pred.wgt.PT_sumstats)) == nrow(genos$bim)){
+				if ( opt$verbose >= 1 ) cat("No clumps remaining after P+T, NA results \n")
+				cv.calls[ indx , colcount ] = NA
+				r2_training_pt = append(r2_training_pt, NA)	
+			}else{
+				cv.calls[ indx , colcount ] = genos$bed[cv.sample[indx], , drop = FALSE] %*% pred.wgt.PT_sumstats
+				pred_train_pt = summary(lm( cv.all[-indx,3] ~ (genos$bed[cv.sample[-indx], , drop = FALSE] %*% pred.wgt.PT_sumstats)))
+				r2_training_pt = append(r2_training_pt, pred_train_pt$adj.r.sq)
+			}
+			
+			colcount = colcount + 1
+
+		}
+		#------------------------------------------------------------------------------
+
+		# SuSiE------------------------------------------------------------------------
+
+		if ("SuSiE" %in% model){
+			pred.wgt.susie <- weights.susie(genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3])
+			if ( sum(pred.wgt.susie == 0) == nrow(genos$bim) ) {
+				pred.wgt.susie = weights.marginal( genos$bed[ cv.sample[ -indx ],] , as.matrix(cv.train[,3,drop=F]) , beta=T )
+				pred.wgt.susie[ - which.max( pred.wgt.susie^2 ) ] = 0
+			}
+			if (length(pred.wgt.susie) == 1){
+				pred.wgt.susie <- t(pred.wgt.susie) # 1 snp in the cis window -> transpose for "matrix" mult
+			}
+			cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.susie
+			pred_train_susie = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.susie)))
+				r2_training_susie = append(r2_training_susie, pred_train_susie$adj.r.sq)
+
+			colcount = colcount + 1
+		
+		}
+
+		#------------------------------------------------------------------------------
+
+		# SuSiE_IMPACT-----------------------------------------------------------------
+
+		if ("SuSiE_IMPACT" %in% model){
+			pred.wgt.susieimpact <- weights.susie_impact(genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], opt$impact_path)
+			cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.susieimpact
+			pred_train_susieimpact = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.susieimpact)))
+				r2_training_susie_impact = append(r2_training_susie_impact, pred_train_susieimpact$adj.r.sq)
+
+			colcount = colcount + 1
+		
+
+		}
+
+		#------------------------------------------------------------------------------
+
+		# PRS-CSx----------------------------------------------------------------------
+
+		if ("PRSCSx" %in% model){
+			if (ext_prscsx > 0){
+				pred.wgt.prs_csx <- weights.prscsx(wgt_prscsx, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], "pred.wgt")
+				cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.prs_csx
+				pred_train_prscsx = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.prs_csx)))
+				r2_training_prscsx = append(r2_training_prscsx, pred_train_prscsx$adj.r.sq)
+			}else{
+				cv.calls[ indx , colcount ] = NA
+				r2_training_prscsx = append(r2_training_prscsx, NA)
+			}
+			colcount = colcount + 1
+
+		}	
+
+		#------------------------------------------------------------------------------
+
+		# MAGEPRO_fullsumstats---------------------------------------------------------
+
+		if ("MAGEPRO_fullsumstats" %in% model){
+			if (ext_fullsumstats > 0){
+				##pred.wgt.magepro_fullsumstats <- weights.magepro_marquezluna(pred.wgt, wgt_fullsumstats, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train, genos$bim, opt$tmp, lasso_h2, FALSE)
+				pred.wgt.magepro_fullsumstats <- weights.magepro(pred.wgt, wgt_fullsumstats, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], FALSE)
+				cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ], , drop = FALSE] %*% pred.wgt.magepro_fullsumstats
+				pred_train_magepro_fullsumstats = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.magepro_fullsumstats))) #r^2 between predicted and actual
+				r2_training_magepro_fullsumstats = append(r2_training_magepro_fullsumstats, pred_train_magepro_fullsumstats$adj.r.sq)
+			}else{
+				cv.calls[ indx , colcount ] = NA
+				r2_training_magepro_fullsumstats = append(r2_training_magepro_fullsumstats, NA)
+		}
+		
+		colcount = colcount + 1
+
+		}
+
+		#------------------------------------------------------------------------------
+
+
+		# MAGEPRO----------------------------------------------------------------------
+		
+		if ("MAGEPRO" %in% model){	
+			if (ext_magepro > 0){	
+				#pred.wgt.magepro <- weights.magepro_marquezluna(pred.wgt, wgt_magepro, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train, genos$bim, opt$tmp, lasso_h2, FALSE)
+				pred.wgt.magepro <- weights.magepro(pred.wgt, wgt_magepro, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], FALSE)
+				cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ], , drop = FALSE] %*% pred.wgt.magepro
+				# --- for checking cor() of weights in CV
+				wgt.cv[,cv] = pred.wgt.magepro
+				# --- 
+				#store the r2 on training set
+				pred_train_magepro = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.magepro))) #r^2 between predicted and actual 
+				r2_training_magepro = append(r2_training_magepro, pred_train_magepro$adj.r.sq)	
+			}else{
+				cv.calls[ indx , colcount ] = NA
+				r2_training_magepro = append(r2_training_magepro, NA)
+			}
+		}
+		#-------------------------------------------------------------------------------
+
 	}
-	#-----------------------------------------------------------------------------
 
-	# P+T--------------------------------------------------------------------------
-	if ("PT" %in% model){
-	# if --prune_r2 and --threshold_p are not provided, cross validation on the training fold again to tune r2 and p values 
-	if ( is.na(opt$prune_r2) & is.na(opt$threshold_p) ){
-	tuned_pt <- tune.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train, c(0.2,0.5,0.8), c(0.001, 0.01, 0.1, 0.5), 2, opt$ldref_pt, opt$tmp)
-	}else if ( is.na(opt$prune_r2) & !is.na(opt$threshold_p) ){
-	tuned_pt <- tune.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train, c(0.2,0.5,0.8), c(opt$threshold_p), 2, opt$ldref_pt, opt$tmp)
-	}else if ( !is.na(opt$prune_r2) & is.na(opt$threshold_p) ){
-	tuned_pt <- tune.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train, c(opt$prune_r2), c(0.001, 0.01, 0.1, 0.5), 2, opt$ldref_pt, opt$tmp)
-	}else{
-	tuned_pt <- c(opt$prune_r2, opt$threshold_p)
+	if (opt$verbose >= 1) cat("### COLLECTING CROSS VALIDATION RESULTS \n")
+
+	#compute rsq + P-value for each model
+	cv.performance = matrix(NA,nrow=2,ncol=length(model))  
+	rownames(cv.performance) = c("rsq","pval") 
+	colnames(cv.performance) = types 
+
+	for ( mod in 1:ncol(cv.calls) ) { 
+		if ( !is.na(sd(cv.calls[,mod])) && sd(cv.calls[,mod]) != 0 ) {   
+			reg = summary(lm( cv.all[,3] ~ cv.calls[,mod] )) #r^2 between predicted and actual 
+			cv.performance[ 1, mod ] = reg$adj.r.sq
+			cv.performance[ 2, mod ] = reg$coef[2,4]
+		} else {
+			cv.performance[ 1, mod ] = NA
+			cv.performance[ 2, mod ] = NA
+		}
 	}
-	pred.wgt.PT_sumstats <- weights.pt(genos$bed[cv.sample[-indx], , drop = FALSE], genos$bim, cv.train[,3], tuned_pt[1], tuned_pt[2], opt$ldref_pt, opt$tmp)
-	if (sum(is.na(pred.wgt.PT_sumstats)) == nrow(genos$bim)){
-	if ( opt$verbose >= 1 ) cat("No clumps remaining after P+T, NA results \n")
-	cv.calls[ indx , colcount ] = NA
-	r2_training_pt = append(r2_training_pt, NA)	
-	}else{
-	cv.calls[ indx , colcount ] = genos$bed[cv.sample[indx], , drop = FALSE] %*% pred.wgt.PT_sumstats
-	pred_train_pt = summary(lm( cv.all[-indx,3] ~ (genos$bed[cv.sample[-indx], , drop = FALSE] %*% pred.wgt.PT_sumstats)))
-        r2_training_pt = append(r2_training_pt, pred_train_pt$adj.r.sq)
-	}
-	
-	colcount = colcount + 1
-
-	}
-	#------------------------------------------------------------------------------
-
-	# SuSiE------------------------------------------------------------------------
-
-	if ("SuSiE" %in% model){
-	pred.wgt.susie <- weights.susie(genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3])
-	if ( sum(pred.wgt.susie == 0) == nrow(genos$bim) ) {
-		pred.wgt.susie = weights.marginal( genos$bed[ cv.sample[ -indx ],] , as.matrix(cv.train[,3,drop=F]) , beta=T )
-		pred.wgt.susie[ - which.max( pred.wgt.susie^2 ) ] = 0
-	}
-	if (length(pred.wgt.susie) == 1){
-		pred.wgt.susie <- t(pred.wgt.susie) # 1 snp in the cis window -> transpose for "matrix" mult
-	}
-	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.susie
-	pred_train_susie = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.susie)))
-        r2_training_susie = append(r2_training_susie, pred_train_susie$adj.r.sq)
-
-	colcount = colcount + 1
-	
-	}
-
-	#------------------------------------------------------------------------------
-
-	# SuSiE_IMPACT-----------------------------------------------------------------
-
-	if ("SuSiE_IMPACT" %in% model){
-	pred.wgt.susieimpact <- weights.susie_impact(genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], opt$impact_path)
-	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.susieimpact
-	pred_train_susieimpact = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.susieimpact)))
-        r2_training_susie_impact = append(r2_training_susie_impact, pred_train_susieimpact$adj.r.sq)
-
-	colcount = colcount + 1
-	
-
-	}
-
-	#------------------------------------------------------------------------------
-
-	# PRS-CSx----------------------------------------------------------------------
-
-	if ("PRSCSx" %in% model){
-	if (ext_prscsx > 0){
-	pred.wgt.prs_csx <- weights.prscsx(wgt_prscsx, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], "pred.wgt")
-	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ] , , drop = FALSE] %*% pred.wgt.prs_csx
-	pred_train_prscsx = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.prs_csx)))
-        r2_training_prscsx = append(r2_training_prscsx, pred_train_prscsx$adj.r.sq)
-	}else{
-	cv.calls[ indx , colcount ] = NA
-        r2_training_prscsx = append(r2_training_prscsx, NA)
-	}
-
-	colcount = colcount + 1
-
-	}	
-
-	#------------------------------------------------------------------------------
-
-	# MAGEPRO_fullsumstats---------------------------------------------------------
-
-	if ("MAGEPRO_fullsumstats" %in% model){
-	if (ext_fullsumstats > 0){
-	##pred.wgt.magepro_fullsumstats <- weights.magepro_marquezluna(pred.wgt, wgt_fullsumstats, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train, genos$bim, opt$tmp, lasso_h2, FALSE)
-	pred.wgt.magepro_fullsumstats <- weights.magepro(pred.wgt, wgt_fullsumstats, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], FALSE)
-	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ], , drop = FALSE] %*% pred.wgt.magepro_fullsumstats
-	pred_train_magepro_fullsumstats = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.magepro_fullsumstats))) #r^2 between predicted and actual
-        r2_training_magepro_fullsumstats = append(r2_training_magepro_fullsumstats, pred_train_magepro_fullsumstats$adj.r.sq)
-	}else{
-	cv.calls[ indx , colcount ] = NA
-        r2_training_magepro_fullsumstats = append(r2_training_magepro_fullsumstats, NA)
-	}
-	
-	colcount = colcount + 1
-
-	}
-
-	#------------------------------------------------------------------------------
+	if ( opt$verbose >= 1 ) write.table(cv.performance,quote=F,sep='\t')
 
 
-	# MAGEPRO----------------------------------------------------------------------
-	
-	if ("MAGEPRO" %in% model){	
-	if (ext_magepro > 0){	
-	#pred.wgt.magepro <- weights.magepro_marquezluna(pred.wgt, wgt_magepro, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train, genos$bim, opt$tmp, lasso_h2, FALSE)
-	pred.wgt.magepro <- weights.magepro(pred.wgt, wgt_magepro, genos$bed[cv.sample[-indx], , drop = FALSE], cv.train[,3], FALSE)
-	cv.calls[ indx , colcount ] = genos$bed[ cv.sample[ indx ], , drop = FALSE] %*% pred.wgt.magepro
-	# --- for checking cor() of weights in CV
-	wgt.cv[,cv] = pred.wgt.magepro
-	# --- 
-	#store the r2 on training set
-	pred_train_magepro = summary(lm( cv.all[-indx,3] ~ (genos$bed[ cv.sample[-indx], , drop = FALSE] %*% pred.wgt.magepro))) #r^2 between predicted and actual 
-	r2_training_magepro = append(r2_training_magepro, pred_train_magepro$adj.r.sq)	
-	}else{
-	cv.calls[ indx , colcount ] = NA
-	r2_training_magepro = append(r2_training_magepro, NA)
-	}
-	
-	}
-	#-------------------------------------------------------------------------------
-
-}
-
-if (opt$verbose >= 1) cat("### COLLECTING CROSS VALIDATION RESULTS \n")
-
-#compute rsq + P-value for each model
-cv.performance = matrix(NA,nrow=2,ncol=length(model))  
-rownames(cv.performance) = c("rsq","pval") 
-colnames(cv.performance) = types 
-
-for ( mod in 1:ncol(cv.calls) ) { 
-	if ( !is.na(sd(cv.calls[,mod])) && sd(cv.calls[,mod]) != 0 ) {   
-		reg = summary(lm( cv.all[,3] ~ cv.calls[,mod] )) #r^2 between predicted and actual 
-		cv.performance[ 1, mod ] = reg$adj.r.sq
-		cv.performance[ 2, mod ] = reg$coef[2,4]
-	} else {
-		cv.performance[ 1, mod ] = NA
-		cv.performance[ 2, mod ] = NA
-	}
-}
-if ( opt$verbose >= 1 ) write.table(cv.performance,quote=F,sep='\t')
-
-
-#take average of r2 on training set
-if ("SINGLE" %in% model) avg_training_r2_single <- mean(r2_training_single)
-if ("META" %in% model) avg_training_r2_meta <- mean(r2_training_meta)
-if ("PT" %in% model) avg_training_r2_pt <- mean(r2_training_pt)
-if ("SuSiE" %in% model) avg_training_r2_susie <- mean(r2_training_susie)
-if ("SuSiE_IMPACT" %in% model) avg_training_r2_susie_impact <- mean(r2_training_susie_impact)
-if ("PRSCSx" %in% model) avg_training_r2_prscsx <- mean(r2_training_prscsx)
-if ("MAGEPRO_fullsumstats" %in% model) avg_training_r2_magepro_fullsumstats <- mean(r2_training_magepro_fullsumstats)
-if ("MAGEPRO" %in% model) avg_training_r2_magepro <- mean(r2_training_magepro)
+	#take average of r2 on training set
+	if ("SINGLE" %in% model) avg_training_r2_single <- mean(r2_training_single)
+	if ("META" %in% model) avg_training_r2_meta <- mean(r2_training_meta)
+	if ("PT" %in% model) avg_training_r2_pt <- mean(r2_training_pt)
+	if ("SuSiE" %in% model) avg_training_r2_susie <- mean(r2_training_susie)
+	if ("SuSiE_IMPACT" %in% model) avg_training_r2_susie_impact <- mean(r2_training_susie_impact)
+	if ("PRSCSx" %in% model) avg_training_r2_prscsx <- mean(r2_training_prscsx)
+	if ("MAGEPRO_fullsumstats" %in% model) avg_training_r2_magepro_fullsumstats <- mean(r2_training_magepro_fullsumstats)
+	if ("MAGEPRO" %in% model) avg_training_r2_magepro <- mean(r2_training_magepro)
 
 }
 
@@ -847,93 +861,94 @@ if(length(pred.wgtfull) == 1){
 }
 assign("pred.wgtfull", pred.wgtfull, envir = .GlobalEnv)
 if ("SINGLE" %in% model){
-wgt.matrix[, colcount] = pred.wgtfull
-colcount = colcount + 1
+	wgt.matrix[, colcount] = pred.wgtfull
+	colcount = colcount + 1
 }
 # --- SS-WEIGHTED META-ANALYSIS
 if ("META" %in% model){
-if (ext_fullsumstats > 0){
-total_ss_full <- total_ss_sumstats + N.tot
-pred.wgt.metafull <- weights.meta(pred.wgtfull, N.tot, wgt_fullsumstats, hashmap_ss, total_ss_full)
-wgt.matrix[, colcount] = pred.wgt.metafull
-}else{
-wgt.matrix[, colcount] = NA
-}
-colcount = colcount + 1
+	if (ext_fullsumstats > 0){
+		total_ss_full <- total_ss_sumstats + N.tot
+		pred.wgt.metafull <- weights.meta(pred.wgtfull, N.tot, wgt_fullsumstats, hashmap_ss, total_ss_full)
+		wgt.matrix[, colcount] = pred.wgt.metafull
+		}else{
+		wgt.matrix[, colcount] = NA
+	}
+	colcount = colcount + 1
 }
 # --- P+T 
 if ("PT" %in% model){
-if ( is.na(opt$prune_r2) & is.na(opt$threshold_p) ){
-tuned_pt <- tune.pt(genos$bed, genos$bim, pheno, c(0.2,0.5,0.8), c(0.001, 0.01, 0.1, 0.5), 5, opt$ldref_pt, opt$tmp)
-}else if ( is.na(opt$prune_r2) & !is.na(opt$threshold_p) ){
-tuned_pt <- tune.pt(genos$bed, genos$bim, pheno, c(0.2,0.5,0.8), c(opt$threshold_p), 5, opt$ldref_pt, opt$tmp)
-}else if ( !is.na(opt$prune_r2) & is.na(opt$threshold_p) ){
-tuned_pt <- tune.pt(genos$bed, genos$bim, pheno, c(opt$prune_r2), c(0.001, 0.01, 0.1, 0.5), 5, opt$ldref_pt, opt$tmp)
-}else{
-tuned_pt <- c(opt$prune_r2, opt$threshold_p)
-}
-pred.wgt.PT_sumstatsfull <- weights.pt(genos$bed, genos$bim, pheno[,3], tuned_pt[1], tuned_pt[2], opt$ldref_pt, opt$tmp)
-wgt.matrix[, colcount] = pred.wgt.PT_sumstatsfull
-colcount = colcount + 1
+	if ( is.na(opt$prune_r2) & is.na(opt$threshold_p) ){
+		tuned_pt <- tune.pt(genos$bed, genos$bim, pheno, c(0.2,0.5,0.8), c(0.001, 0.01, 0.1, 0.5), 5, opt$ldref_pt, opt$tmp)
+	}else if ( is.na(opt$prune_r2) & !is.na(opt$threshold_p) ){
+		tuned_pt <- tune.pt(genos$bed, genos$bim, pheno, c(0.2,0.5,0.8), c(opt$threshold_p), 5, opt$ldref_pt, opt$tmp)
+	}else if ( !is.na(opt$prune_r2) & is.na(opt$threshold_p) ){
+		tuned_pt <- tune.pt(genos$bed, genos$bim, pheno, c(opt$prune_r2), c(0.001, 0.01, 0.1, 0.5), 5, opt$ldref_pt, opt$tmp)
+	}else{
+		tuned_pt <- c(opt$prune_r2, opt$threshold_p)
+	}
+	pred.wgt.PT_sumstatsfull <- weights.pt(genos$bed, genos$bim, pheno[,3], tuned_pt[1], tuned_pt[2], opt$ldref_pt, opt$tmp)
+	wgt.matrix[, colcount] = pred.wgt.PT_sumstatsfull
+	colcount = colcount + 1
 }
 # --- SuSiE
 if ("SuSiE" %in% model){
-pred.wgt.susiefull <- weights.susie(genos$bed, pheno[,3])
+	pred.wgt.susiefull <- weights.susie(genos$bed, pheno[,3])
 if ( sum(pred.wgt.susiefull == 0) == nrow(genos$bim) ) {
-pred.wgt.susiefull = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T ) # use marginal weights for susie if NA
-pred.wgt.susiefull[ - which.max( pred.wgt.susiefull^2 ) ] = 0
+	pred.wgt.susiefull = weights.marginal( genos$bed , as.matrix(pheno[,3]) , beta=T ) # use marginal weights for susie if NA
+	pred.wgt.susiefull[ - which.max( pred.wgt.susiefull^2 ) ] = 0
 }
 if (length(pred.wgt.susiefull) == 1){
-pred.wgt.susiefull <- t(pred.wgt.susiefull) # 1 snp in the cis window -> transpose for "matrix" mult
+	pred.wgt.susiefull <- t(pred.wgt.susiefull) # 1 snp in the cis window -> transpose for "matrix" mult
 }
-wgt.matrix[, colcount] = pred.wgt.susiefull
-colcount = colcount + 1
+	wgt.matrix[, colcount] = pred.wgt.susiefull
+	colcount = colcount + 1
 }
 # --- SuSiE_IMPACT
 if ("SuSiE_IMPACT" %in% model){
-pred.wgt.susieimpactfull <- weights.susie_impact(genos$bed, pheno[,3], opt$impact_path)
-wgt.matrix[, colcount] = pred.wgt.susieimpactfull
-colcount = colcount + 1
+	pred.wgt.susieimpactfull <- weights.susie_impact(genos$bed, pheno[,3], opt$impact_path)
+	wgt.matrix[, colcount] = pred.wgt.susieimpactfull
+	colcount = colcount + 1
 }
 # --- PRS-CSx
 if ("PRSCSx" %in% model){
-if (ext_prscsx > 0){
-pred.wgt.prs_csxfull <- weights.prscsx(wgt_prscsx, genos$bed, pheno[,3], "pred.wgtfull")
-wgt.matrix[, colcount] = pred.wgt.prs_csxfull
-}else{
-wgt.matrix[, colcount] = NA
-}
-colcount = colcount + 1
+	if (ext_prscsx > 0){
+		pred.wgt.prs_csxfull <- weights.prscsx(wgt_prscsx, genos$bed, pheno[,3], "pred.wgtfull")
+		wgt.matrix[, colcount] = pred.wgt.prs_csxfull
+	}else{
+		wgt.matrix[, colcount] = NA
+	}
+	colcount = colcount + 1
 }
 # --- MAGEPROfullsumstats
 if ("MAGEPRO_fullsumstats" %in% model){
-if (ext_fullsumstats > 0){
-#pred.wgt.magepro_fullsumstatsfull <- weights.magepro_marquezluna(pred.wgtfull, wgt_fullsumstats, genos$bed, pheno, genos$bim, opt$tmp, lasso_h2, FALSE)
-pred.wgt.magepro_fullsumstatsfull <- weights.magepro(pred.wgtfull, wgt_fullsumstats, genos$bed, pheno[,3], FALSE)
-wgt.matrix[, colcount] = pred.wgt.magepro_fullsumstatsfull
-}else{
-wgt.matrix[, colcount] = NA
+	if (ext_fullsumstats > 0){
+		#pred.wgt.magepro_fullsumstatsfull <- weights.magepro_marquezluna(pred.wgtfull, wgt_fullsumstats, genos$bed, pheno, genos$bim, opt$tmp, lasso_h2, FALSE)
+		pred.wgt.magepro_fullsumstatsfull <- weights.magepro(pred.wgtfull, wgt_fullsumstats, genos$bed, pheno[,3], FALSE)
+		wgt.matrix[, colcount] = pred.wgt.magepro_fullsumstatsfull
+	}else{
+		wgt.matrix[, colcount] = NA
+	}
+		colcount = colcount + 1
 }
-colcount = colcount + 1
-}
+
 # --- MAGEPRO
 cf_total = NA
 if ("MAGEPRO" %in% model){
-if (ext_magepro > 0){
-#pred.wgt.mageprofull <- weights.magepro_marquezluna(pred.wgtfull, wgt_magepro, genos$bed, pheno, genos$bim, opt$tmp, lasso_h2, TRUE)
-pred.wgt.mageprofull <- weights.magepro(pred.wgtfull, wgt_magepro, genos$bed, pheno[,3], TRUE)
-wgt.matrix[, colcount] = pred.wgt.mageprofull
-}else{
-wgt.matrix[, colcount] = NA
-}
+	if (ext_magepro > 0){
+		#pred.wgt.mageprofull <- weights.magepro_marquezluna(pred.wgtfull, wgt_magepro, genos$bed, pheno, genos$bim, opt$tmp, lasso_h2, TRUE)
+		pred.wgt.mageprofull <- weights.magepro(pred.wgtfull, wgt_magepro, genos$bed, pheno[,3], TRUE)
+		wgt.matrix[, colcount] = pred.wgt.mageprofull
+	}else{
+		wgt.matrix[, colcount] = NA
+	}
 }
 
 #--- SAVE RESULTS
 snps = genos$bim
 if ( ("MAGEPRO" %in% model) & (ext_magepro > 0) ){
-wgtmagepro <- append("pred.wgt", wgt_magepro)
+	wgtmagepro <- append("pred.wgt", wgt_magepro)
 }else{
-wgtmagepro = NA
+	wgtmagepro = NA
 }
 
 # --- for checking cor() of weights in CV

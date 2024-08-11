@@ -18,6 +18,8 @@ option_list = list(
   make_option("--num_covar", action="store", default=NA, type='double',
               help="Number of covariate to use (number of rows to extract from --covar file). 'ALL' for all covariates in the file. 
 	      Default assumes gtex covariate file (first 5 PC, first 15 inferredcov, pcr, platform, sex: ideal for N < 150) [optional]"),
+  make_option("--batch", action="store_true", default=FALSE,
+              help="Boolean flag for running batches (sbatch) of genes in a parallel fashion. Note: this would only work in a slurm environment [optional]"),
   make_option("--num_batches", action="store", default=20, type='double',
               help="Number of batch jobs to split the genes into. Default 20 [optional]"),
   make_option("--rerun", action="store_true", default=FALSE,
@@ -76,17 +78,21 @@ option_list = list(
   make_option("--phi_shrinkage_PRSCSx", action="store", default=1e-6, type='numeric',
               help="Shrinkage parameter for PRS-CSx"),
   make_option("--pops", action="store", default=NA, type='character',                               
-	      help="Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR)"),
+	            help="Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR)"),
   make_option("--impact_path", action="store", default=NA, type='character',
               help="path to file with impact scores for each snp"),
   make_option("--ldref_dir", action="store", default=NA, type="character",
-  			  help="Directory containing ld reference files used for susie fine mapping"),
+  			      help="Directory containing ld reference files used in MAGEPRO for susie fine mapping"),
   make_option("--ldrefs", action="store", default=NA, type="character",
-  			  help="Comma-separated list of ld reference files (plink prefixes) used for susie fine mapping"),
+  			      help="Comma-separated list of ld reference files (plink prefixes) used in MAGEPRO for susie fine mapping"),
+  make_option("--in_sample", action="store", default=NA, type="character",
+              help="Comma-separated list of TRUE/FALSE indicating whether the ld reference is in sample or not; used for susie fine mapping"),
   make_option("--out_susie", action="store", default=NA, type='character',
-          help="Path to susie output directory [required if using MAGEPRO]"), 
+              help="Path to susie output directory [required if using MAGEPRO]"), 
   make_option("--skip_susie", action="store_true", default=FALSE,
-          help="Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from susie")
+              help="Boolean to skip SuSiE preprocessing. This assumes summary statistics in sumstats_dir have columns 8/9/10 with PIP/POSTERIOR/CS from susie"),
+  make_option("--n_threads", action="store", default=1,
+              help="Integer value representing how many threads to be used by MAGEPRO_PIPELINE/5_RunJobs.sh")
 )
 
 opt = parse_args(OptionParser(option_list=option_list))
@@ -113,66 +119,107 @@ gene_beds_dir = paste0(opt$scratch, "/gene_beds")
 plink_gene_dir = paste0(opt$scratch, "/plink_gene")
 
 if (! opt$rerun){
-system( paste("mkdir", gene_beds_dir, sep = " "), ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
-system( paste("mkdir", plink_gene_dir, sep = " "), ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+  system( paste("mkdir", gene_beds_dir, sep = " "), ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+  system( paste("mkdir", plink_gene_dir, sep = " "), ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 
-# --- CREATE GENE BEDS (skip if --rerun)
-if ( opt$verbose >= 1 ) cat("### CREATING GENE BEDS FOR GENES OF INTEREST\n")
-arg = paste("Rscript MAGEPRO_PIPELINE/2_GeneBed.R", opt$ge, gene_beds_dir, opt$intermed_dir, opt$subset_genes, sep = " ")
-system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
-if ( opt$verbose >= 1 ) cat("### WROTE GENE BEDS IN ", gene_beds_dir, "\n", sep = "")
-if ( opt$verbose >= 1 ) cat("### WROTE FILE OF ALL GENES IN ANALYSIS IN ", opt$intermed_dir, "/All_Genes_Expressed.txt\n", sep = "")
+  # --- CREATE GENE BEDS (skip if --rerun)
+  if ( opt$verbose >= 1 ) cat("### CREATING GENE BEDS FOR GENES OF INTEREST\n")
+  arg = paste("Rscript MAGEPRO_PIPELINE/2_GeneBed.R", opt$ge, gene_beds_dir, opt$intermed_dir, opt$subset_genes, sep = " ")
+  system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+  if ( opt$verbose >= 1 ) cat("### WROTE GENE BEDS IN ", gene_beds_dir, "\n", sep = "")
+  if ( opt$verbose >= 1 ) cat("### WROTE FILE OF ALL GENES IN ANALYSIS IN ", opt$intermed_dir, "/All_Genes_Expressed.txt\n", sep = "")
 
-# --- CREATE PLINK FILES PER GENE (skip if --rerun)
-if ( opt$verbose >= 1 ) cat("### CREATING PLINK FILES PER GENE: MAY TAKE A WHILE\n")
+  # --- CREATE PLINK FILES PER GENE (skip if --rerun)
+  if ( opt$verbose >= 1 ) cat("### CREATING PLINK FILES PER GENE: MAY TAKE A WHILE\n")
 
-bed_files = list.files(path = gene_beds_dir)
-for (b in bed_files){
-	data = fread( paste0(gene_beds_dir, "/", b), header = F, sep = "\t" )
-	name = data$V4[1]
-	chr = data$V1[1]
-	start = data$V2[1]
-	end = data$V3[1]
-	plink_file = paste0(opt$bfile, chr)
-	arg = paste(opt$PATH_plink, "--bfile", plink_file, "--chr", chr, "--from-bp", start, "--to-bp", end, "--allow-no-sex", "--make-bed", "--out", paste0(plink_gene_dir, "/", name), sep = " " )
-	system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
-	system( paste0("rm -rf ", plink_gene_dir, "/", name, ".log"), ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
-}
+  bed_files = list.files(path = gene_beds_dir)
+  for (b in bed_files){
+    data = fread( paste0(gene_beds_dir, "/", b), header = F, sep = "\t" )
+    name = data$V4[1]
+    chr = data$V1[1]
+    start = data$V2[1]
+    end = data$V3[1]
+    plink_file = paste0(opt$bfile, chr)
+    arg = paste(opt$PATH_plink, "--bfile", plink_file, "--chr", chr, "--from-bp", start, "--to-bp", end, "--allow-no-sex", "--make-bed", "--out", paste0(plink_gene_dir, "/", name), sep = " " )
+    system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+    system( paste0("rm -rf ", plink_gene_dir, "/", name, ".log"), ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+  }
 }else{
-if ( opt$verbose >= 1 ) cat("### SKIPPING CREATION OF PLINK FILES PER GENE. MAKE SURE THESE FILE EXISTS IN ", plink_gene_dir, "\n", sep = "")
+  if ( opt$verbose >= 1 ) cat("### SKIPPING CREATION OF PLINK FILES PER GENE. MAKE SURE THESE FILE EXISTS IN ", plink_gene_dir, "\n", sep = "")
 }
 
 # --- PREPARING COVARIATE FILE, DICTATE NUMBER OF COVARIATES TO EXTRACT 
-if (!is.na(opt$covar)){
-if ( opt$verbose >= 1 ) cat("### PREPARING COVARIATE FILE\n")
-arg = paste("Rscript MAGEPRO_PIPELINE/3_PrepCovar.R", opt$covar, opt$intermed_dir, opt$num_covar, sep = " ")
-system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
-if ( opt$verbose >= 1 ) cat("### WROTE COVARIATE FILE IN ", opt$intermed_dir, "/Covar_All.txt\n", sep = "")
-}else{
-if ( opt$verbose >= 1 ) cat("### SKIPPING COVAR FILE PROCESSING \n")
+if (!is.na(opt$covar)) {
+  if ( opt$verbose >= 1 ) cat("### PREPARING COVARIATE FILE\n")
+  arg = paste("Rscript MAGEPRO_PIPELINE/3_PrepCovar.R", opt$covar, opt$intermed_dir, opt$num_covar, sep = " ")
+  system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+  if ( opt$verbose >= 1 ) cat("### WROTE COVARIATE FILE IN ", opt$intermed_dir, "/Covar_All.txt\n", sep = "")
+}else {
+  if ( opt$verbose >= 1 ) cat("### SKIPPING COVAR FILE PROCESSING \n")
 }
 
-# --- SPLIT UP GENES INTO BATCHES, SUBSET TO GENES OF INTEREST
-if ( opt$verbose >= 1 ) cat("### ASSIGNING GENE BATCHES \n")
-arg = paste("Rscript MAGEPRO_PIPELINE/4_AssignBatches.R", opt$intermed_dir, opt$num_batches, opt$subset_genes, sep = " ")
-system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
-if ( opt$verbose >= 1 ) cat("### WROTE GENE BATCH FILE IN ", opt$intermed_dir, "/Genes_Assigned.txt\n", sep = "")
+if (opt$batch) {
+  # --- SPLIT UP GENES INTO BATCHES, SUBSET TO GENES OF INTEREST
+  if ( opt$verbose >= 1 ) cat("### ASSIGNING GENE BATCHES \n")
+  arg = paste("Rscript MAGEPRO_PIPELINE/4_AssignBatches.R", opt$intermed_dir, opt$num_batches, opt$subset_genes, sep = " ")
+  system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+  if ( opt$verbose >= 1 ) cat("### WROTE GENE BATCH FILE IN ", opt$intermed_dir, "/Genes_Assigned.txt\n", sep = "")
 
 
-# --- CREATE DIRECTORY FOR STANDARD OUT AND ERROR FILES FROM BATCH JOBS
-if ( opt$verbose >= 1 ) cat("### CREATING DIRECTORY ../working_err FOR BATCH JOB OUT/ERROR FILES \n")
-system( "mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+  # --- CREATE DIRECTORY FOR STANDARD OUT AND ERROR FILES FROM BATCH JOBS
+  if ( opt$verbose >= 1 ) cat("### CREATING DIRECTORY ../working_err FOR BATCH JOB OUT/ERROR FILES \n")
+  system( "mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
 
-# --- RUN SLURM JOBS PER BATCH 
-# read batch file and split genes per batch number 
-if ( opt$verbose >= 1 ) cat("### RUNNING JOBS \n")
-batches <- c(1:opt$num_batches)
-for (batch in batches){
-arg = paste("sbatch MAGEPRO_PIPELINE/5_RunJobs.sh", batch, opt$ge, opt$scratch, opt$intermed_dir, opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set , opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt, opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx, opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$ldref_dir, opt$ldrefs, opt$out_susie, opt$skip_susie, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
-system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+
+  # --- RUN SLURM JOBS PER BATCH 
+  # read batch file and split genes per batch number 
+  if ( opt$verbose >= 1 ) cat("### RUNNING JOBS \n")
+  batches <- c(1:opt$num_batches)
+  for (batch in batches) {
+    arg = paste("sbatch MAGEPRO_PIPELINE/5_batch_RunJobs.sh", 
+    batch, opt$ge, opt$scratch, opt$intermed_dir, 
+    opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats, 
+    opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set,
+    opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt,
+    opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx,
+    opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$ldref_dir,
+    opt$ldrefs, opt$in_sample, opt$out_susie, opt$skip_susie, opt$n_threads, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
+    system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+  }
+} else {
+  if (opt$num_batches != 20) cat("WARNING: You specified a non default number of batches, but did not set --batch flag to true.\n")
+  opt$num_batches <- 1
+  # "Assigning" to 1 batch as we're not running with sbatch.
+  # In practice, we only use the script below to split data into the format we want for 5_RunJobs.sh
+  arg = paste("Rscript MAGEPRO_PIPELINE/4_AssignBatches.R", opt$intermed_dir, opt$num_batches, opt$subset_genes, sep = " ")
+  system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
+  if ( opt$verbose >= 1 ) cat("### WROTE GENE FILE IN ", opt$intermed_dir, "/Genes_Assigned.txt\n", sep = "")
+
+  # --- CREATE DIRECTORY FOR STANDARD OUT AND ERROR FILES FROM JOB
+  if ( opt$verbose >= 1 ) cat("### CREATING DIRECTORY ../working_err FOR OUT/ERROR FILES \n")
+  system("mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT)
+
+  current_datetime <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
+
+  output_file <- paste0("../working_err/5_RunJobs_", current_datetime, ".out")
+  error_file <- paste0("../working_err/5_RunJobs_", current_datetime, ".err")
+
+  if (opt$verbose >= 1) cat("### RUNNING JOB \n")
+  
+  arg = paste(
+        "MAGEPRO_PIPELINE/5_RunJobs.sh", 1, opt$ge, opt$scratch, opt$intermed_dir,
+        opt$out, opt$PATH_plink, opt$PATH_gcta, opt$sumstats_dir, opt$sumstats,
+        opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set,
+        opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt,
+        opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx,
+        opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$ldref_dir,
+        opt$ldrefs, opt$in_sample, opt$out_susie, opt$skip_susie, opt$n_threads, current_datetime,
+        paste("> ", output_file, " 2> ", error_file, sep = ""),
+        sep = " ")
+  system(arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT)
 }
 
-# --- PROCESS RESULTS WHEN JOBS FINISH RUNNING
-if ( opt$verbose >= 1 ) cat("### WHEN JOBS FINISH RUNNING, USE THE SCRIPTS IN PROCESS_RESULTS DIRECTORY TO SUMMARIZE GENE MODELS \n")
+# # --- PROCESS RESULTS WHEN JOBS FINISH RUNNING
+# if ( opt$verbose >= 1 ) cat("### WHEN JOBS FINISH RUNNING, USE THE SCRIPTS IN PROCESS_RESULTS DIRECTORY TO SUMMARIZE GENE MODELS \n")
 
 

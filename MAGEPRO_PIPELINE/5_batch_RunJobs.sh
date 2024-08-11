@@ -1,9 +1,25 @@
 #!/bin/bash
+#SBATCH -p shared
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=2G
+#SBATCH -t 01:00:00
+#SBATCH -J MAGEPRO
+#SBATCH -A csd832
+#SBATCH -o ../working_err/MAGEPRO.%j.%N.out
+#SBATCH -e ../working_err/MAGEPRO.%j.%N.err
+#SBATCH --export=ALL
+#SBATCH --constraint="lustre"
+#--- EDIT ABOVE TO SUIT YOUR HPC CLUSTER
+
+source ~/.bashrc
+conda activate r_py
 module load cpu/0.15.4 
 module load parallel/20200822 
 
 #--- read command line arguments
-input_column=$1
+batch=$1
 gefile=$2
 scratch=$3 
 intermed=$4
@@ -36,8 +52,6 @@ in_sample=${30}
 out_susie=${31}
 skip_susie=${32}
 n_threads=${33}
-current_datetime=${34}
-
 
 available_threads=$(nproc)
 
@@ -49,7 +63,6 @@ if [ "$n_threads" -gt "$available_threads" ]; then
 else
   echo "Using $n_threads of the $available_threads available threads"
 fi
-
 
 export plinkdir=$plinkdir
 export plink_exec=$plink_exec
@@ -83,30 +96,30 @@ export pops=$pops
 export impact_path=$impact_path
 export ldref_dir=$ldref_dir
 export ldrefs=$ldrefs
-export in_sample=$in_sample
 export out_susie=$out_susie
 export skip_susie=$skip_susie
+export in_sample=$in_sample
 export intermed=$intermed
 
 
 #--- create directory for temporary/working files 
-#--- NOTE: create "tmp" and "wd" where your system can write/delete files efficiently (EDIT TO SUIT YOUR MACHINE)
+#--- NOTE: create "tmp" and "wd" where your system can write/delete files efficiently (EDIT TO SUIT YOUR HPC CLUSTER)
 #tmpdir=$scratch/tmp
-tmpdir=$scratch/job_$current_datetime/tmp
-mkdir -p $tmpdir
+tmpdir=/scratch/$USER/job_$SLURM_JOBID/tmp
+mkdir $tmpdir
 #wd=$scratch/wd
-wd=$scratch/job_$current_datetime/wd
-mkdir -p $wd
+wd=/scratch/$USER/job_$SLURM_JOBID/wd
+mkdir $wd
 
 #--- define file paths 
 plinkdir=$scratch/plink_gene
-inputfile=$intermed/Genes_Assigned.txt 
+batchfile=$intermed/Genes_Assigned.txt 
 geneids=$intermed/All_Genes_Expressed.txt 
 ind=$intermed/All_Individuals.txt #all individuals with both genotype and ge data 
 samples=$intermed/Sample_IDs.txt 
 
 #--- get column numbers (in ge data) of individuals we are interested in
-genes=$(awk '$2 == '${input_column}' {print $1}' $inputfile) #all genes passed in to the script 
+genes=$(awk '$2 == '${batch}' {print $1}' $batchfile) #all genes with the batch number passed in to the script 
 #grabbing just the individuals we want
 alldonors=$(zcat $gefile | head -n 1)
 colind=$(echo $alldonors | sed 's| |\n|g' | nl | grep -f $samples | awk 'BEGIN {ORS=","} {print $1}') 
