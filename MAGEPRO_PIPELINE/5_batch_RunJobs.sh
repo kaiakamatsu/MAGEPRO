@@ -2,8 +2,9 @@
 #SBATCH -p shared
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=16
 #SBATCH --mem=2G
-#SBATCH -t 10:00:00
+#SBATCH -t 01:00:00
 #SBATCH -J MAGEPRO
 #SBATCH -A csd832
 #SBATCH -o ../working_err/MAGEPRO.%j.%N.out
@@ -13,7 +14,7 @@
 #--- EDIT ABOVE TO SUIT YOUR HPC CLUSTER
 
 source ~/.bashrc
-conda activate r_env
+conda activate r_py
 module load cpu/0.15.4 
 module load parallel/20200822 
 
@@ -59,8 +60,9 @@ if [ "$n_threads" -gt "$available_threads" ]; then
   echo "Warning: Specified number of threads ($n_threads) is greater than available threads ($available_threads)."
   echo "Setting number of threads to maximum available: $available_threads."
   n_threads=$available_threads
+else
+  echo "Using $n_threads of the $available_threads available threads"
 fi
-
 
 export plinkdir=$plinkdir
 export plink_exec=$plink_exec

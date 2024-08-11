@@ -5,6 +5,7 @@ suppressMessages(library("data.table"))
 suppressMessages({library("Rfast")})
 suppressMessages(library("dplyr"))
 suppressMessages(library("ggplot2"))
+
 arg_parser <- function() {
     option_list <- list(
         make_option(c("-g", "--genes_folder"), type = "character",
@@ -17,7 +18,7 @@ arg_parser <- function() {
                     help = "Number of people/sample size", metavar="NSUSIE"),
         make_option(c("-o", "--output_folder"), type="character", help="output folder name", metavar="OUTPUTFOLDER"),
         make_option(c("-b", "--bim_file"), type="character", help="Path to file containing ld reference bim file", metavar="BIMFILE"),
-        make_option(c("-v", "--variance"), type = "logical", default = FALSE,
+        make_option(c("-v", "--variance_estimate_resid"), type = "logical", default = FALSE,
                     help = "Estimate residual variance: set to TRUE if in-sample LD is provided", metavar = "VARFLAG")
     )
 
@@ -44,8 +45,8 @@ arg_parser <- function() {
         stop("bim file path (-b, --bim_file) is required", call. = FALSE)
     }
 
-    if (is.null(opt$variance)) {
-        stop("Error: Flag indicating whether in sample or out of sample LD is provided (-v, --variance) is required", call. = FALSE)
+    if (is.null(opt$variance_estimate_resid)) {
+        stop("Flag indicating whether in sample or out of sample LD is provided (-v, --estimate_resid_variance) is required", call. = FALSE)
     }
 
     return(opt)
@@ -138,7 +139,7 @@ output <- file.path(opt$o, opt$c)
 
 tryCatch({
     withCallingHandlers({
-        res <- susie_rss(bhat = df[[5]], shat = df[[6]], R = ld_matrix, n = opt$n, max_iter = 100)
+        res <- susie_rss(bhat = df[[5]], shat = df[[6]], R = ld_matrix, n = opt$n, max_iter = 100, estimate_residual_variance=opt$v)
     }, warning = function(w) {
         if (grepl("IBSS algorithm did not converge", w$message)) {
             out_dir <- dirname(opt$o)

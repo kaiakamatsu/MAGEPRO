@@ -11,10 +11,9 @@ cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, g
 	# Every other parameter description can be found in MAGEPRO.R option_list.
 	# RETURN: hashmap which maps dataset name to TRUE/FALSE, indicating if 
 	# susie was ran successfully for that dataset
-	susie_result_status <- list()
 
 	results <- lapply(names(cohort_map), function(cohort) {
-		process_cohort(cohort, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, verbose)
+		process_cohort(cohort, cohort_map, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, verbose)
 	})
 
 	susie_result_status <- list()
@@ -30,7 +29,7 @@ cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, g
 }
 
 
-process_cohort <- function(cohort, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, verbose) {
+process_cohort <- function(cohort, cohort_map, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, verbose) {
 	print(paste0("current cohort: ", cohort))
 	cohort_data <- cohort_map[[cohort]]
 	cohort_path <- file.path(sumstats_dir, cohort)

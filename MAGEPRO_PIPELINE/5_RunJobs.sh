@@ -1,4 +1,6 @@
 #!/bin/bash
+module load cpu/0.15.4 
+module load parallel/20200822 
 
 #--- read command line arguments
 input_column=$1
@@ -35,7 +37,7 @@ out_susie=${31}
 skip_susie=${32}
 n_threads=${33}
 current_datetime=${34}
-temp_dir=${35}
+
 
 available_threads=$(nproc)
 
@@ -44,6 +46,8 @@ if [ "$n_threads" -gt "$available_threads" ]; then
   echo "Warning: Specified number of threads ($n_threads) is greater than available threads ($available_threads)."
   echo "Setting number of threads to maximum available: $available_threads."
   n_threads=$available_threads
+else
+  echo "Using $n_threads of the $available_threads available threads"
 fi
 
 
@@ -88,10 +92,10 @@ export intermed=$intermed
 #--- create directory for temporary/working files 
 #--- NOTE: create "tmp" and "wd" where your system can write/delete files efficiently (EDIT TO SUIT YOUR MACHINE)
 #tmpdir=$scratch/tmp
-tmpdir=$temp_dir/job_$current_datetime/tmp
+tmpdir=$scratch/job_$current_datetime/tmp
 mkdir -p $tmpdir
 #wd=$scratch/wd
-wd=$temp_dir/job_$current_datetime/wd
+wd=$scratch/job_$current_datetime/wd
 mkdir -p $wd
 
 #--- define file paths 

@@ -77,11 +77,11 @@ option_list = list(
   make_option("--impact_path", action="store", default=NA, type='character',
               help="path to file with impact scores for each snp"), 
   make_option("--ldref_dir", action="store", default=NA, type="character",
-  			  help="Directory containing ld reference files used for SuSiE fine mapping"),
+  			  help="Directory containing ld reference files used in MAGEPRO for SuSiE fine mapping"),
   make_option("--ldrefs", action="store", default=NA, type="character",
-  			  help="Comma-separated list of ld reference files (plink prefixes) used for SuSiE fine mapping"),
+  			  help="Comma-separated list of ld reference files (plink prefixes) used in MAGEPRO for SuSiE fine mapping"),
   make_option("--in_sample", action="store", default=NA, type="character",
-                          help="Comma-separated list of TRUE/FALSE indicating whether the ld reference is in sample or not; used for susie fine mapping"),
+              help="Comma-separated list of TRUE/FALSE indicating whether the ld reference is in sample or not; used for susie fine mapping [optional]. If not provided will assume it is FALSE"),
   make_option("--out_susie", action="store", default=NA, type='character',
               help="Path to susie output directory [required if using MAGEPRO and not skipping susie]"),
   make_option("--skip_susie", action="store_true", default=FALSE,
@@ -116,7 +116,7 @@ cleanup = function() {
 if (!is.na(opt$gene)){
 	name <- strsplit(opt$gene, ".", fixed = TRUE)[[1]][1] # find gene name without version number
 }else{
-        cat( "ERROR: --gene flag is required\n" , sep='', file=stderr() )
+    cat( "ERROR: --gene flag is required\n" , sep='', file=stderr() )
 	cleanup()
 	q()
 }
@@ -125,8 +125,8 @@ if (!is.na(opt$gene)){
 model <- strsplit(opt$models, ",", fixed = TRUE)[[1]]
 if ( sum(! model %in% c("SINGLE", "META", "PT", "SuSiE", "SuSiE_IMPACT","PRSCSx", "MAGEPRO_fullsumstats", "MAGEPRO")) > 0 | length(model) > 8 ){
 	cat( "ERROR: Please input valid models \n" , sep='', file=stderr() )
-        cleanup()
-        q()
+    cleanup()
+    q()
 }
 
 if (opt$verbose >= 1) cat("### USING THE FOLLOWING MODELS:", opt$models, "\n")
@@ -142,8 +142,8 @@ datasets <- list()
 if ( ! is.na(opt$sumstats)){
 	if ( is.na(opt$sumstats_dir) ){
 		cat( "ERROR: --sumstats supplied, but not --sumstats_dir \n" , sep='', file=stderr() )
-                cleanup()
-                q()
+        cleanup()
+        q()
 	}
 	sumstats <- strsplit(opt$sumstats, ",", fixed = TRUE)[[1]]
 	for (s in sumstats){
@@ -168,7 +168,7 @@ if ( ! is.na(opt$sumstats)){
 	if ("META" %in% model | "PRSCSx" %in% model | "MAGEPRO_fullsumstats" %in% model | "MAGEPRO" %in% model){
 		cat( "ERROR: --sumstats not supplied, cannot compute META, PRS-CSx, MAGEPRO models \n" , sep='', file=stderr() )
 		cleanup()
-                q()
+        q()
 	}
 }
 
@@ -178,14 +178,14 @@ if ( ("META" %in% model | "PRSCSx" %in% model |  ("MAGEPRO" %in% model & !opt$sk
 		sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
 		if (length(sumstats) != length(sample_sizes)){
 			cat( "ERROR: --ss flag required an entry for every dataset\n" , sep='', file=stderr() )
-                	cleanup()
-                	q()
+            cleanup()
+            q()
 		}
 		hashmap_ss <<- setNames(as.numeric(sample_sizes), sumstats)
 	}else{
 		cat( "ERROR: Cannot perform sample-size weighted meta-analysis or PRS-CSx without the --ss flag\n" , sep='', file=stderr() )
-                cleanup()
-                q()
+        cleanup()
+        q()
 	}
 }
 
@@ -199,28 +199,28 @@ if ("MAGEPRO" %in% model & (!opt$skip_susie) ) {
 		}
 	} else {
 		cat( "ERROR: --ldref_dir not supplied, cannot perform fine mapping of sumstats for MAGEPRO model\n", sep='', file=stderr() )
-				cleanup()
-				q()
+		cleanup()
+		q()
 	}
 
 	if (!is.na(opt$ldrefs)) {
 		ldrefs_list <- strsplit(opt$ldrefs, ",")[[1]]
 		if (length(sumstats) != length(ldrefs_list)) {
 			cat ("ERROR: --ldrefs flag requires an entry for every dataset\n", sep='', file=stderr())
-				cleanup()
-				q()
+			cleanup()
+			q()
 		}
 
 	} else {
 		cat( "ERROR: --ldrefs not supplied, cannot perform fine mapping for MAGEPRO model\n", sep='', file=stderr() )
-				cleanup()
-				q()
+		cleanup()
+		q()
 	}
 
 	in_sample_list <- rep(FALSE, length(sumstats))
 	if (!is.na(opt$in_sample)) {
 		in_sample_list <<- strsplit(opt$in_sample, ",")[[1]]
-		if (length(ldrefs_list) != length(in_sample_list)) {
+		if (length(sumstats) != length(in_sample_list)) {
 			cat ("ERROR: --in_sample flag requires an entry for every dataset\n", sep='', file=stderr())
 			cleanup()
 			q()

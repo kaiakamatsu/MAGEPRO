@@ -82,9 +82,9 @@ option_list = list(
   make_option("--impact_path", action="store", default=NA, type='character',
               help="path to file with impact scores for each snp"),
   make_option("--ldref_dir", action="store", default=NA, type="character",
-  			      help="Directory containing ld reference files used for susie fine mapping"),
+  			      help="Directory containing ld reference files used in MAGEPRO for susie fine mapping"),
   make_option("--ldrefs", action="store", default=NA, type="character",
-  			      help="Comma-separated list of ld reference files (plink prefixes) used for susie fine mapping"),
+  			      help="Comma-separated list of ld reference files (plink prefixes) used in MAGEPRO for susie fine mapping"),
   make_option("--in_sample", action="store", default=NA, type="character",
               help="Comma-separated list of TRUE/FALSE indicating whether the ld reference is in sample or not; used for susie fine mapping"),
   make_option("--out_susie", action="store", default=NA, type='character',
@@ -198,7 +198,6 @@ if (opt$batch) {
   # --- CREATE DIRECTORY FOR STANDARD OUT AND ERROR FILES FROM JOB
   if ( opt$verbose >= 1 ) cat("### CREATING DIRECTORY ../working_err FOR OUT/ERROR FILES \n")
   system("mkdir ../working_err" , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT)
-  temp_dir <- "../"
 
   current_datetime <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
 
@@ -214,7 +213,7 @@ if (opt$batch) {
         opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt,
         opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx,
         opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$ldref_dir,
-        opt$ldrefs, opt$in_sample, opt$out_susie, opt$skip_susie, opt$n_threads, current_datetime, temp_dir,
+        opt$ldrefs, opt$in_sample, opt$out_susie, opt$skip_susie, opt$n_threads, current_datetime,
         paste("> ", output_file, " 2> ", error_file, sep = ""),
         sep = " ")
   system(arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT)
