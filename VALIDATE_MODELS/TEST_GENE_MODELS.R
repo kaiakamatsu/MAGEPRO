@@ -51,7 +51,6 @@ print(opt)
 #name <- strsplit(opt$gene, ".", fixed = TRUE)[[1]][1]
 
 # path to weights  
-#file.wgts <- paste0(opt$genemodel,"/", opt$gene, ".wgt.RDat")
 file.wgts <- paste0(opt$genemodel,"/", opt$gene, ".wgt.RDat")
 
 if ( opt$verbose == 2 ) {

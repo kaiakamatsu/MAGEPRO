@@ -157,6 +157,38 @@ def sim_effect_sizes(h2g, num_causal, num_snps, causal_index):
         effect_sizes[causal_index] = np.random.normal(mean, np.sqrt(variance))
     return effect_sizes
 
+def sim_effect_sizes_only(h2g, num_causal):
+    mean = 0
+    variance = h2g/num_causal
+    effect_sizes = np.zeros(num_causal)
+    if num_causal >= 2:
+        for index in range(num_causal):
+            effect_sizes[index] = np.random.normal(mean, np.sqrt(variance))
+    else:
+        effect_sizes[0] = np.random.normal(mean, np.sqrt(variance))
+    return effect_sizes
+
+def create_betas(effects, num_causal, num_snps, causal_index):
+    # effects = list of causal effect sizes 
+    # num_causal = number of causal variants 
+    # num_snps = number of snps 
+    # causal_index = list containing indices of causal variants (same order as effects)
+    betas = np.zeros(num_snps)
+    if num_causal >= 2:
+        for index in range(num_causal):
+            betas[causal_index[index]] = effects[index]
+    else:
+        betas[causal_index[0]] = effects[0]
+    return betas
+
+def random_correlated_effect(effect1, heritability, correlation):
+    # effect1 = first effect for which you want another effect that is correlated to it
+    # heritability = preset heritability value (variance of the distribution of effect size)
+    # correlation = desired correlation of the two effect sizes 
+    effect_temp = np.random.normal(0, np.sqrt(heritability))
+    effect2 = (correlation*effect1) + np.sqrt(1-(correlation**2))*effect_temp # see supplements for more information
+    return (effect2)
+
 def get_hsq(geno, gene_expr, out, gcta, thread_n):
     nindv, nsnp = geno.shape
     grm = np.dot(geno, geno.T) / nsnp
@@ -494,4 +526,6 @@ def prscsx_cv(N, geno_prscsx, pheno_prscsx, prscsx_weights, best_penalty):
     prscsx_coef = np.dot(wgts_sep, linear_coef)
 
     return prscsx_r2, prscsx_coef
+
+
 
