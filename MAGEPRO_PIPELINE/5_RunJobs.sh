@@ -28,14 +28,15 @@ dir_PRSCSx=${24}
 phi_shrinkage_PRSCSx=${25}
 pops=${26}
 impact_path=${27}
-ldref_dir=${28}
-ldrefs=${29}
-in_sample=${30}
-out_susie=${31}
-skip_susie=${32}
-n_threads=${33}
-current_datetime=${34}
-temp_dir=${35}
+impact_paths=${28}
+ldref_dir=${29}
+ldrefs=${30}
+in_sample=${31}
+out_susie=${32}
+skip_susie=${33}
+n_threads=${34}
+current_datetime=${35}
+temp_dir=${36}
 
 available_threads=$(nproc)
 
@@ -81,6 +82,7 @@ export dir_PRSCSx=$dir_PRSCSx
 export phi_shrinkage_PRSCSx=$phi_shrinkage_PRSCSx
 export pops=$pops
 export impact_path=$impact_path
+export impact_paths=$impact_paths
 export ldref_dir=$ldref_dir
 export ldrefs=$ldrefs
 export in_sample=$in_sample
@@ -126,7 +128,7 @@ process_gene() {
             mv $wd/$gene.mod.fam $wd/$gene.fam 
             TMP=$tmpdir/${gene}
             OUT=$weights/${gene}
-            cmd="time Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq --ldref_pt $ldref_pt --prune_r2 $prune_r2 --threshold_p $threshold_p --ldref_PRSCSx $ldref_PRSCSx --dir_PRSCSx $dir_PRSCSx --phi_shrinkage_PRSCSx $phi_shrinkage_PRSCSx --pops $pops --impact_path ${impact_path}${chr}.txt --ldref_dir ${ldref_dir} --ldrefs ${ldrefs} --in_sample ${in_sample} --out_susie ${out_susie} --skip_susie ${skip_susie}"
+            cmd="time Rscript MAGEPRO.R --gene $gene --bfile $wd/$gene --covar $intermed/Covar_All.txt --tmp $TMP --out $OUT --PATH_gcta $gcta --PATH_plink ${plink_exec} --sumstats_dir $sumstats_dir --sumstats $sumstats --models $models --ss $ss --resid $resid --hsq_p $hsq_p --lassohsq $lassohsq --hsq_set $hsq_set --crossval $crossval --verbose $verbose --noclean $noclean --save_hsq $save_hsq --ldref_pt $ldref_pt --prune_r2 $prune_r2 --threshold_p $threshold_p --ldref_PRSCSx $ldref_PRSCSx --dir_PRSCSx $dir_PRSCSx --phi_shrinkage_PRSCSx $phi_shrinkage_PRSCSx --pops $pops --impact_path ${impact_path}${chr}.txt --impact_paths ${chr},${impact_paths} --ldref_dir ${ldref_dir} --ldrefs ${ldrefs} --in_sample ${in_sample} --out_susie ${out_susie} --skip_susie ${skip_susie}"
             echo $cmd
             $cmd
             rm $wd/$gene.* 

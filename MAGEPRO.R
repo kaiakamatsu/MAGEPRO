@@ -77,7 +77,9 @@ option_list = list(
   make_option("--pops", action="store", default=NA, type='character',                               
 	      help="Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR)"),
   make_option("--impact_path", action="store", default=NA, type='character',
-              help="path to file with impact scores for each snp"), 
+              help="Path to file with impact scores for each snp. Required for SuSiE_IMPACT"),
+make_option("--impact_paths", action="store", default=NA, type='character',
+              help="Comma separated list of paths to files with impact scores for each SNPs in different cohorts. Required for MAGEPRO_IMPACT"),
   make_option("--ldref_dir", action="store", default=NA, type="character",
   			  help="Directory containing ld reference files used for SuSiE fine mapping"),
   make_option("--ldrefs", action="store", default=NA, type="character",
@@ -192,17 +194,8 @@ if ( ("META" %in% model | "PRSCSx" %in% model |  ("MAGEPRO" %in% model & !opt$sk
 }
 
 
-if ("MAGEPRO_IMPACT" %in% model) {
-	if(is.na(opt$impact_path)){
-		cat( "ERROR: Cannot perform MAGEPRO_IMPACT without the --impact_path flag\n" , sep='', file=stderr() )
-		cleanup()
-		q()
-	}
-}
-
-
 cohort_map <- list()
-if ("MAGEPRO" %in% model & (!opt$skip_susie) | ("MAGEPRO_IMPACT" %in% model & !opt$skip_susie)) {
+if ("MAGEPRO" %in% model & (!opt$skip_susie) | ("MAGEPRO_IMPACT" %in% model & (!opt$skip_susie))) {
 	if ( !is.na(opt$ldref_dir) ) {
 		if (!file.exists(opt$ldref_dir)) {
 			cat( "ERROR: --ldref_dir directory does not exist, please check the path\n", sep='', file=stderr())
@@ -211,22 +204,22 @@ if ("MAGEPRO" %in% model & (!opt$skip_susie) | ("MAGEPRO_IMPACT" %in% model & !o
 		}
 	} else {
 		cat( "ERROR: --ldref_dir not supplied, cannot perform fine mapping of sumstats for MAGEPRO model\n", sep='', file=stderr() )
-				cleanup()
-				q()
+			cleanup()
+			q()
 	}
 
+	ldrefs_list <- rep(FALSE, length(sumstats))
 	if (!is.na(opt$ldrefs)) {
-		ldrefs_list <- strsplit(opt$ldrefs, ",")[[1]]
+		ldrefs_list <<- strsplit(opt$ldrefs, ",")[[1]]
 		if (length(sumstats) != length(ldrefs_list)) {
 			cat ("ERROR: --ldrefs flag requires an entry for every dataset\n", sep='', file=stderr())
-				cleanup()
-				q()
+			cleanup()
+			q()
 		}
-
 	} else {
 		cat( "ERROR: --ldrefs not supplied, cannot perform fine mapping for MAGEPRO model\n", sep='', file=stderr() )
-				cleanup()
-				q()
+		cleanup()
+		q()
 	}
 
 	in_sample_list <- rep(FALSE, length(sumstats))
@@ -234,6 +227,28 @@ if ("MAGEPRO" %in% model & (!opt$skip_susie) | ("MAGEPRO_IMPACT" %in% model & !o
 		in_sample_list <<- strsplit(opt$in_sample, ",")[[1]]
 		if (length(ldrefs_list) != length(in_sample_list)) {
 			cat ("ERROR: --in_sample flag requires an entry for every dataset\n", sep='', file=stderr())
+			cleanup()
+			q()
+		}
+	} else {
+		cat( "ERROR: --in_sample not supplied, cannot perform fine mapping for MAGEPRO model\n", sep='', file=stderr() )
+		cleanup()
+		q()
+	}
+
+	impact_paths_list <- rep(NA, length(sumstats))
+	if ("MAGEPRO_IMPACT" %in% model) {
+		if(!is.na(opt$impact_paths)) {
+			all_impact <- strsplit(opt$impact_paths, ",")[[1]]
+			chr_info <- all_impact[1]
+			impact_paths_list <<- all_impact[-1]
+			if (length(impact_paths_list) != length(ldrefs_list)) {
+				cat ("ERROR: --impact_paths flag requires an entry for every dataset\n", sep='', file=stderr())
+				cleanup()
+				q()
+			}
+		} else {
+			cat( "ERROR: --impact_paths not supplied, cannot perform fine mapping for MAGEPRO_IMPACT model\n" , sep='', file=stderr() )
 			cleanup()
 			q()
 		}
@@ -257,11 +272,11 @@ if ("MAGEPRO" %in% model & (!opt$skip_susie) | ("MAGEPRO_IMPACT" %in% model & !o
 	lapply(seq_along(sumstats), function(i) {
 		list(sample_size = sample_sizes[i],
 			ldref = ldrefs_list[i],
-			in_sample=in_sample_list[i])
+			in_sample = in_sample_list[i],
+			impact_path = if(is.na(impact_paths_list[i])) NA else paste0(impact_paths_list[i], chr_info, ".txt"))
 	}), sumstats)
 	
 }
-
 
 
 if ( "PT" %in% model ){
@@ -518,11 +533,16 @@ if (ext > 0){
 	if ( "MAGEPRO" %in% model ){
 		if (!opt$skip_susie) {
 			# returns a list that maps dataset name -> TRUE/FALSE (indicating success running susie or not)
-			susie_status <<- cohort_fine_mapping(cohort_map, opt$sumstats_dir, 
+
+			magepro_cohort_map <- lapply(cohort_map, function(cohort) {
+				cohort$impact_path <- NA
+				return(cohort)
+			})
+			
+			susie_status <<- cohort_fine_mapping(magepro_cohort_map, opt$sumstats_dir, 
 												 opt$tmp, opt$ldref_dir, 
 												 opt$out_susie, opt$gene, 
-												 opt$PATH_plink, 
-												 NA, opt$verbose) 
+												 opt$PATH_plink, opt$verbose) 
 		}
 	}
 	for (d in datasets) {
@@ -540,8 +560,7 @@ if (ext > 0){
 			susie_status_impact <<- cohort_fine_mapping(cohort_map, opt$sumstats_dir, 
 												 opt$tmp, opt$ldref_dir, 
 												 opt$out_susie, opt$gene, 
-												 opt$PATH_plink, 
-												 opt$impact_path, opt$verbose) 
+												 opt$PATH_plink, opt$verbose) 
 		}
 	}
 	for (d in datasets) {

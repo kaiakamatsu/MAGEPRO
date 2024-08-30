@@ -82,7 +82,9 @@ option_list = list(
   make_option("--pops", action="store", default=NA, type='character',                               
 	            help="Comma separated list of ancestries of datasets for PRS-CSx (ex. EUR,EAS,AFR)"),
   make_option("--impact_path", action="store", default=NA, type='character',
-              help="path to file with impact scores for each snp. Required for SuSiE_IMPACT, MAGEPRO_IMPACT"),
+              help="Path to file with impact scores for each snp. Required for SuSiE_IMPACT"),
+  make_option("--impact_paths", action="store", default=NA, type='character',
+              help="Comma separated list of paths to files with impact scores for each SNPs in different cohorts. Required for MAGEPRO_IMPACT"),
   make_option("--ldref_dir", action="store", default=NA, type="character",
   			      help="Directory containing ld reference files used for susie fine mapping"),
   make_option("--ldrefs", action="store", default=NA, type="character",
@@ -184,7 +186,7 @@ if (opt$batch) {
     opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set,
     opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt,
     opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx,
-    opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$ldref_dir,
+    opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$impact_paths, opt$ldref_dir,
     opt$ldrefs, opt$in_sample, opt$out_susie, opt$skip_susie, opt$n_threads, sep = " ") # you may have to edit this script "5_RunJobs.sh" to suit your HPC cluster
     system( arg , ignore.stdout=SYS_PRINT, ignore.stderr=SYS_PRINT )
   }
@@ -215,7 +217,7 @@ if (opt$batch) {
         opt$models, opt$ss, opt$resid, opt$hsq_p, opt$lassohsq, opt$hsq_set,
         opt$crossval, opt$verbose, opt$noclean, opt$save_hsq, opt$ldref_pt,
         opt$prune_r2, opt$threshold_p, opt$ldref_PRSCSx, opt$dir_PRSCSx,
-        opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$ldref_dir,
+        opt$phi_shrinkage_PRSCSx, opt$pops, opt$impact_path, opt$impact_paths, opt$ldref_dir,
         opt$ldrefs, opt$in_sample, opt$out_susie, opt$skip_susie, opt$n_threads, current_datetime, temp_dir,
         paste("> ", output_file, " 2> ", error_file, sep = ""),
         sep = " ")

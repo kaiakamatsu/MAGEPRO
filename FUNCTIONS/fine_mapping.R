@@ -4,7 +4,7 @@ suppressMessages(library('data.table'))
 suppressMessages(library('parallel'))
 
 
-cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, impact_path, verbose) {
+cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, verbose) {
 	# PURPOSE: run fine_mapping on each on a gene in specified and available cohorts
 	# PREREQ: cohort_map – map containing information about sample_size and 
 	#         ldref file for the cohort
@@ -14,11 +14,10 @@ cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, g
 	susie_result_status <- list()
 
 	results <- lapply(names(cohort_map), function(cohort) {
-		process_cohort(cohort, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, impact_path, verbose)
+		process_cohort(cohort_map, cohort, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, verbose)
 	})
 	susie_result_status <- list()
 	for (i in seq_along(results)) {
-		print( paste( names(cohort_map)[i] , results[[i]]$status) )
 		cohort <- names(cohort_map)[i]
 		susie_result_status[[cohort]] <- results[[i]]$status
 		if (results[[i]]$status) {
@@ -29,20 +28,18 @@ cohort_fine_mapping <- function(cohort_map, sumstats_dir, tmp, ldref_dir, out, g
 }
 
 
-process_cohort <- function(cohort, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, impact_path, verbose) {
-	print(paste0("current cohort: ", cohort))
+process_cohort <- function(cohort_map, cohort, sumstats_dir, tmp, ldref_dir, out, gene, PATH_plink, verbose) {
 	cohort_data <- cohort_map[[cohort]]
 	cohort_path <- file.path(sumstats_dir, cohort)
 	cohort_ld_directory <- file.path(tmp, paste0(cohort, "ld"))
 	cohort_ldref_path <- file.path(ldref_dir, cohort_data$ldref)
 	
 	out_cohort_path <- file.path(out, cohort)
-	if (!is.na(impact_path)) {
-		# if impact, add _impact at the end
+	if (!is.na(cohort_data$impact_path)) {
+		# if impact_path, add _impact at the end
 		clean_path <- sub("/$", "", out)
 		out_cohort_path <- file.path(paste0(clean_path, "_impact"), cohort)
 	}
-
 	# Create directories for output and ld_matrix_path
 	dir.create(cohort_ld_directory, recursive = TRUE, showWarnings = FALSE)
 	dir.create(out_cohort_path, recursive = TRUE, showWarnings = FALSE)
@@ -56,7 +53,7 @@ process_cohort <- function(cohort, sumstats_dir, tmp, ldref_dir, out, gene, PATH
 		return(list(status = FALSE, path = NULL))
 	}
 
-	path_to_fine_mapping_output <- gene_fine_mapping(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, PATH_plink, out_cohort_path, impact_path, verbose)
+	path_to_fine_mapping_output <- gene_fine_mapping(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, PATH_plink, out_cohort_path, verbose)
 	if (path_to_fine_mapping_output == "Error") {
 		return(list(status = FALSE, path = NULL))
 	}
@@ -66,14 +63,12 @@ process_cohort <- function(cohort, sumstats_dir, tmp, ldref_dir, out, gene, PATH
 }
 
 
-
-
-gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, plink, out, impact_path, verbose) {
+gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort_ld_directory, cohort_ldref_path, plink, out, verbose) {
 
 	# PURPOSE: create correlation matrix for each gene for given cohort, then perform fine-mapping with susie_rss in get_pips.R
 	# PREREQs: 
 	# 	cohort – current cohort string;  
-	#	cohort_data – vector containing information about sample size and ldref
+	#	cohort_data – vector containing information about sample size, ldref, in_sample information, and impact_path
 	# 	cohort_path – file path containing information about curent cohort
 	# 	cohort_ld_directory – path to temporary folder storing correlation matrix information
 	#   cohort_ldref_path – path to ld reference file
@@ -108,7 +103,7 @@ gene_fine_mapping <- function(gene_txt, cohort, cohort_data, cohort_path, cohort
 		return(to_return)
 	}
 
-	impact_arg <- if (!is.na(impact_path)) paste("-i", impact_path) else ""
+	impact_arg <- if (!is.na(cohort_data$impact_path)) paste("-i", cohort_data$impact_path) else ""
 
 	rcommand <- paste0("Rscript FUNCTIONS/get_pips.R -g ", cohort_path, "/",
                    " -c ", gene_txt, 

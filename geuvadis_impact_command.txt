@@ -1,0 +1,42 @@
+#!/bin/bash
+#SBATCH --job-name="MAGEPRO_RUN"
+#SBATCH --output="MAGEPRO_geuvadis_RUN_08_30.%j.%N.out"
+#SBATCH --partition=shared
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=2gb
+#SBATCH --account=csd832
+#SBATCH --export=ALL
+#SBATCH -t 02:00:00
+
+source ~/.bashrc
+conda activate r_env
+
+srun Rscript RUN_MAGEPRO_PIPELINE.R \
+--bfile /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/GEUVADIS/1KG_geno/plink_HM3_variants_EUR/maf_hwe_rate_relatedness_HM3_ingenoa_b38_redo/GEUVADIS_EUR  \
+--ge /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/GEUVADIS/GE/GEUVADIS_normalized_processed_ge_v26_b38_EUR_start_end.bed.gz \
+--covar /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/GEUVADIS/covar/GEUVADIS_EUR_covariates.txt \
+--impact_paths /expanse/lustre/projects/ddp412/kakamatsu/IMPACT_TRACKS/EUR_processed/means_LCL/IMPACT_707_LCL_HM3_EUR_chr,/expanse/lustre/projects/ddp412/kakamatsu/IMPACT_TRACKS/EUR_processed/means_Monocytes/IMPACT_707_MONO_HM3_EUR_chr,/expanse/lustre/projects/ddp412/kakamatsu/IMPACT_TRACKS/EUR_processed/means_Monocytes/IMPACT_707_MONO_HM3_EUR_chr,/expanse/lustre/projects/ddp412/kakamatsu/IMPACT_TRACKS/EUR_processed/means_blood/IMPACT_707_BLOOD_HM3_EUR_chr,/expanse/lustre/projects/ddp412/kakamatsu/IMPACT_TRACKS/EUR_processed/means_blood/IMPACT_707_BLOOD_HM3_EUR_chr \
+\
+--out /expanse/lustre/projects/ddp412/sgolzari/MAGEPRO_output/geuvadis/weights \
+--scratch /expanse/lustre/projects/ddp412/sgolzari/MAGEPRO_output/geuvadis/scratch \
+--intermed_dir /expanse/lustre/projects/ddp412/sgolzari/MAGEPRO_output/geuvadis/intermediate \
+\
+--PATH_plink /expanse/lustre/projects/ddp412/sgolzari/plink/plink \
+--PATH_gcta fusion_twas-master/gcta_nr_robust \
+\
+--sumstats_dir /expanse/lustre/projects/ddp412/sgolzari/fine_mapping \
+--sumstats genoa,mesaafr,mesahis,eqtlgen,eurgtex \
+--ss 1032,233,352,31684,574 \
+\
+--ldref_dir  /expanse/lustre/projects/ddp412/sgolzari/ldref \
+--ldrefs GENOA_AA,MESA_AAall,MESA_HISall,1000G.EUR.HM3.filtered,1000G.EUR.HM3.filtered \
+--models SINGLE,SuSiE,MAGEPRO,MAGEPRO_IMPACT \
+--hsq_p 1 \
+--verbose 2 \
+--num_covar 36 \
+--in_sample TRUE,TRUE,TRUE,FALSE,FALSE \
+--batch TRUE \
+\
+--out_susie /expanse/lustre/projects/ddp412/sgolzari/MAGEPRO_output/geuvadis/susie_output
