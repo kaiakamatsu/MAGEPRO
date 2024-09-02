@@ -42,8 +42,6 @@ Although this may be a useful option, it require some extra dependencies:
   * h5py: https://www.h5py.org/
   * matplotlib: https://matplotlib.org/
 
-* Bridge-PRS: https://www.bridgeprs.net/  
-
 * R:
   * BEDMatrix, boot, data.table, doMC, glmnet, MASS, optparse, parallel, and R.utils
   * `install.packages(c("BEDMatrix","boot","data.table","doMC","glmnet","MASS","optparse","parallel","R.utils"))`
