@@ -66,7 +66,7 @@ option_list = list(
               help="Save heritability results even if weights are not computed [default: %default]"), 
   make_option("--ldref_pt", action="store", default=NA, type='character',
               help="Path to LD reference file for pruning and thresholding, prefix of plink formatted files (assumed to be split by chr) \n 
-	      ex. path/file_chr for path/file_chr1.bed/bim/fam "),
+	            ex. path/file_chr for path/file_chr1.bed/bim/fam. If not provided, --bfile will be used by default"),
   make_option("--prune_r2", action="store", default=NA, type='numeric',
               help="Pruning threshold to use in P+T. If not provided, it will be tuned via 5-fold cross-validation"),
   make_option("--threshold_p", action="store", default=NA, type='numeric',

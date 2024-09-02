@@ -255,9 +255,8 @@ if ("MAGEPRO" %in% model & (!opt$skip_susie) ) {
 if ( "PT" %in% model ){
 
 	if (is.na(opt$ldref_pt)){
-		cat( "ERROR: Cannot perform PT without ld reference file (--ldref_pt) \n" , sep='', file=stderr() )
-                cleanup()
-                q()
+		cat( "WARNING: Performing P+T with --bfile as LD reference file because --ldref_pt was not provided \n" , sep='', file=stderr() )
+        opt$ldref_pt <- opt$bfile
 	}
 
 	if ( !is.na(opt$prune_r2) ){
