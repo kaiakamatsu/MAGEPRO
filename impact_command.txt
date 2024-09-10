@@ -1,0 +1,43 @@
+#!/bin/bash
+#SBATCH --job-name="MAGEPRO_RUN"
+#SBATCH --output="MAGEPRO_RUN.%j.%N.out"
+#SBATCH --partition=shared
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=2gb
+#SBATCH --account=csd832
+#SBATCH --export=ALL
+#SBATCH -t 02:00:00
+
+
+source ~/.bashrc
+conda activate r_env
+
+srun Rscript RUN_MAGEPRO_PIPELINE.R \
+--bfile /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/MESA/genotypes/consents_combined/HIS/maf_hwe_rate_filtered_HM3_filtered/MESA_HISchr  \
+--ge /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/MESA/gene_expression/processed/MESA_HIS_ge_normalized.bed.gz \
+--covar /expanse/lustre/projects/ddp412/kakamatsu/GENOTYPES_GE_data/MESA/covars/ready/MESA_HIS_covariates.txt \
+--impact_path /expanse/lustre/projects/ddp412/kakamatsu/IMPACT_TRACKS/EUR_processed/means_Monocytes/IMPACT_707_MONO_HM3_EUR_chr \
+\
+--out /expanse/lustre/projects/ddp412/sgolzari/MAGEPRO_output/weights \
+--scratch /expanse/lustre/projects/ddp412/sgolzari/MAGEPRO_output/scratch \
+--intermed_dir /expanse/lustre/projects/ddp412/sgolzari/MAGEPRO_output/intermediate \
+\
+--PATH_plink /expanse/lustre/projects/ddp412/sgolzari/plink/plink \
+--PATH_gcta fusion_twas-master/gcta_nr_robust \
+\
+--sumstats_dir /expanse/lustre/projects/ddp412/sgolzari/fine_mapping \
+--sumstats genoa,mesaafr,eqtlgen,eurgtex \
+--ss 1032,233,31684,574 \
+\
+--ldref_dir  /expanse/lustre/projects/ddp412/sgolzari/ldref \
+--ldrefs GENOA_AA,MESA_AAall,1000G.EUR.HM3.filtered,1000G.EUR.HM3.filtered \
+--models SINGLE,SuSiE,MAGEPRO,MAGEPRO_IMPACT \
+--hsq_p 1 \
+--verbose 2 \
+--num_covar 42 \
+--in_sample TRUE,TRUE,FALSE,FALSE \
+--batch TRUE \
+\
+--out_susie /expanse/lustre/projects/ddp412/sgolzari/MAGEPRO_output/susie_output

@@ -13,31 +13,30 @@ genes <- read.table(file = genes_assign, header = F)$V1 #all genes in analysis
 r2_h2 <- matrix(0, length(genes), 2*num_models+8)
 
 for (j in 1:length(genes)){
-file <- paste0(weightsdir,"/",genes[j],".wgt.RDat") 
-if(file.exists(file)){
-if(file.info(file)$size > 0){
-load(file)
-#if (length(cv.performance[1,]) != num_models){ # this line is necessary for only this iteration of the analysis because I forgot to delete old files in the same weights directory 
-#next
-#}
-r2_h2[j,1] <- genes[j]
-r2_h2[j,2:(num_models+1)] <- cv.performance[1,]
-r2_h2[j,((num_models+2): (2*num_models+1) )] <- cv.performance[2,]
-r2_h2[j, 2*num_models+2] <- hsq[1]
-r2_h2[j, 2*num_models+3] <- hsq[2]
-r2_h2[j, 2*num_models+4] <- hsq.pv
-if (sum(is.na(wgtmagepro)) == 0){
-	r2_h2[j, 2*num_models+5] <- paste(wgtmagepro, collapse = ",")
-	r2_h2[j, 2*num_models+6] <- paste(cf_total, collapse = ",")
-}else{
-	r2_h2[j, 2*num_models+5] <- NA
-	r2_h2[j, 2*num_models+6] <-NA
-}
-r2_h2[j, 2*num_models+7] <- var_cov
-r2_h2[j, 2*num_models+8] <- avg_cor 
-
-}
-}
+	file <- paste0(weightsdir,"/",genes[j],".wgt.RDat") 
+	if(file.exists(file)){
+		if(file.info(file)$size > 0){
+			load(file)
+			#if (length(cv.performance[1,]) != num_models){ # this line is necessary for only this iteration of the analysis because I forgot to delete old files in the same weights directory 
+			#next
+			#}
+			r2_h2[j,1] <- genes[j]
+			r2_h2[j,2:(num_models+1)] <- cv.performance[1,]
+			r2_h2[j,((num_models+2): (2*num_models+1) )] <- cv.performance[2,]
+			r2_h2[j, 2*num_models+2] <- hsq[1]
+			r2_h2[j, 2*num_models+3] <- hsq[2]
+			r2_h2[j, 2*num_models+4] <- hsq.pv
+			if (sum(is.na(wgtmagepro)) == 0){
+				r2_h2[j, 2*num_models+5] <- paste(wgtmagepro, collapse = ",")
+				r2_h2[j, 2*num_models+6] <- paste(cf_total, collapse = ",")
+			}else{
+				r2_h2[j, 2*num_models+5] <- NA
+				r2_h2[j, 2*num_models+6] <-NA
+			}
+			r2_h2[j, 2*num_models+7] <- var_cov
+			r2_h2[j, 2*num_models+8] <- avg_cor 
+		}
+	}
 }
 h <- which(r2_h2[,1] == 0)
 if(length(h) > 0){r2_h2 <- r2_h2[-h,]}

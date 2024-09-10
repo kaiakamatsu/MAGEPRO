@@ -172,7 +172,7 @@ if ( ! is.na(opt$sumstats)){
 	if ("META" %in% model | "PRSCSx" %in% model | "MAGEPRO_fullsumstats" %in% model | "MAGEPRO" %in% model | "MAGEPRO_IMPACT" %in% model){
 		cat( "ERROR: --sumstats not supplied, cannot compute META, PRS-CSx, MAGEPRO models \n" , sep='', file=stderr() )
 		cleanup()
-                q()
+        q()
 	}
 }
 
@@ -182,14 +182,14 @@ if ( ("META" %in% model | "PRSCSx" %in% model |  ("MAGEPRO" %in% model & !opt$sk
 		sample_sizes <- strsplit(opt$ss, ",", fixed = TRUE)[[1]]
 		if (length(sumstats) != length(sample_sizes)){
 			cat( "ERROR: --ss flag required an entry for every dataset\n" , sep='', file=stderr() )
-                	cleanup()
-                	q()
+			cleanup()
+			q()
 		}
 		hashmap_ss <<- setNames(as.numeric(sample_sizes), sumstats)
 	}else{
 		cat( "ERROR: Cannot perform sample-size weighted meta-analysis or PRS-CSx without the --ss flag\n" , sep='', file=stderr() )
-                cleanup()
-                q()
+		cleanup()
+		q()
 	}
 }
 
@@ -538,7 +538,6 @@ if (ext > 0){
 				cohort$impact_path <- NA
 				return(cohort)
 			})
-			
 			susie_status <<- cohort_fine_mapping(magepro_cohort_map, opt$sumstats_dir, 
 												 opt$tmp, opt$ldref_dir, 
 												 opt$out_susie, opt$gene, 
