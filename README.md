@@ -50,6 +50,52 @@ Although this may be a useful option, it require some extra dependencies:
 
 * SuSiE: https://stephenslab.github.io/susieR/index.html
 
+## QUICKSTART: Typical application of MAGEPRO: improving LCL gene expression prediction models 
+
+### 7 simple steps to run MAGEPRO on five sample genes (SAMPLE_DATA/sample_genes.txt)
+
+1. Clone the repository  
+> git clone https://github.com/kaiakamatsu/MAGEPRO.git  
+
+2. Create a directory to store sample gene expression, genotype, covariates, and external eQTL data.  
+> mkdir DATA  
+
+3. Download sample data  
+> cd DATA  
+> pip install gdown # if you have not already  
+> gdown --folder https://drive.google.com/drive/u/1/folders/16iEM5HtoJq9LUIzx8vfrxZCZrRVVkxlb  
+> cd MAGEPRO_data  
+> ls  
+
+| File | Description |
+| -------- | -------- |
+| **GEUVADIS_EUR_covariates.txt.gz** | Sample covariates data |
+| **GEUVADIS_EUR_genotypes.tar.gz** | Sample genotype data |
+| **GEUVADIS_normalized_gene_expression_EUR.bed.gz** | Sample gene expression data |
+| **MAGEPRO_SUMSTATS_SuSiE.tar.gz** | Posterior effect sizes of external eQTL summary statistics |
+
+4. Uncompress sample data  
+> tar -zxvf GEUVADIS_EUR_genotypes.tar.gz  
+> tar -zxvf MAGEPRO_SUMSTATS_SuSiE.tar.gz  
+> gunzip GEUVADIS_EUR_covariates.txt.gz  
+> cd GEUVADIS_EUR_genotypes  
+> bash split_by_chr.sh 'path to plink'  
+
+5. Split summary statistics by gene  
+> cd ../MAGEPRO_SUMSTATS_SuSiE  
+> Rscript split_by_gene.R -d mesahis -o ./ -s ../../../MAGEPRO/SAMPLE_DATA/sample_genes.txt
+
+6. Use sample genotype/gene expression/covariates data to run MAGEPRO  
+> cd ../../../MAGEPRO  
+> mkdir ../SAMPLE_FILES  # output folder  
+>  mkdir ../SAMPLE_FILES/OUTPUT  
+> mkdir ../SAMPLE_FILES/SCRATCH  
+> mkdir ../SAMPLE_FILES/INTERMED  
+> bash tutorial_run.sh 'path to plink' 'path to gcta'  
+
+7. Check outputs, see “MAGEPRO/PROCESS_RESULTS” to compile results across genes into a table  
+> cd ../SAMPLE_FILES/OUTPUT  
+
 ## Preparing datasets
 
 MAGEPRO utilizes external eQTL summary statistics to improve gene models trained on a specific population. See PROCESS_DATASET directory for more information on how to prepare summary statistics used in our analysis.
@@ -172,52 +218,6 @@ Example:
 | Gene | SNP | A1 | A2 | BETA | SE | P | PIP | POSTERIOR | CS |
 | ---- | --- | -- | -- | ---- | -- | - | --- | --------- | -- |
 | ENSGXXXXX | rXXXX | X | X | X | X | X | X | X | X |
-
-## QUICKSTART: Typical application of MAGEPRO: improving LCL gene expression prediction models 
-
-### 7 simple steps to run MAGEPRO on five sample genes (SAMPLE_DATA/sample_genes.txt)
-
-1. Clone the repository  
-> git clone https://github.com/kaiakamatsu/MAGEPRO.git  
-
-2. Create a directory to store sample gene expression, genotype, covariates, and external eQTL data.  
-> mkdir DATA  
-
-3. Download sample data  
-> cd DATA  
-> pip install gdown # if you have not already  
-> gdown --folder https://drive.google.com/drive/u/1/folders/16iEM5HtoJq9LUIzx8vfrxZCZrRVVkxlb  
-> cd MAGEPRO_data  
-> ls  
-
-| File | Description |
-| -------- | -------- |
-| **GEUVADIS_EUR_covariates.txt.gz** | Sample covariates data |
-| **GEUVADIS_EUR_genotypes.tar.gz** | Sample genotype data |
-| **GEUVADIS_normalized_gene_expression_EUR.bed.gz** | Sample gene expression data |
-| **MAGEPRO_SUMSTATS_SuSiE.tar.gz** | Posterior effect sizes of external eQTL summary statistics |
-
-4. Uncompress sample data  
-> tar -zxvf GEUVADIS_EUR_genotypes.tar.gz  
-> tar -zxvf MAGEPRO_SUMSTATS_SuSiE.tar.gz  
-> gunzip GEUVADIS_EUR_covariates.txt.gz  
-> cd GEUVADIS_EUR_genotypes  
-> bash split_by_chr.sh <path to plink>  
-
-5. Split summary statistics by gene  
-> cd ../MAGEPRO_SUMSTATS_SuSiE  
-> Rscript split_by_gene.R -d mesahis -o ./ -s ../../../MAGEPRO/SAMPLE_DATA/sample_genes.txt
-
-6. Use sample genotype/gene expression/covariates data to run MAGEPRO  
-> cd ../../../MAGEPRO  
-> mkdir ../SAMPLE_FILES  # output folder  
->  mkdir ../SAMPLE_FILES/OUTPUT  
-> mkdir ../SAMPLE_FILES/SCRATCH  
-> mkdir ../SAMPLE_FILES/INTERMED  
-> bash tutorial_run.sh <path to plink> <path to gcta>  
-
-7. Check outputs, see “MAGEPRO/PROCESS_RESULTS” to compile results across genes into a table  
-> cd ../SAMPLE_FILES/OUTPUT  
 
 ## Command-line options for the computing gene-models one gene at a time
 
