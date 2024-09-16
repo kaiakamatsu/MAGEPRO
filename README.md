@@ -173,79 +173,51 @@ Example:
 | ---- | --- | -- | -- | ---- | -- | - | --- | --------- | -- |
 | ENSGXXXXX | rXXXX | X | X | X | X | X | X | X | X |
 
-## QUICKSTART: Typical application of MAGEPRO on GTEx Tissues
+## QUICKSTART: Typical application of MAGEPRO: improving LCL gene expression prediction models 
 
-1. clone this repository
-> git clone https://github.com/kaiakamatsu/MAGEPRO.git
+### 7 simple steps to run MAGEPRO on five sample genes (SAMPLE_DATA/sample_genes.txt)
 
-2. create directories where intermediate files and eQTL summary statistics will be stored
-> mkdir GE_PREDICTION
-> 
-> cd GE_PREDICTION
-> 
-> mkdir DATASETS
-> 
-> mkdir GTEX
-> 
-> mkdir MODELS
->
-> mkdir SCRATCH
+1. Clone the repository  
+> git clone https://github.com/kaiakamatsu/MAGEPRO.git  
 
-3. download and process eQTL summary statistics (**we will only use MESA eQTL summary statistics for this tutorial.** see PROCESS_DATASET directory)
-> cd DATASETS
-> 
-> wget "https://www.dropbox.com/sh/f6un5evevyvvyl9/AAA3sfa1DgqY67tx4q36P341a?dl=1"
->
-> mkdir mesahis
->
-> mkdir mesaafr
->
-> unzip MESA_cis-eQTLs.zip
-> 
-> pwd #copy this path
->
-> cd ../../MAGEPRO/PROCESS_DATASET/mesa
->
-> vim run_splitFilter.sh
->
-> - paste path copied above to replace "PASTE PATH HERE"
-> - replace "PATH TO SNPS HERE" with the path to a bim file containing all SNPs of interest (we used HM3 SNPs in GTEx)
->
-> vim submitSplit.sh #edit this file to prepare for job submission on your HPC cluster
->
-> sbatch submitSplit.sh
-> - 'bash run_splitFilter.sh' #if not on cluster 
->
-> cd ../../../GE_PREDICTION/DATASETS/
-> 
-> ls
-> - after this job runs, 'mesaafr' and 'mesahis' directories will contain gene-specific eQTL summary statistics data files
+2. Create a directory to store sample gene expression, genotype, covariates, and external eQTL data.  
+> mkdir DATA  
 
-4. download GTEx Gene Expression and Covariates data
-> cd ../GTEX
->
-> wget "https://storage.googleapis.com/adult-gtex/bulk-qtl/v8/single-tissue-cis-qtl/GTEx_Analysis_v8_eQTL_expression_matrices.tar" # gene expression
->
-> tar -xvf GTEx_Analysis_v8_eQTL_expression_matrices.tar
-> 
-> wget "https://storage.googleapis.com/adult-gtex/bulk-qtl/v8/single-tissue-cis-qtl/GTEx_Analysis_v8_eQTL_covariates.tar.gz" # covariates
->
-> tar -xzf GTEx_Analysis_v8_eQTL_covariates.tar.gz
->
-> - individual-level GTEx genotypes are protected access. this should be in this same directory, plink format (bed/bim/fam) and split by chromosome
-> - genotype files should contain individuals from the ancestry of interest (ex. only AFR individuals)
+3. Download sample data  
+> cd DATA  
+> pip install gdown # if you have not already  
+> gdown --folder https://drive.google.com/drive/u/1/folders/16iEM5HtoJq9LUIzx8vfrxZCZrRVVkxlb  
+> cd MAGEPRO_data  
+> ls  
 
-5. run MAGEPRO
-> cd ../../MAGEPRO
->
-> vim MAGEPRO_PIPELINE/5_batch_RunJobs.sh # edit to prepare for job submission if using HPC cluster (--batch option in RUN_MAGEPRO_PIPELINE.R)
-> vim MAGEPRO_PIPELINE/5_RunJobs.sh # for running on a linux/macOS machine without creating batches (called through RUN_MAGEPRO_PIPELINE.R)
-> 
-> #example with whole blood below, computing models for only significantly heritable
-> 
-> Rscript RUN_MAGEPRO_PIPELINE.R --bfile ../GE_PREDICTION/GTEX/"prefix of genotype files, preceeding chromosome number" --ge ../GE_PREDICTION/GTEX/GTEx_Analysis_v8_eQTL_expression_matrices/Whole_Blood.v8.normalized_expression.bed.gz --covar ../GE_PREDICTION/GTEX/GTEx_Analysis_v8_eQTL_covariates/Whole_Blood.v8.covariates.txt --out ../GE_PREDICTION/MODELS --scratch ../GE_PREDICTION/SCRATCH --intermed_dir ../GE_PREDICTION --PATH_plink "path to plink" --PATH_gcta "path to gcta" --sumstats_dir ../GE_PREDICTION/DATASETS --sumstats mesahis,mesaafr --models SINGLE,META,MAGEPRO --ss 352,233 --verbose 2 --num_covar ALL
->
-> cd ../GE_PREDICTION/MODELS #this directory will contain all output files after the job finishes running
+| File | Description |
+| -------- | -------- |
+| **GEUVADIS_EUR_covariates.txt.gz** | Sample covariates data |
+| **GEUVADIS_EUR_genotypes.tar.gz** | Sample genotype data |
+| **GEUVADIS_normalized_gene_expression_EUR.bed.gz** | Sample gene expression data |
+| **MAGEPRO_SUMSTATS_SuSiE.tar.gz** | Posterior effect sizes of external eQTL summary statistics |
+
+4. Uncompress sample data  
+> tar -zxvf GEUVADIS_EUR_genotypes.tar.gz  
+> tar -zxvf MAGEPRO_SUMSTATS_SuSiE.tar.gz  
+> gunzip GEUVADIS_EUR_covariates.txt.gz  
+> cd GEUVADIS_EUR_genotypes  
+> bash split_by_chr.sh <path to plink>  
+
+5. Split summary statistics by gene  
+> cd ../MAGEPRO_SUMSTATS_SuSiE  
+> Rscript split_by_gene.R -d mesahis -o ./ -s ../../../MAGEPRO/SAMPLE_DATA/sample_genes.txt
+
+6. Use sample genotype/gene expression/covariates data to run MAGEPRO  
+> cd ../../../MAGEPRO  
+> mkdir ../SAMPLE_FILES  # output folder  
+>  mkdir ../SAMPLE_FILES/OUTPUT  
+> mkdir ../SAMPLE_FILES/SCRATCH  
+> mkdir ../SAMPLE_FILES/INTERMED  
+> bash tutorial_run.sh <path to plink> <path to gcta>  
+
+7. Check outputs, see “MAGEPRO/PROCESS_RESULTS” to compile results across genes into a table  
+> cd ../SAMPLE_FILES/OUTPUT  
 
 ## Command-line options for the computing gene-models one gene at a time
 
