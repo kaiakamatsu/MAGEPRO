@@ -267,14 +267,16 @@ If you would like to run MAGEPRO on one gene, it is possible to run MAGEPRO.R se
 | Directory | Description |
 | -------- | -------- |
 | BENCHMARK | Scripts to benchmark MAGEPRO against other models |
+| FUNCTIONS | Contains functions used by MAGEPRO.R |
 | IMAGES | Images used in github |
 | MAGEPRO_PIPELINE | Intermediate scripts that are a part of the main MAGEPRO pipeline |
+| MAGEPRO_VALIDATE_PIPELINE | Pipeline used to validate MAGEPRO models in out-of-cohort prediction |
 | PLOTS | R scripts used to visualize data |
 | PROCESS_DATASET | Scripts used to extract and process eQTL summary statistics from various studies |
 | PROCESS_RESULTS | Scripts to process and summarize gene model performance |
-| SIMULATIONS | Scripts for testing MAGEPRO in simulation
-| SUPPLEMENTAL_ANALYSIS | All other supplementary analysis |
-| FUNCTIONS | Contains functions used by MAGEPRO.R |
+| SAMPLE_DATA | Description on how to download sample data |
+| SIMULATIONS | Scripts for testing MAGEPRO in simulation |
+| TEST_RUNTIME | Scripts used to test the runtime of MAGEPRO using different numbers of threads |
 | TWAS | Transcriptome-wide association studies using MAGEPRO gene models |
 | VALIDATE_MODELS | Validating MAGEPRO gene models | 
 | test_1gene | Scripts for testing |
