@@ -5,50 +5,35 @@ MAGEPRO is a method to create powerful gene expression prediction models. We lev
 
 # USING MAGEPRO 
 
-## Dependencies 
+## Dependencies installation
 
-R version 4.2.3
-Packages:
-- data.table_1.14.8
-- glmnet_4.1-7
-- optparse_1.7.3
-- plink2R_1.1
-  > install.packages("devtools")
-  
-  > library(devtools)
-  
-  > devtools::install_github("carbocation/plink2R/plink2R", ref="carbocation-permit-r361")
-- dplyr_1.1.2
-- susieR_0.12.35
-- tools_4.3.0
-- Rfast_2.1.0
+0. Please make sure you have [conda installed](https://conda.io/projects/conda/en/latest/user-guide/install/index.html).
+1. We provide `magepro_env.yml` file that can be used to create conda environment. It contains libraries and corresponding versions required to run MAGEPRO:
+```
+conda env create -f magepro_env.yml
+conda activate magepro_env
+```
 
-GCTA 
-Download gcta from either ...
+Additionally, one needs to install plink2R package. In active R session, run:
+```
+library(devtools)
+devtools::install_github("carbocation/plink2R/plink2R", ref="carbocation-permit-r361")
+```
+2. Download gcta from either:
 - https://github.com/gusevlab/fusion_twas.git
 - https://yanglab.westlake.edu.cn/software/gcta/#Overview
 
-Plink 1.9 
-Download from ...
+3. Download Plink 1.9 from:
 - https://www.cog-genomics.org/plink/1.9/
+
+4. Download GNU Parallel via homebrew for MacOS or via [GNU Parallel website](https://www.gnu.org/software/parallel/) for linux (can also `sudo apt-get` as shown [here](https://askubuntu.com/questions/12764/where-do-i-get-a-package-for-gnu-parallel)). On an HPC cluster one can simply module load like in `MAGEPRO_PIPELINE/5_RunJobs.sh`.
 
 ## Extra Dependencies 
 
 Our tool enables users to build predictive models of gene expression using PRS and fine-mapping methods that have not been applied to gene expression prediction before.  
 Although this may be a useful option, it require some extra dependencies:
 
-* PRS-CSx: https://github.com/getian107/PRScsx  
-
-* Python:
-  * scipy: https://www.scipy.org/
-  * h5py: https://www.h5py.org/
-  * matplotlib: https://matplotlib.org/
-
-* R:
-  * BEDMatrix, boot, data.table, doMC, glmnet, MASS, optparse, parallel, and R.utils
-  * `install.packages(c("BEDMatrix","boot","data.table","doMC","glmnet","MASS","optparse","parallel","R.utils"))`
-
-* SuSiE: https://stephenslab.github.io/susieR/index.html
+* PRS-CSx: https://github.com/getian107/PRScsx
 
 ## QUICKSTART: Typical application of MAGEPRO: improving LCL gene expression prediction models 
 
