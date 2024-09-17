@@ -26,7 +26,7 @@ devtools::install_github("carbocation/plink2R/plink2R", ref="carbocation-permit-
 3. Download Plink 1.9 from:
 - https://www.cog-genomics.org/plink/1.9/
 
-4. Download GNU Parallel via homebrew for MacOS or via [GNU Parallel website](https://www.gnu.org/software/parallel/) for linux (can also `sudo apt-get` as shown [here](https://askubuntu.com/questions/12764/where-do-i-get-a-package-for-gnu-parallel)). On an HPC cluster one can simply module load like in `MAGEPRO_PIPELINE/5_RunJobs.sh`.
+4. Download GNU Parallel via homebrew for MacOS or via [GNU Parallel website](https://www.gnu.org/software/parallel/) for Linux (can also `sudo apt-get` as shown [here](https://askubuntu.com/questions/12764/where-do-i-get-a-package-for-gnu-parallel)). On an HPC cluster one can simply **module load** like in `MAGEPRO_PIPELINE/5_RunJobs.sh`.
 
 ## Extra Dependencies 
 
@@ -37,20 +37,27 @@ Although this may be a useful option, it require some extra dependencies:
 
 ## QUICKSTART: Typical application of MAGEPRO: improving LCL gene expression prediction models 
 
-### 7 simple steps to run MAGEPRO on five sample genes (SAMPLE_DATA/sample_genes.txt)
+### 8 simple steps to run MAGEPRO on five sample genes (SAMPLE_DATA/sample_genes.txt)
 
 1. Clone the repository  
-> git clone https://github.com/kaiakamatsu/MAGEPRO.git  
+```
+git clone https://github.com/kaiakamatsu/MAGEPRO.git
+```
 
-2. Create a directory to store sample gene expression, genotype, covariates, and external eQTL data.  
-> mkdir DATA  
+2. Install conda environment following instructions above.
 
-3. Download sample data  
-> cd DATA  
-> pip install gdown # if you have not already  
-> gdown --folder https://drive.google.com/drive/u/1/folders/16iEM5HtoJq9LUIzx8vfrxZCZrRVVkxlb  
-> cd MAGEPRO_data  
-> ls  
+3. Create a directory to store sample gene expression, genotype, covariates, and external eQTL data:
+```
+mkdir DATA
+cd DATA
+```
+
+4. Download sample data (make sure you're in `magepro_env` or have gdown installed):
+```
+gdown --folder https://drive.google.com/drive/u/1/folders/16iEM5HtoJq9LUIzx8vfrxZCZrRVVkxlb  
+cd MAGEPRO_data  
+ls
+```
 
 | File | Description |
 | -------- | -------- |
@@ -59,27 +66,34 @@ Although this may be a useful option, it require some extra dependencies:
 | **GEUVADIS_normalized_gene_expression_EUR.bed.gz** | Sample gene expression data |
 | **MAGEPRO_SUMSTATS_SuSiE.tar.gz** | Posterior effect sizes of external eQTL summary statistics |
 
-4. Uncompress sample data  
-> tar -zxvf GEUVADIS_EUR_genotypes.tar.gz  
-> tar -zxvf MAGEPRO_SUMSTATS_SuSiE.tar.gz  
-> gunzip GEUVADIS_EUR_covariates.txt.gz  
-> cd GEUVADIS_EUR_genotypes  
-> bash split_by_chr.sh 'path to plink'  
+5. Uncompress sample data  
+```
+tar -zxvf GEUVADIS_EUR_genotypes.tar.gz  
+tar -zxvf MAGEPRO_SUMSTATS_SuSiE.tar.gz  
+gunzip GEUVADIS_EUR_covariates.txt.gz  
+cd GEUVADIS_EUR_genotypes  
+bash split_by_chr.sh 'path to plink'  
+```
 
-5. Split summary statistics by gene  
-> cd ../MAGEPRO_SUMSTATS_SuSiE  
-> Rscript split_by_gene.R -d mesahis -o ./ -s ../../../MAGEPRO/SAMPLE_DATA/sample_genes.txt
+6. Split summary statistics by gene
+```
+cd ../MAGEPRO_SUMSTATS_SuSiE  
+Rscript split_by_gene.R -d mesahis -o ./ -s ../../../MAGEPRO/SAMPLE_DATA/sample_genes.txt
+```
 
-6. Use sample genotype/gene expression/covariates data to run MAGEPRO  
-> cd ../../../MAGEPRO  
-> mkdir ../SAMPLE_FILES  # output folder  
->  mkdir ../SAMPLE_FILES/OUTPUT  
-> mkdir ../SAMPLE_FILES/SCRATCH  
-> mkdir ../SAMPLE_FILES/INTERMED  
-> bash tutorial_run.sh 'path to plink' 'path to gcta'  
-
-7. Check outputs, see “MAGEPRO/PROCESS_RESULTS” to compile results across genes into a table  
-> cd ../SAMPLE_FILES/OUTPUT  
+7. Use sample genotype/gene expression/covariates data to run MAGEPRO. Here `SAMPLE_FILES` is an output folder.
+```
+cd ../../../MAGEPRO  
+mkdir ../SAMPLE_FILES
+mkdir ../SAMPLE_FILES/OUTPUT  
+mkdir ../SAMPLE_FILES/SCRATCH  
+mkdir ../SAMPLE_FILES/INTERMED  
+bash tutorial_run.sh 'path to plink' 'path to gcta'  
+```
+8. Check outputs, see “MAGEPRO/PROCESS_RESULTS” to compile results across genes into a table  
+```
+cd ../SAMPLE_FILES/OUTPUT
+```
 
 ## Preparing datasets
 
@@ -153,10 +167,10 @@ The following variables are saved in this output file:
 | avg_training_r2_magepro | average r-squared of MAGEPRO model on training cohort | 
 | var_cov | variance explained in gene expression by covariates | 
 
-> see "PROCESS_RESULTS" directory on how to format the results from cv.performance across all genes into a tab-delimited dataframe. 
+> See "PROCESS_RESULTS" directory on how to format the results from cv.performance across all genes into a tab-delimited dataframe. 
 
 ## Input data format
-> the MAGEPRO pipeline is designed to handle files that are formatted like the gene expression and covariate files made available by GTEx.
+> The MAGEPRO pipeline is designed to handle files that are formatted like the gene expression and covariate files made available by GTEx.
 
 - GTEx portal: https://www.gtexportal.org/home/downloads/adult-gtex#qtl
 - gene expression data from GTEx: https://storage.cloud.google.com/adult-gtex/bulk-qtl/v8/single-tissue-cis-qtl/GTEx_Analysis_v8_eQTL_expression_matrices.tar
