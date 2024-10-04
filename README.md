@@ -5,10 +5,47 @@ MAGEPRO is a method to create powerful gene expression prediction models. We lev
 
 # USING MAGEPRO 
 
-## Dependencies installation
+## System Requirements
+### Hardware requirements
+MAGEPRO method requires only a standard computer with enough RAM to support the in-memory operations.
+### Software requirements
+This method is supported for Linux. The method has been tested on the following system:
+* Rocky Linux 8.9 (Green Obsidian)
 
-0. Please make sure you have [conda installed](https://conda.io/projects/conda/en/latest/user-guide/install/index.html).
-1. We provide `magepro_env.yml` file that can be used to create conda environment. It contains libraries and corresponding versions required to run MAGEPRO:
+### R dependencies
+R dependencies include:
+```
+r=4.3
+r-base=4.3.0
+r-data.table=1.14.8
+r-glmnet=4.1_7
+r-optparse=1.7.3
+r-dplyr=1.1.2
+r-susier=0.12.35
+r-rfast
+r-r.utils
+r-devtools
+```
+### Python dependencies
+Python dependencies include:
+```
+python=3.11.4
+scipy==1.11.1
+h5py==3.9.0
+matplotlib==3.8.0
+gdown==5.2.0
+```
+
+## Installation Guide
+
+1. Please make sure you have [conda installed](https://conda.io/projects/conda/en/latest/user-guide/install/index.html).
+2. Clone this repository
+```
+git clone https://github.com/kaiakamatsu/MAGEPRO.git
+cd MAGEPRO
+```
+
+3. We provide `magepro_env.yml` file that can be used to create conda environment. It contains libraries and corresponding versions required to run MAGEPRO:
 ```
 conda env create -f magepro_env.yml
 conda activate magepro_env
@@ -19,14 +56,16 @@ Additionally, one needs to install plink2R package. In active R session, run:
 library(devtools)
 devtools::install_github("carbocation/plink2R/plink2R", ref="carbocation-permit-r361")
 ```
-2. Download gcta from either:
+4. Download gcta from either:
 - https://github.com/gusevlab/fusion_twas.git
 - https://yanglab.westlake.edu.cn/software/gcta/#Overview
 
-3. Download Plink 1.9 from:
+5. Download Plink 1.9 from:
 - https://www.cog-genomics.org/plink/1.9/
 
-4. Download GNU Parallel via homebrew for MacOS or via [GNU Parallel website](https://www.gnu.org/software/parallel/) for Linux (can also `sudo apt-get` as shown [here](https://askubuntu.com/questions/12764/where-do-i-get-a-package-for-gnu-parallel)). On an HPC cluster one can simply **module load** like in `MAGEPRO_PIPELINE/5_RunJobs.sh`.
+6. Download GNU Parallel via [GNU Parallel website](https://www.gnu.org/software/parallel/) for Linux (can also `sudo apt-get` as shown [here](https://askubuntu.com/questions/12764/where-do-i-get-a-package-for-gnu-parallel)). On an HPC cluster one can simply **module load** like in `MAGEPRO_PIPELINE/5_batch_RunJobs.sh`.
+
+The installation takes up to 20 minutes with `conda` environment set up taking up the most time.
 
 ## Extra Dependencies 
 
@@ -39,20 +78,15 @@ Although this may be a useful option, it require some extra dependencies:
 
 ### 8 simple steps to run MAGEPRO on five sample genes (SAMPLE_DATA/sample_genes.txt)
 
-1. Clone the repository  
-```
-git clone https://github.com/kaiakamatsu/MAGEPRO.git
-```
+1. Follow installation steps above. Tutorial below assumes you are in a parent directory to MAGEPRO.
 
-2. Install conda environment following instructions above.
-
-3. Create a directory to store sample gene expression, genotype, covariates, and external eQTL data:
+2. Create a directory to store sample gene expression, genotype, covariates, and external eQTL data:
 ```
 mkdir DATA
 cd DATA
 ```
 
-4. Download sample data (make sure you're in `magepro_env` or have gdown installed):
+3. Download sample data (make sure you're in `magepro_env` or have gdown installed):
 ```
 gdown --folder https://drive.google.com/drive/u/1/folders/16iEM5HtoJq9LUIzx8vfrxZCZrRVVkxlb  
 cd MAGEPRO_data  
@@ -66,31 +100,34 @@ ls
 | **GEUVADIS_normalized_gene_expression_EUR.bed.gz** | Sample gene expression data |
 | **MAGEPRO_SUMSTATS_SuSiE.tar.gz** | Posterior effect sizes of external eQTL summary statistics |
 
-5. Uncompress sample data  
+4. Uncompress sample data  
 ```
 tar -zxvf GEUVADIS_EUR_genotypes.tar.gz  
 tar -zxvf MAGEPRO_SUMSTATS_SuSiE.tar.gz  
 gunzip GEUVADIS_EUR_covariates.txt.gz  
-cd GEUVADIS_EUR_genotypes  
+cd GEUVADIS_EUR_genotypes
+chmod +x split_by_chr.sh
 bash split_by_chr.sh 'path to plink'  
 ```
 
-6. Split summary statistics by gene
+5. Split summary statistics by gene
 ```
 cd ../MAGEPRO_SUMSTATS_SuSiE  
 Rscript split_by_gene.R -d mesahis -o ./ -s ../../../MAGEPRO/SAMPLE_DATA/sample_genes.txt
 ```
 
-7. Use sample genotype/gene expression/covariates data to run MAGEPRO. Here `SAMPLE_FILES` is an output folder.
+6. Use sample genotype/gene expression/covariates data to run MAGEPRO. Here `SAMPLE_FILES` is an output folder.
 ```
 cd ../../../MAGEPRO  
 mkdir ../SAMPLE_FILES
 mkdir ../SAMPLE_FILES/OUTPUT  
 mkdir ../SAMPLE_FILES/SCRATCH  
-mkdir ../SAMPLE_FILES/INTERMED  
+mkdir ../SAMPLE_FILES/INTERMED
+chmod +x tutorial_run.sh
+chmod +x MAGEPRO_PIPELINE/5_RunJobs.sh
 bash tutorial_run.sh 'path to plink' 'path to gcta'  
 ```
-8. Check outputs, see “MAGEPRO/PROCESS_RESULTS” to compile results across genes into a table  
+7. Check outputs, see “MAGEPRO/PROCESS_RESULTS” to compile results across genes into a table  
 ```
 cd ../SAMPLE_FILES/OUTPUT
 ```
